@@ -45,6 +45,15 @@ in `docs/DECISIONS.md` point here.
   default. It states geometry only ("this neighbourhood's addresses fall in two
   ridings"), never a judgement on the line or on who drew it. First
   measurement and sources: `data/DATA.md`, "Neighbourhoods".
+- 2026-10-10 — **"Ghost buildings" are the likely first view** (owner).
+  Buildings drawn faint and translucent, as context for the boundary lines
+  rather than as the subject. This is where the detail phase starts.
+- 2026-10-10 — **Lens: physical and natural boundaries** (owner's idea; wanted
+  "if possible", not yet scheduled). Shows the barriers residents recognise
+  (river valley, arterial roads, highways, rail lines) so a reader can see
+  where a boundary line follows one. Same rules as the other lenses: geometry
+  only, no judgement on the line. Candidate sources: `data/DATA.md`,
+  "Buildings and physical barriers".
 
 ---
 

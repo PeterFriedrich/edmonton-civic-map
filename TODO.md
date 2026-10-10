@@ -26,11 +26,13 @@ symptom and re-measure the stated cause before acting on it.
 
 ### Map detail phase (after the lookup works on the chosen stack)
 
-- [ ] **Find how much geographic detail the site can carry.** Add terrain, then buildings, in steps; at each step measure the published size against the host's limits, first-load time and frame rate on a mid-range phone. Done when the limits and the chosen level are recorded with their numbers, and a test holds the size budget.
+- [ ] **Find how much geographic detail the site can carry.** Start with "ghost buildings" (faint, translucent, from the 2019 rooflines layer `jpxi-a9a5`), then add terrain and detail in steps; at each step measure the published size against the host's limits, first-load time and frame rate on a mid-range phone. Done when the limits and the chosen level are recorded with their numbers, and a test holds the size budget.
 
 ### Lenses
 
 - [ ] **Communities-of-interest lens** (`docs/SPEC_civic_map.md`, amendments). Before building: find a primary source for community league boundaries (not on the City portal); settle the threshold that separates a divided neighbourhood from a digitising sliver; decide what "shared services" means in data terms, if anything. Neighbourhoods are measured already (`data/DATA.md`, "Neighbourhoods").
+
+- [ ] **Physical-and-natural-boundaries lens** (`docs/SPEC_civic_map.md`, amendments). Before building: download and check the road network's arterial classes; find primary sources for the river valley edge and rail lines (neither is a ready layer on the City portal). Candidates: `data/DATA.md`, "Buildings and physical barriers".
 
 ### Tier 2
 
