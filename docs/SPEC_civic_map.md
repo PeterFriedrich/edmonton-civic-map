@@ -28,6 +28,12 @@ in `docs/DECISIONS.md` point here.
   public version is Tier 1, the lookup. Tier 2 entries have no deadline and are
   added one at a time as each is judged ready. The site is public from launch,
   so it must be complete and honest with no Tier 2 entries at all.
+- 2026-10-10 — **Static site on GitHub Pages** (owner; closes §9 question 2).
+  No backend of ours: the site is files, and the lookup runs in the browser.
+- 2026-10-10 — **A geographic map is in scope, with 2D and 3D views** (owner;
+  not in the brief). Comparable in kind to `edmonton-tax-viz`, but **built on a
+  different stack**: trying one is part of the point of this project. Not yet
+  decided: what 3D shows here, and which stack.
 
 ---
 

@@ -12,7 +12,7 @@ symptom and re-measure the stated cause before acting on it.
 
 ### Waiting on the owner
 
-- [ ] **Answer brief §9 question 2** (`docs/SPEC_civic_map.md`): static site or small backend. Recommended static; every decision so far assumes it.
+- [ ] **Map: say what 3D shows, and pick the stack.** The owner wants a 2D/3D geographic map on a stack other than the tax viz's MapLibre + deck.gl (`docs/SPEC_civic_map.md`, amendments). Open: whether 3D is terrain and buildings or encodes a quantity, and which stack. If the owner wants options, survey candidates against boundary layers, in-browser address search, 2D/3D and mobile, and report before choosing.
 - [ ] **Report data defects to the City.** The owner will send one report later, collecting what `docs/DATA_ISSUES.md` holds by then (2026-10-10). Done when each row there has a status other than NOT SENT.
 
 ### Sources still to verify
