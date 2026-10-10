@@ -12,7 +12,7 @@ symptom and re-measure the stated cause before acting on it.
 
 ### Waiting on the owner
 
-- [ ] **Answer brief §9 questions 2–4** (`docs/SPEC_civic_map.md`): static site or small backend, Tier 2 authorship, launch scope.
+- [ ] **Answer brief §9 questions 2 and 4** (`docs/SPEC_civic_map.md`): static site or small backend, and launch scope.
 - [ ] **Report data defects to the City.** The owner will send one report later, collecting what `docs/DATA_ISSUES.md` holds by then (2026-10-10). Done when each row there has a status other than NOT SENT.
 
 ### Sources still to verify
@@ -24,7 +24,11 @@ symptom and re-measure the stated cause before acting on it.
 - [ ] **School-ward boundaries used in the 2025 election** — confirm against each board's ward bylaw that they match the City layers.
 - [ ] **Recheck the provincial boundary process after 2026-11-02**, when the Select Special Committee on Electoral Boundaries must report. Done when `data/DATA.md` records what was tabled and whether anything is enacted.
 
-### Build (after the schema is approved)
+### Tier 2
+
+- [ ] **Survey what Tier 2 can say by automation.** For each issue in brief §3 (potholes, snow clearing, zoning and infill, transit, policing, schools, water and stormwater, property tax and assessment), find whether a primary source states the responsible body and the way to engage in a form a script can fetch and diff: the City's 311 service catalogue and `q7ua-agfg`, City and EPCOR service pages, the governing bylaw or Act. Done when each issue is placed on a rung of the ladder in `docs/SPEC_civic_map.md` with its source, and reported to the owner before any entry is written.
+
+### Build
 
 - [ ] **Downloaders, one per source in `data/DATA.md`**, each checking its row count and writing a `sources.json` entry.
 - [ ] **Boundary build**: reproject, clip provincial and federal layers to the city, simplify at the recorded tolerance, with a test that no parcel address changes district against full resolution.

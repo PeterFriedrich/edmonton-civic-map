@@ -10,6 +10,20 @@ in `docs/DECISIONS.md` point here.
   "Edmonton Civic Atlas" in §2 item 6 and closes §9 question 1.
 - 2026-10-10 — §10 tasks 1–4 are done; findings are in `data/DATA.md`,
   `docs/DATA_ISSUES.md`, `docs/SPEC_data_schema.md` and `prototype/README.md`.
+- 2026-10-10 — **Tier 2 approach** (owner; closes §9 question 3). Start with
+  what can be said plainly from a primary source by automation, then move up
+  to written content only where that runs out. The ladder:
+  1. **Stated by a source, refreshed by script.** A publisher's own statement
+     of who handles something, carried with its `source_url` and
+     `last_verified` like any Tier 1 record, and held by the same diff check.
+  2. **Assembled from sources.** A plain sentence built from two or more such
+     facts, with every part linked. Drafted by Claude, approved by the owner.
+  3. **Written explanation.** Only where an issue genuinely spans bodies and no
+     source says it plainly. Drafted by Claude from primary sources, approved
+     by the owner, with an owner and a review date per entry (§6).
+
+  Each entry records which rung it is on. Nothing on rungs 2–3 publishes
+  without the owner's approval.
 
 ---
 
