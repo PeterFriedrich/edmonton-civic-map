@@ -198,5 +198,31 @@ approves the report. "Stop" means nothing is produced. If nothing moved, only
    diff in git history.
 3. **Thresholds — decided 2026-10-10:** office holders 45 days, boundaries and
    population 180 days (§6).
-4. **Trustee rows — open.** Scrape the two board pages, or hand-keep the 16
-   rows with a source link and a review date. Recommendation: hand-keep.
+4. **Trustee rows — direction from the owner 2026-10-10: scrape, with an
+   agent confirming.** See §8.
+
+## 8. Who confirms a change (proposed 2026-10-10)
+
+The owner's direction: scrapers run on a schedule on the Oracle server, and an
+always-on agent session there confirms what they find, so no source needs
+hand-keeping and no agent time is spent when nothing changed.
+
+- **The script does the routine work and costs no agent time.** A scheduled
+  job fetches every source, rebuilds, and runs the diff check (§5). If nothing
+  moved it advances `last_verified` and exits. This is the usual case.
+- **An agent is woken only when the job exits non-zero**: a "review" or "stop"
+  row in §5, or a scraper that no longer finds what it expects. The job hands
+  it the diff report, not the raw pages.
+- **The agent confirms against the primary source, then opens a PR.** It reads
+  the page the scraper read, checks the change against the second source where
+  one exists, and writes what it checked into the PR. It does not merge.
+- **The owner's merge is the publish step.** Brief §6 asks for human review of
+  unexpected changes; the agent prepares that review, it does not replace it.
+- **A broken scraper is a finding, not a retry loop.** One attempt to confirm,
+  then a GitHub issue. No repeated wake-ups on the same failure.
+- **Which session, and how it is scheduled, is the `server` session's call**:
+  it owns cron and is always on. This repo owns the scraper, the diff check and
+  the report format it hands over.
+
+Open: the cadence. Proposed weekly, which keeps every record well inside the
+45-day threshold and survives a few failed runs.
