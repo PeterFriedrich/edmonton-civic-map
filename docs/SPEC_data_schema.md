@@ -201,50 +201,58 @@ approves the report. "Stop" means nothing is produced. If nothing moved, only
    diff in git history.
 3. **Thresholds — decided 2026-10-10:** office holders 45 days, boundaries and
    population 180 days (§6).
-4. **Trustee rows — direction from the owner 2026-10-10: scrape, with an
-   agent confirming.** See §8.
+4. **Trustee rows — decided 2026-10-10: scraped like every other source**, not
+   hand-kept. See §8.
 
-## 8. Who confirms a change (proposed 2026-10-10)
+## 8. How the refresh runs and who confirms a change (decided 2026-10-10)
 
-The owner's direction: scrapers run on a schedule on the Oracle server, and an
-always-on agent session there confirms what they find, so no source needs
-hand-keeping and no agent time is spent when nothing changed.
+Settled with the owner after asking the `server` session (scheduling, fetch
+etiquette) and the `edmonton-tax-viz` session (what its refresh does today).
 
-- **The script does the routine work and costs no agent time.** A scheduled
-  job fetches every source, rebuilds, and runs the diff check (§5). If nothing
-  moved it advances `last_verified` and exits. This is the usual case.
-- **A non-zero exit files a GitHub issue; nothing is typed into a live
-  session.** A "review" or "stop" row in §5, or a scraper that no longer finds
-  what it expects, makes the cron line run `gh issue create` with the trimmed
-  diff report as the body. The report is scraped web content, and injecting it
-  into a session would give it the owner's authority.
-- **This project's session confirms, at its next start.** It already checks
-  open issues then (`CLAUDE.md`, "Session Management"). It reads the page the
-  scraper read, checks the change against the second source where one exists,
-  and opens a PR saying what it checked. It does not merge.
-- **The owner's merge is the publish step.** Brief §6 asks for human review of
-  unexpected changes; the agent prepares that review, it does not replace it.
-- **One run, no retry loop.** A broken scraper is a finding: it fails closed on
-  any non-200 response or a parse that finds zero rows, so it can never look
-  like "everyone left office".
+**It runs on GitHub Actions, weekly**, not on server cron: the run can deploy
+in the same job, a failed run emails the owner, and it does not depend on the
+Oracle server or its CA bundle.
+
+**The split:**
+
+- **Nothing changed — fully automatic.** The run fetches every source,
+  rebuilds, and runs the diff check (§5). If nothing moved it advances
+  `last_verified`, commits to master and deploys. No issue, no PR, nobody
+  acts. This is nearly every run.
+- **Something changed — held.** A "review" or "stop" row in §5, or a scraper
+  that no longer finds what it expects, publishes nothing: the site keeps
+  serving the last good data and the run files a GitHub issue with the trimmed
+  diff report. This project's session picks the issue up at its next start
+  (`CLAUDE.md`, "Session Management"), checks the change against the primary
+  source and the second source where one exists, and opens a PR saying what it
+  checked. **The owner's merge is the publish step** (brief §6).
+
+Changes are held rather than published-then-reported because a wrong name on a
+"who represents me" tool is worse than a late one. `edmonton-tax-viz`
+publishes automatically, and one green run there shipped a doubled figure
+that was live for four days.
+
+**Rules that follow:**
+
+- **No "all fine" issues.** An issue means a change or a break. The heartbeat
+  is `last_verified` itself: the site's staleness warning (§6) shows a dead
+  schedule, an expired token or a broken workflow without anyone watching.
+- **A held change shows as stale, not as wrong.** Until the PR merges, the
+  affected records stop advancing `last_verified` and age toward the warning.
+- **Nothing scraped is ever typed into a live session.** The issue body is
+  data for a session to check, not instructions.
+- **One run, no retry loop.** A scraper fails closed on any non-200 response
+  or a parse that finds zero rows, so a broken scraper can never look like
+  "everyone left office".
 - **Fetching:** requests one at a time, 1–2 s apart; a User-Agent naming the
   project and its GitHub URL; robots.txt honoured; conditional GETs where a
   site supports them.
-- **The wrapper** follows the server's other crons: `set -euo pipefail`,
-  `flock -n` on a `/tmp` lock, absolute paths and the venv Python (which also
-  carries the `certifi` bundle, `data/DATA.md`), output to a git-ignored
-  `logs/` directory.
-- **Scheduling is the `server` session's**, installed on the owner's approval.
-  Proposed slot: Wednesdays 09:00 UTC (03:00 in Edmonton), which is free.
+- **A warning inside a green run reaches nobody.** Anything that matters is an
+  issue or a red run.
+- GitHub disables scheduled workflows after 60 days without repository
+  activity; the weekly `last_verified` commit keeps this one alive.
 
-This design is the `server` session's reply of 2026-10-10 to the proposal
-above. It differs from the owner's first suggestion in one way: `server` would
-not be the confirming session, because it only acts when messaged and the PR
-belongs to this repo. **Awaiting the owner's confirmation.**
-
-A possible later phase, the owner's call: on a non-zero exit, cron runs a
-headless agent in this repo with a narrow tool allowlist to open the PR
-unattended. It costs one run per wake. The issue path comes first.
-
-Cadence: weekly, which keeps every record well inside the
-45-day threshold and survives a few failed runs.
+**A dial, not a fixed line.** Which §5 rows hold and which pass is a config
+list, so the amount of checking can be traded against effort later. A possible
+later step, the owner's call: an unattended agent run that opens the PR itself
+when an issue is filed.
