@@ -12,9 +12,9 @@ symptom and re-measure the stated cause before acting on it.
 
 ### Waiting on the owner
 
-- [ ] **Approve or amend the data schema draft.** `docs/SPEC_data_schema.md` §7 lists four open points: party/caucus shown or not, where published files live, staleness thresholds, scraped or hand-kept trustee rows. Done when a `docs/DECISIONS.md` row locks it. No downloader or UI before this.
+- [ ] **Two schema points still open** (`docs/SPEC_data_schema.md` §7): confirm affiliation as a card field for MLAs and MPs only (point 1), and scrape or hand-keep the trustee rows (point 4). Points 2 and 3 are decided. No downloader or UI before these close.
 - [ ] **Answer brief §9 questions 2–4** (`docs/SPEC_civic_map.md`): static site or small backend, Tier 2 authorship, launch scope.
-- [ ] **Decide whether to report the stale trustee columns to the City.** `docs/DATA_ISSUES.md`, status NOT SENT. Done when the status changes.
+- [ ] **Report data defects to the City.** The owner will send one report later, collecting what `docs/DATA_ISSUES.md` holds by then (2026-10-10). Done when each row there has a status other than NOT SENT.
 
 ### Sources still to verify
 
