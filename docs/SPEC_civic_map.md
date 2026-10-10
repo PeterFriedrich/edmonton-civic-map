@@ -39,6 +39,12 @@ in `docs/DECISIONS.md` point here.
   encode a number. **How much detail is a phase of its own**: experiment with
   terrain and building detail until storage or performance limits are hit, and
   record where they are. The lookup must work without the detail layers.
+- 2026-10-10 — **Lens: communities of interest** (owner's idea; wanted, not
+  yet scheduled). Shows where a boundary line runs through a neighbourhood or
+  community league area, layer by layer. Like the affiliation lens it is off by
+  default. It states geometry only ("this neighbourhood's addresses fall in two
+  ridings"), never a judgement on the line or on who drew it. First
+  measurement and sources: `data/DATA.md`, "Neighbourhoods".
 
 ---
 
