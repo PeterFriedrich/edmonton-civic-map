@@ -162,5 +162,22 @@ Use Python with `certifi`'s bundle. Do not disable verification.
 - **Quirks:** `neighbourhood_name` and `neighbourhood_number` in the address layer `ut27-nrpn` are **empty on every row**, so neighbourhood has to come from a point-in-polygon against this layer. The catalogue search surfaces the centroid table `3b6m-fezs` first; this is the polygon one. `Neighbourhood Boundaries : 2019` (`xu6q-xcmj`) is an old snapshot.
 - **Not found:** community league **boundaries**. The portal has league halls as points (`kaps-rk7z`) only. The Edmonton Federation of Community Leagues is the likely primary source; not yet checked.
 
+### Buildings and physical barriers (candidates, catalogue metadata only)
+Found on the City portal 2026-10-10. Row counts and columns are from the
+portal's API; **no geometry has been downloaded or checked yet.**
+
+| Need | Dataset | Rows | Vintage | Notes |
+|---|---|---|---|---|
+| Buildings with height | `jpxi-a9a5` City of Edmonton - Rooflines (as of 2019) | 384,228 | 2019; rows updated 2021-01-20 | `building_height`, `elevation_ground`, `elevation_rooftop`, `area`. Mean height 5.7 m, tallest 146.8 m, 597 over 20 m. **Seven years old**: newer neighbourhoods will be missing buildings. |
+| Buildings, older | `6n9r-ddf8` Building Footprint | 365,822 | May 2017 | no height column; superseded by the 2019 layer |
+| Roads by class | `9j8t-zm52` Road Network | 53,873 segments | rows updated 2026-10-10 | `functional_class_code` separates arterials (classes A–D, about 8,900 segments; class A is primary highway) from collectors and locals. 14,229 segments have no class. |
+| River valley | none found as a boundary layer | | | `6w3s-58pv` Zoning Overlays may carry the river valley overlay; not checked |
+| Rail lines | none found on the City portal | | | likely a federal source (Natural Resources Canada's National Railway Network); not checked |
+| Terrain | none found on the City portal | | | `v59u-75mc` is only the tiling grid for the City's remote-sensing data |
+
+384,228 roofline polygons is the storage question for the detail phase: far too
+large to ship as GeoJSON, so buildings mean vector tiles or heavy
+simplification, whichever stack is chosen.
+
 ### Not a source: Represent (Open North)
 `represent.opennorth.ca` answers "who represents this point" for all three levels, but it is a third-party aggregator and sending it a location is the third-party geocoding the brief rules out without the owner's say-so. Listed so it is not rediscovered as a shortcut.
