@@ -30,7 +30,7 @@ symptom and re-measure the stated cause before acting on it.
 - [ ] **Downloaders, one per source in `data/DATA.md`**, each checking its row count and writing a `sources.json` entry.
 - [ ] **Boundary build**: reproject, clip provincial and federal layers to the city, simplify at the recorded tolerance, with a test that no parcel address changes district against full resolution.
 - [ ] **Diff check and staleness guard** per `docs/SPEC_data_schema.md` §5–§6.
-- [ ] **Ask the `server` session to schedule the refresh** once the diff check exists: the job, its cadence, and which session is woken on a non-zero exit (`docs/SPEC_data_schema.md` §8).
+- [ ] **Hand the refresh job to the `server` session to schedule** once it exists and is merged: send the script path, the merged commit and the proposed cron line (`0 9 * * 3`). Design constraints from `server` are in `docs/SPEC_data_schema.md` §8.
 - [ ] **Replace the template `README.md`** with one for this project.
 
 ## Done
