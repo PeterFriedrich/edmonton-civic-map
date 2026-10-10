@@ -12,7 +12,7 @@ symptom and re-measure the stated cause before acting on it.
 
 ### Waiting on the owner
 
-- [ ] **Two schema points still open** (`docs/SPEC_data_schema.md` §7): confirm affiliation as a card field for MLAs and MPs only (point 1), and scrape or hand-keep the trustee rows (point 4). Points 2 and 3 are decided. No downloader or UI before these close.
+- [ ] **Schema points still open** (`docs/SPEC_data_schema.md`): confirm affiliation as a card field for MLAs and MPs only (§7 point 1), and the agent-confirmed refresh in §8 with its weekly cadence. No downloader or UI before these close.
 - [ ] **Answer brief §9 questions 2–4** (`docs/SPEC_civic_map.md`): static site or small backend, Tier 2 authorship, launch scope.
 - [ ] **Report data defects to the City.** The owner will send one report later, collecting what `docs/DATA_ISSUES.md` holds by then (2026-10-10). Done when each row there has a status other than NOT SENT.
 
@@ -30,6 +30,7 @@ symptom and re-measure the stated cause before acting on it.
 - [ ] **Downloaders, one per source in `data/DATA.md`**, each checking its row count and writing a `sources.json` entry.
 - [ ] **Boundary build**: reproject, clip provincial and federal layers to the city, simplify at the recorded tolerance, with a test that no parcel address changes district against full resolution.
 - [ ] **Diff check and staleness guard** per `docs/SPEC_data_schema.md` §5–§6.
+- [ ] **Ask the `server` session to schedule the refresh** once the diff check exists: the job, its cadence, and which session is woken on a non-zero exit (`docs/SPEC_data_schema.md` §8).
 - [ ] **Replace the template `README.md`** with one for this project.
 
 ## Done
