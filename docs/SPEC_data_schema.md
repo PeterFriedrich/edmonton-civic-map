@@ -185,14 +185,17 @@ approves the report. "Stop" means nothing is produced. If nothing moved, only
 
 ## 7. Points put to the owner
 
-1. **Party or caucus — proposed 2026-10-10, awaiting confirmation.** Each
-   office holder is shown as a card, and affiliation is one plain field on it,
-   shown **only where the body's own member list publishes one**: the Assembly
-   list for MLAs and the House of Commons list for MPs. Council and trustee
-   cards have no such field, because the City's and the boards' lists of who
-   holds office carry none. The field is labelled with its source like every
-   other. `officeholders.json` gains `affiliation` (string or null) and
-   `affiliation_source_id`. This supersedes "No party or caucus field" in §4.
+1. **Party or caucus — decided 2026-10-10.** Each office holder is shown as a
+   card. Affiliation is a field on MLA and MP cards only, taken from the
+   Assembly's and the House of Commons' own member lists and labelled with
+   that source. Council and trustee cards have no such field, because the
+   City's and the boards' lists of who holds office carry none.
+   **It is off by default**: an opt-in "lens" the reader turns on, since people
+   will look for it anyway but the tool should not lead with it.
+   `officeholders.json` gains `affiliation` (string or null) and
+   `affiliation_source_id`; the data is always published, the lens only
+   controls display. Not decided: whether the lens does anything beyond the
+   card text, such as colouring the map. Until that is asked for, it does not.
 2. **Where the published files live — decided 2026-10-10, for now:** committed
    under `site/data/`, so every change to who represents whom is a reviewable
    diff in git history.
@@ -210,19 +213,38 @@ hand-keeping and no agent time is spent when nothing changed.
 - **The script does the routine work and costs no agent time.** A scheduled
   job fetches every source, rebuilds, and runs the diff check (§5). If nothing
   moved it advances `last_verified` and exits. This is the usual case.
-- **An agent is woken only when the job exits non-zero**: a "review" or "stop"
-  row in §5, or a scraper that no longer finds what it expects. The job hands
-  it the diff report, not the raw pages.
-- **The agent confirms against the primary source, then opens a PR.** It reads
-  the page the scraper read, checks the change against the second source where
-  one exists, and writes what it checked into the PR. It does not merge.
+- **A non-zero exit files a GitHub issue; nothing is typed into a live
+  session.** A "review" or "stop" row in §5, or a scraper that no longer finds
+  what it expects, makes the cron line run `gh issue create` with the trimmed
+  diff report as the body. The report is scraped web content, and injecting it
+  into a session would give it the owner's authority.
+- **This project's session confirms, at its next start.** It already checks
+  open issues then (`CLAUDE.md`, "Session Management"). It reads the page the
+  scraper read, checks the change against the second source where one exists,
+  and opens a PR saying what it checked. It does not merge.
 - **The owner's merge is the publish step.** Brief §6 asks for human review of
   unexpected changes; the agent prepares that review, it does not replace it.
-- **A broken scraper is a finding, not a retry loop.** One attempt to confirm,
-  then a GitHub issue. No repeated wake-ups on the same failure.
-- **Which session, and how it is scheduled, is the `server` session's call**:
-  it owns cron and is always on. This repo owns the scraper, the diff check and
-  the report format it hands over.
+- **One run, no retry loop.** A broken scraper is a finding: it fails closed on
+  any non-200 response or a parse that finds zero rows, so it can never look
+  like "everyone left office".
+- **Fetching:** requests one at a time, 1–2 s apart; a User-Agent naming the
+  project and its GitHub URL; robots.txt honoured; conditional GETs where a
+  site supports them.
+- **The wrapper** follows the server's other crons: `set -euo pipefail`,
+  `flock -n` on a `/tmp` lock, absolute paths and the venv Python (which also
+  carries the `certifi` bundle, `data/DATA.md`), output to a git-ignored
+  `logs/` directory.
+- **Scheduling is the `server` session's**, installed on the owner's approval.
+  Proposed slot: Wednesdays 09:00 UTC (03:00 in Edmonton), which is free.
 
-Open: the cadence. Proposed weekly, which keeps every record well inside the
+This design is the `server` session's reply of 2026-10-10 to the proposal
+above. It differs from the owner's first suggestion in one way: `server` would
+not be the confirming session, because it only acts when messaged and the PR
+belongs to this repo. **Awaiting the owner's confirmation.**
+
+A possible later phase, the owner's call: on a non-zero exit, cron runs a
+headless agent in this repo with a narrow tool allowlist to open the PR
+unattended. It costs one run per wake. The issue path comes first.
+
+Cadence: weekly, which keeps every record well inside the
 45-day threshold and survives a few failed runs.
