@@ -34,7 +34,7 @@ symptom and re-measure the stated cause before acting on it.
 
 - [ ] **Physical-and-natural-boundaries lens** (`docs/SPEC_civic_map.md`, amendments). Before building: download and check the road network's arterial classes; find primary sources for the river valley edge and rail lines (neither is a ready layer on the City portal). Candidates: `data/DATA.md`, "Buildings and physical barriers".
 
-- [ ] **Population balance and growth lens** (`docs/SPEC_civic_map.md`, amendments). Before designing: quote Policy C469A's allowed variance; find a published population forecast (leads in `data/DATA.md`, "Population and growth"); place the 26% of permitted units that have no coordinates and report the remainder; owner to say whether the lens is 2D or amends the "3D never encodes a quantity" decision.
+- [ ] **Population density lens** (`docs/SPEC_civic_map.md`, amendments): a density map with ward boundaries as an overlay, no number per ward. Parked until the owner has looked at 2D and 3D density maps. Growth is a later part: begin by finding how the City forecasts population and what it has stated (`data/DATA.md`, "Population and growth").
 
 ### Tier 2
 
