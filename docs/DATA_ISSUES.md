@@ -23,3 +23,4 @@ unsent as a sub-item of a closed parent and go invisible. Status must be one of
 
 | Date found | Source / dataset | Defect | Evidence | What it breaks here | Status |
 |------------|------------------|--------|----------|---------------------|--------|
+| 2026-10-10 | City of Edmonton open data: `d7pj-rist` (public school wards), `pwzf-sjj2` (Catholic school wards) | The `trustee` column still names the 2021–2025 trustees, although the datasets describe themselves as "the associated board trustee in office" and were refreshed 2026-10-05. | Against the 2025 official results (`fv5x-8efu`) and both boards' own trustee pages, read 2026-10-10: public wards B, C, D, E and H differ (5 of 9); Catholic wards 71 and 73 differ (2 of 7). The council ward layer `b4er-5rp2` from the same publisher was updated correctly. | Trustee names cannot come from the City layer; they are read from the boards' sites and only the geometry is used. | NOT SENT |
