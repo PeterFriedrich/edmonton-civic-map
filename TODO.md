@@ -34,6 +34,8 @@ symptom and re-measure the stated cause before acting on it.
 
 - [ ] **Physical-and-natural-boundaries lens** (`docs/SPEC_civic_map.md`, amendments). Before building: download and check the road network's arterial classes; find primary sources for the river valley edge and rail lines (neither is a ready layer on the City portal). Candidates: `data/DATA.md`, "Buildings and physical barriers".
 
+- [ ] **Population balance and growth lens** (`docs/SPEC_civic_map.md`, amendments). Before designing: quote Policy C469A's allowed variance; find a published population forecast (leads in `data/DATA.md`, "Population and growth"); place the 26% of permitted units that have no coordinates and report the remainder; owner to say whether the lens is 2D or amends the "3D never encodes a quantity" decision.
+
 ### Tier 2
 
 - [ ] **Survey what Tier 2 can say by automation.** For each issue in brief §3 (potholes, snow clearing, zoning and infill, transit, policing, schools, water and stormwater, property tax and assessment), find whether a primary source states the responsible body and the way to engage in a form a script can fetch and diff: the City's 311 service catalogue and `q7ua-agfg`, City and EPCOR service pages, the governing bylaw or Act. Done when each issue is placed on a rung of the ladder in `docs/SPEC_civic_map.md` with its source, and reported to the owner before any entry is written.

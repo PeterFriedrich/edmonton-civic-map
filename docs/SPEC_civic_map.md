@@ -54,6 +54,21 @@ in `docs/DECISIONS.md` point here.
   where a boundary line follows one. Same rules as the other lenses: geometry
   only, no judgement on the line. Candidate sources: `data/DATA.md`,
   "Buildings and physical barriers".
+- 2026-10-10 — **Lens: population balance and growth** (owner's idea; wanted,
+  not yet scheduled). Some blend of two things: how far each ward's population
+  sits from the average ward, and where the city is growing, so a reader can
+  see whether wards that are balanced today are likely to stay so. Open
+  questions before it is designed:
+  - It is the first lens that shows a number per ward. The brief (§3) already
+    requires population beside any ward-level figure; the wording must stay a
+    fact about a ward, never a measure of its councillor, and wards are not
+    ranked.
+  - Whether it is drawn flat or in 3D. A decision of the same day says 3D never
+    encodes a quantity; this lens either stays 2D or that decision is amended
+    by the owner.
+  - "Projected growth" needs a published forecast. None was found on the City
+    portal; what exists is growth already permitted (`data/DATA.md`,
+    "Population and growth").
 
 ---
 
