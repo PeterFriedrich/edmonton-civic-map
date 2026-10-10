@@ -12,7 +12,7 @@ symptom and re-measure the stated cause before acting on it.
 
 ### Waiting on the owner
 
-- [ ] **Answer brief §9 questions 2 and 4** (`docs/SPEC_civic_map.md`): static site or small backend, and launch scope.
+- [ ] **Answer brief §9 question 2** (`docs/SPEC_civic_map.md`): static site or small backend. Recommended static; every decision so far assumes it.
 - [ ] **Report data defects to the City.** The owner will send one report later, collecting what `docs/DATA_ISSUES.md` holds by then (2026-10-10). Done when each row there has a status other than NOT SENT.
 
 ### Sources still to verify
