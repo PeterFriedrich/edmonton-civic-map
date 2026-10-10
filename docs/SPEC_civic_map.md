@@ -54,6 +54,16 @@ in `docs/DECISIONS.md` point here.
   where a boundary line follows one. Same rules as the other lenses: geometry
   only, no judgement on the line. Candidate sources: `data/DATA.md`,
   "Buildings and physical barriers".
+- 2026-10-10 — **Lens: population density** (owner; wanted, not yet
+  scheduled). A population density map of the city, over which the reader can
+  lay ward boundaries to compare roughly by eye. **No number is attached to a
+  ward**: the lens shows where people live, and the boundary lines are an
+  overlay, not the unit of the map. Deferred until the lens is worked on:
+  - **2D or 3D.** The owner will look at examples of both first. The same-day
+    decision that 3D never encodes a quantity stands until then.
+  - **Growth.** When it is taken up, start from how the City itself forecasts
+    population and what it has stated, not from our own projection. Leads and
+    what was found so far: `data/DATA.md`, "Population and growth".
 
 ---
 

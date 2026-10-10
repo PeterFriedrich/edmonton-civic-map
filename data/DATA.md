@@ -179,5 +179,14 @@ portal's API; **no geometry has been downloaded or checked yet.**
 large to ship as GeoJSON, so buildings mean vector tiles or heavy
 simplification, whichever stack is chosen.
 
+### Population and growth (for the population lens)
+- **Balance today:** ward population from the 2021 Census, "Ward population" above. Every ward was within −19.1% to +12.8% of the mean in 2021. **The tolerance Policy C469A actually allows is not verified**; ±25% is a common Canadian figure, not a quoted Edmonton one.
+- **Density:** the same census table is by neighbourhood (278 rows), and `65fr-66s6` gives neighbourhood areas, so people per hectare by neighbourhood is derivable. Not yet computed.
+- **Forecasts: none found on the City portal** (searched "population forecast", "population projection", 2026-10-10). Leads not yet checked: `k8bn-rfq9` Growth Monitoring Reports (updated 2025-02-13), `avbh-ga6n` City Plan_Planning Districts, `jdmr-bidz` Plans in Effect, and the City Plan's population targets by district, which may exist only in documents.
+- **Growth already permitted — `24uj-dj8v` General Building Permits:** 247,482 rows; `issue_date`, `units_added`, `neighbourhood`, `latitude`, `longitude`. Between 2021-05-12 and 2026-10-08, 27,353 permits changed the unit count, for a net **70,165 dwelling units** (273 rows are negative: demolitions and conversions).
+  - **⚠️ 7,466 of those rows, carrying 18,167 units (26%), have no coordinates.** Placing permits by latitude and longitude alone drops a quarter of the units, and probably not evenly: large multi-unit buildings are the likely ones missing. A first by-ward sum of the 51,998 located units is therefore **not usable** and is not recorded here. Use the `neighbourhood` column for the unlocated rows, and report what still cannot be placed.
+  - Note the misspelt column `neighbourhood_numberr`.
+  - Units permitted are not units built or occupied, and not people. Converting them to population needs a persons-per-unit assumption that must be stated and sourced.
+
 ### Not a source: Represent (Open North)
 `represent.opennorth.ca` answers "who represents this point" for all three levels, but it is a third-party aggregator and sending it a location is the third-party geocoding the brief rules out without the owner's say-so. Listed so it is not rediscovered as a shortcut.
