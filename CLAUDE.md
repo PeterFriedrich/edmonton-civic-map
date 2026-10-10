@@ -17,6 +17,7 @@
 - `session-summary/` — session handoff notes. Read the latest before starting work; older ones live in `session-summary/archive/` (don't bulk-read them).
 - `docs/SPEC_civic_map.md` — the owner's founding brief, verbatim, with amendments. **Read before scoping any feature.**
 - `docs/SPEC_data_schema.md` — draft schema for sources, boundaries and office holders, the diff check and staleness. **Read before writing a downloader or anything that reads published data.** Draft until a DECISIONS row says otherwise.
+- `docs/SPEC_lenses.md` — the map's base view and each lens: what it is for, what data and rendering it needs, what is open, and the stack research request. **Read before choosing the stack or designing a lens.**
 - `prototype/` — the measured point-in-polygon proof. Not the app; read `prototype/README.md` for the numbers.
 
 ## Token Efficiency
