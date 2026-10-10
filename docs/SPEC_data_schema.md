@@ -185,14 +185,17 @@ approves the report. "Stop" means nothing is produced. If nothing moved, only
 
 ## 7. Points put to the owner
 
-1. **Party or caucus — proposed 2026-10-10, awaiting confirmation.** Each
-   office holder is shown as a card, and affiliation is one plain field on it,
-   shown **only where the body's own member list publishes one**: the Assembly
-   list for MLAs and the House of Commons list for MPs. Council and trustee
-   cards have no such field, because the City's and the boards' lists of who
-   holds office carry none. The field is labelled with its source like every
-   other. `officeholders.json` gains `affiliation` (string or null) and
-   `affiliation_source_id`. This supersedes "No party or caucus field" in §4.
+1. **Party or caucus — decided 2026-10-10.** Each office holder is shown as a
+   card. Affiliation is a field on MLA and MP cards only, taken from the
+   Assembly's and the House of Commons' own member lists and labelled with
+   that source. Council and trustee cards have no such field, because the
+   City's and the boards' lists of who holds office carry none.
+   **It is off by default**: an opt-in "lens" the reader turns on, since people
+   will look for it anyway but the tool should not lead with it.
+   `officeholders.json` gains `affiliation` (string or null) and
+   `affiliation_source_id`; the data is always published, the lens only
+   controls display. Not decided: whether the lens does anything beyond the
+   card text, such as colouring the map. Until that is asked for, it does not.
 2. **Where the published files live — decided 2026-10-10, for now:** committed
    under `site/data/`, so every change to who represents whom is a reviewable
    diff in git history.
