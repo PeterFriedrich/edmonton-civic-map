@@ -12,7 +12,7 @@ symptom and re-measure the stated cause before acting on it.
 
 ### Waiting on the owner
 
-- [ ] **Map: say what 3D shows, and pick the stack.** The owner wants a 2D/3D geographic map on a stack other than the tax viz's MapLibre + deck.gl (`docs/SPEC_civic_map.md`, amendments). Open: whether 3D is terrain and buildings or encodes a quantity, and which stack. If the owner wants options, survey candidates against boundary layers, in-browser address search, 2D/3D and mobile, and report before choosing.
+- [ ] **Map: pick the stack.** The owner wants a 2D/3D geographic map on a stack other than the tax viz's MapLibre + deck.gl (`docs/SPEC_civic_map.md`, amendments). If the owner wants options, survey candidates against boundary layers, in-browser address search, terrain and buildings in 3D, and mobile, and report before choosing.
 - [ ] **Report data defects to the City.** The owner will send one report later, collecting what `docs/DATA_ISSUES.md` holds by then (2026-10-10). Done when each row there has a status other than NOT SENT.
 
 ### Sources still to verify
@@ -23,6 +23,10 @@ symptom and re-measure the stated cause before acting on it.
 - [ ] **A ward population newer than the 2021 Census**, from a primary source. Done when found, or when recorded as not existing.
 - [ ] **School-ward boundaries used in the 2025 election** — confirm against each board's ward bylaw that they match the City layers.
 - [ ] **Recheck the provincial boundary process after 2026-11-02**, when the Select Special Committee on Electoral Boundaries must report. Done when `data/DATA.md` records what was tabled and whether anything is enacted.
+
+### Map detail phase (after the lookup works on the chosen stack)
+
+- [ ] **Find how much geographic detail the site can carry.** Add terrain, then buildings, in steps; at each step measure the published size against the host's limits, first-load time and frame rate on a mid-range phone. Done when the limits and the chosen level are recorded with their numbers, and a test holds the size budget.
 
 ### Tier 2
 
