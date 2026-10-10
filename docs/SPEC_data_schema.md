@@ -135,7 +135,7 @@ One row per **seat**, including a vacant one.
 - `last_verified` is the date a refresh last confirmed this row against its
   source. It is **not** the date the source was last modified, and it does not
   move if the fetch failed.
-- **No party or caucus field.** Proposed, pending the owner: see §7.
+- **Affiliation:** see §7 point 1.
 
 Source and cross-check per body:
 
@@ -183,18 +183,20 @@ approves the report. "Stop" means nothing is produced. If nothing moved, only
   thresholds: municipal election 2029-10, the Alberta committee report due
   2026-11-02, the next provincial and federal general elections.
 
-## 7. Open points for the owner
+## 7. Points put to the owner
 
-1. **Party or caucus.** The Assembly and House of Commons lists publish an
-   affiliation for MLAs and MPs, and the 2025 municipal results carry
-   `partyname` and `slatename` columns. The brief says descriptive only and
-   notes council is formally non-partisan. Proposal: show none at any level,
-   so the three levels are treated alike.
-2. **Where the published files live.** `data/processed/` is git-ignored in
-   this template, and a static site needs its JSON either committed or built
-   on deploy. Proposal: commit the published files under `site/data/`, so every
-   change to who-represents-whom is a reviewable diff in git history.
-3. **Thresholds** in §6.
-4. **Fragile sources.** Trustees come from two HTML pages with no export. The
-   alternative is to hand-maintain those 16 rows with a source link and a
-   review date, as Tier 2 content will be.
+1. **Party or caucus — proposed 2026-10-10, awaiting confirmation.** Each
+   office holder is shown as a card, and affiliation is one plain field on it,
+   shown **only where the body's own member list publishes one**: the Assembly
+   list for MLAs and the House of Commons list for MPs. Council and trustee
+   cards have no such field, because the City's and the boards' lists of who
+   holds office carry none. The field is labelled with its source like every
+   other. `officeholders.json` gains `affiliation` (string or null) and
+   `affiliation_source_id`. This supersedes "No party or caucus field" in §4.
+2. **Where the published files live — decided 2026-10-10, for now:** committed
+   under `site/data/`, so every change to who represents whom is a reviewable
+   diff in git history.
+3. **Thresholds — decided 2026-10-10:** office holders 45 days, boundaries and
+   population 180 days (§6).
+4. **Trustee rows — open.** Scrape the two board pages, or hand-keep the 16
+   rows with a source link and a review date. Recommendation: hand-keep.
