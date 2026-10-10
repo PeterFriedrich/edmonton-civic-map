@@ -24,6 +24,10 @@ in `docs/DECISIONS.md` point here.
 
   Each entry records which rung it is on. Nothing on rungs 2–3 publishes
   without the owner's approval.
+- 2026-10-10 — **Launch scope** (owner; closes §9 question 4). The first
+  public version is Tier 1, the lookup. Tier 2 entries have no deadline and are
+  added one at a time as each is judged ready. The site is public from launch,
+  so it must be complete and honest with no Tier 2 entries at all.
 
 ---
 
