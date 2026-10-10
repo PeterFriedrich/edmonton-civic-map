@@ -142,5 +142,25 @@ Use Python with `certifi`'s bundle. Do not disable verification.
   - `street_name` is upper case with the quadrant suffix (`ALEXANDER CIRCLE NW`). No postal code.
   - A single 300,000-row CSV request stalled twice; 50,000-row pages return in about 9 s each.
 
+### Neighbourhoods — `65fr-66s6`
+- **Publisher / URL:** City of Edmonton, https://data.edmonton.ca/d/65fr-66s6
+- **Retrieved:** 2026-10-10 — **publisher last-updated:** 2026-10-05
+- **Rows / columns:** 407 (residential and industrial); `neighbourhood_number`, `name`, `descriptive_name`, `description`, `civic_ward_name`, `district`, `effective_start_date`, `effective_end_date`, geometry
+- **CRS:** CRS84
+- **Use:** the communities-of-interest lens (`docs/SPEC_civic_map.md`, amendments).
+- **Measured 2026-10-10, by address:** every parcel address falls in exactly one neighbourhood. Neighbourhoods with at least 10 addresses on each side of a boundary line:
+
+  | Layer | Divided neighbourhoods (of 407) | Any address on a second side |
+  |---|---|---|
+  | Council wards | 2 | 3 |
+  | Public school wards | 0 | 2 |
+  | Catholic school wards | 2 | 4 |
+  | Provincial ridings | 13 | 44 |
+  | Federal ridings | 8 | 30 |
+
+  Largest: The Orchards at Ellerslie (2,468 addresses in Edmonton-Ellerslie, 1,320 in Edmonton-South) and Walker (1,855 in Edmonton Gateway, 1,574 in Edmonton Southeast). The 10-address floor is a first guess to keep digitising slivers out; the right threshold is not settled.
+- **Quirks:** `neighbourhood_name` and `neighbourhood_number` in the address layer `ut27-nrpn` are **empty on every row**, so neighbourhood has to come from a point-in-polygon against this layer. The catalogue search surfaces the centroid table `3b6m-fezs` first; this is the polygon one. `Neighbourhood Boundaries : 2019` (`xu6q-xcmj`) is an old snapshot.
+- **Not found:** community league **boundaries**. The portal has league halls as points (`kaps-rk7z`) only. The Edmonton Federation of Community Leagues is the likely primary source; not yet checked.
+
 ### Not a source: Represent (Open North)
 `represent.opennorth.ca` answers "who represents this point" for all three levels, but it is a third-party aggregator and sending it a location is the third-party geocoding the brief rules out without the owner's say-so. Listed so it is not rediscovered as a shortcut.
