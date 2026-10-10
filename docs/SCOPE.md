@@ -12,4 +12,8 @@ no bullet here — the brief already carries `docs/DECISIONS.md`.
 
 ## Out of scope
 
-- <**Thing not to recommend** — one line on why not; pointer if any.>
+- **A third-party "who represents this point" API** (Open North's Represent, a commercial geocoder) — it sends a resident's location to someone else; needs the owner's decision first. `docs/SPEC_civic_map.md` §5.
+- **Scores of any kind about officials** — attendance, voting records, alignment, responsiveness. Locked out; see `docs/DECISIONS.md`.
+- **Wikipedia, news sites or community wikis as data** — primary sources only; they may be linked as context.
+- **Names, emails or phone numbers of City staff** — roles and departments only, unless the City publishes the person as a public contact.
+- **Merging with `edmonton-tax-viz`** — separate repo and deployment by decision.

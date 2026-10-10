@@ -1,12 +1,7 @@
 # Claude Instructions
 
-<!-- TEMPLATE: replace every <angle-bracket> placeholder; delete this comment.
-     Keep this file short — it is loaded into EVERY session. Pitfalls, rationale
-     and conventions that differ from defaults belong here; anything Claude can
-     derive from the code (layout, dependency lists) does not. -->
-
 ## Project
-<One or two sentences: what this is, what it produces, what it deliberately is not.>
+**Edmonton Civic Map**: a reference tool that answers "who represents me, and who is responsible for what?" for any Edmonton address, across council, school boards, the province and Parliament. It is a lookup and explainer built from primary sources, not a politics dashboard: no rankings, scores or evaluation of officials.
 
 ## Key Files
 - `TODO.md` — living backlog and **the source of truth for progress**. Read it first to know what to work on; update it in place as items open/close. Session summaries narrate *what happened*; TODO.md owns *what's left*. Never redo a closed item without asking — its `## Done` section lists every closed item in one line each. Conversely, an *open* item can be stale — reproduce the symptom and re-measure the stated cause before acting on it. **When an item closes, move its body to `docs/TODO_archive.md` and leave a `## Done` line** (`python tools/todo_archive.py` does it in bulk) — this file is read every session, so it must hold live work, not history.
@@ -20,7 +15,9 @@
 - `docs/CLAUDE_WEB.md` — **read before a Claude web research chat**: the generated brief (`scripts/make_brief.py`), claude.ai Project sync, the reply format. `docs/SCOPE.md` is its one hand-kept input. **A PR that changes a synced file (`docs/BRIEF.md`, `docs/SPEC_*.md`, `docs/ARCHITECTURE.md`, `data/DATA.md`) opens its description with "After merge: press Sync in the claude.ai Project." and the changed synced paths, one per line** — the web side cannot notice it is stale, and the owner syncs by ticking paths. Asked "what do I sync?", answer with the paths first.
 - `docs/COPIER.md` — **read before pulling template changes** (`copier update`) or starting a project from the template.
 - `session-summary/` — session handoff notes. Read the latest before starting work; older ones live in `session-summary/archive/` (don't bulk-read them).
-- <`docs/SPEC_*.md`, `docs/ARCHITECTURE.md`, `docs/RUNBOOK.md` … add as they are written, one line each, with WHEN to read it>
+- `docs/SPEC_civic_map.md` — the owner's founding brief, verbatim, with amendments. **Read before scoping any feature.**
+- `docs/SPEC_data_schema.md` — draft schema for sources, boundaries and office holders, the diff check and staleness. **Read before writing a downloader or anything that reads published data.** Draft until a DECISIONS row says otherwise.
+- `prototype/` — the measured point-in-polygon proof. Not the app; read `prototype/README.md` for the numbers.
 
 ## Token Efficiency
 - **Never `Read` raw data files** (`.geojson`/`.csv`/large `.json`) — inspect via a small python summary instead. See `docs/TOKEN_EFFICIENCY.md`.
@@ -41,7 +38,11 @@
 - **A decision that protects a number is a test first, prose second.** Write the guard, then the `DECISIONS.md` row cites its ID; a row with nothing to cite is tagged `[unverifiable]`. `scripts/check_decisions_log.py` gates new rows on the merge path.
 - Keep processing steps as separate, independently runnable modules in `src/`
 - No silent data drops — flag unmatched or missing records explicitly
-- <domain-specific invariants, e.g. "Always set CRS explicitly before any area calculation">
+- **Primary sources only** for anything published as fact. News and Wikipedia may inform a search; they are never the source of record.
+- **An address never leaves the browser.** No logging, no persistence, no third-party geocoder without the owner's decision.
+- **Every published record carries `source_url` and `last_verified`.** A refresh that finds a change stops for review instead of publishing it.
+- **Do not name staff, add vote-based metrics, or use evaluative wording** about officials or bodies.
+- Reproject to a metric CRS before any distance, area or simplification tolerance; record the tolerance with the output.
 
 ## Comments & Scope
 - Comments only where the *why* is non-obvious. Don't narrate what the code plainly does.
