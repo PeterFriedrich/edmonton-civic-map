@@ -12,7 +12,7 @@ symptom and re-measure the stated cause before acting on it.
 
 ### Waiting on the owner
 
-- [ ] **Map: pick the stack.** The owner wants a 2D/3D geographic map on a stack other than the tax viz's MapLibre + deck.gl (`docs/SPEC_civic_map.md`, amendments). If the owner wants options, survey candidates against boundary layers, in-browser address search, terrain and buildings in 3D, and mobile, and report before choosing.
+- [ ] **Map: pick the stack.** The owner is taking `docs/SPEC_lenses.md` §7 to a Claude web chat for a report on candidate stacks and example projects. When the reply comes back, file it under `/home/opc/research/edmonton-civic-map/` first, then triage it here. Done when a `docs/DECISIONS.md` row names the stack.
 - [ ] **Report data defects to the City.** The owner will send one report later, collecting what `docs/DATA_ISSUES.md` holds by then (2026-10-10). Done when each row there has a status other than NOT SENT.
 
 ### Sources still to verify
