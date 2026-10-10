@@ -33,7 +33,12 @@ in `docs/DECISIONS.md` point here.
 - 2026-10-10 — **A geographic map is in scope, with 2D and 3D views** (owner;
   not in the brief). Comparable in kind to `edmonton-tax-viz`, but **built on a
   different stack**: trying one is part of the point of this project. Not yet
-  decided: what 3D shows here, and which stack.
+  decided: which stack.
+- 2026-10-10 — **The main view is rough geography, possibly with buildings**
+  (owner). 3D shows the city's shape, not a quantity: nothing is extruded to
+  encode a number. **How much detail is a phase of its own**: experiment with
+  terrain and building detail until storage or performance limits are hit, and
+  record where they are. The lookup must work without the detail layers.
 
 ---
 
