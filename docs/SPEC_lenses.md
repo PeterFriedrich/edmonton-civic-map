@@ -3,7 +3,7 @@
 **Read when:** choosing the front-end stack, designing a lens, or briefing an
 outside researcher on what the map has to do.
 
-**Status: 2026-10-10.** Nothing here is built. It gathers the owner's
+**Status: 2026-10-13.** Nothing here is built. It gathers the owner's
 decisions from `docs/SPEC_civic_map.md` (amendments) and the measurements in
 `data/DATA.md` into one place, written to stand alone. §7 is the research
 request this document was written to support.
@@ -23,27 +23,28 @@ quick lookup on a phone.
 
 ## 2. Fixed constraints
 
-Any stack has to fit these. All are decided (`docs/DECISIONS.md`) except the
-last row, which is the owner's stated preference and not yet a locked decision.
+Any stack has to fit these. The "Status" column says which are locked rows in
+`docs/DECISIONS.md` and which are not.
 
-| Constraint | What it means for the stack |
-|---|---|
-| Static site on GitHub Pages, no backend of ours | Everything is files. No server-side rendering at request time, no database, no API we operate. |
-| An address never leaves the browser | Address search and point-in-polygon run client-side against data we ship. No third-party geocoder, and no map service that receives the typed address. |
-| Data refreshed weekly by GitHub Actions | The build must run unattended in CI and produce the published files, including any map tiles. |
-| Every record shows its source and last-verified date | Data files carry provenance; the UI shows a staleness warning by comparing dates in the browser. |
-| Mobile-first | The lookup must work on a mid-range phone on a mobile connection. |
-| The lookup works without the heavy layers | Buildings and terrain are an addition. A slow device still gets its answer. |
-| A different stack from `edmonton-tax-viz` | That project is a single hand-written HTML page, no framework and no build step, using MapLibre GL JS 4.7 for the base map and deck.gl 9.0 for 3D layers. Trying something else is a goal of this project. |
-| Free to run | No usage-billed services or paid API keys. Open-source libraries and free static hosting. |
+| Constraint | What it means for the stack | Status |
+|---|---|---|
+| Static site on GitHub Pages, no backend of ours | Everything is files. No server-side rendering at request time, no database, no API we operate. | Locked |
+| An address never leaves the browser | Address search and point-in-polygon run client-side against data we ship. | Locked |
+| Self-contained on GitHub Pages, for now | The page makes no request to an outside service: no hosted basemap or tile provider, no font or script CDN, no geocoder. Any basemap, tiles, fonts and libraries are files in the site, inside the Pages limits (100 MB per file, about 1 GB per site, 100 GB a month). | Locked 2026-10-13, "for now" |
+| Data refreshed weekly by GitHub Actions | The build must run unattended in CI and produce the published files. A change in any of them is held for the owner's review, not published automatically. Map tiles are rebuilt only when their source changes. Whether tiles are committed like the other published files or built at deploy is open (§6). | Locked, except the tiles question |
+| Every record shows its source and last-verified date | Data files carry provenance; the UI shows a staleness warning by comparing dates in the browser. | Locked |
+| The answer comes before the map | Most visitors look up their own address or neighbourhood. The cards must appear without waiting for the map, buildings or terrain, and a slow device still gets its answer. | Owner, 2026-10-10 and 2026-10-13 |
+| Mobile | The brief says "mobile-friendly; most use will be a quick lookup". Treat a mid-range phone on a mobile connection as the target for the lookup. | Brief; "mobile-first" is not a locked row |
+| A different stack from `edmonton-tax-viz`, where a sound alternative exists | That project is a single hand-written HTML page, no framework, no build step and no tiles. It uses MapLibre GL JS 4.7 as the map canvas and camera, with no basemap, and deck.gl 9.0 for its layers, fed by whole GeoJSON files. Trying something else is a goal of this project, but not at the cost of a weak or unsuitable library: if the alternatives to MapLibre or deck.gl are not robust or do not fit, reusing either is acceptable and the difference can come from the rest of the stack. | Locked 2026-10-13 |
+| Free to run | No usage-billed services or paid API keys. Open-source libraries and free static hosting. | Follows from the self-contained row |
 
 ## 3. The base view
 
 **Use.** The default view: rough geography of the city with "ghost buildings",
 meaning buildings drawn faint and translucent as context, with boundary lines
 on top. The reader searches an address or clicks; the map marks the spot and
-the cards appear. They can also pick a ward from a list without touching the
-map.
+the cards appear. They can also type a neighbourhood name, or pick a ward from
+a list, without touching the map.
 
 **What it needs.**
 
@@ -66,6 +67,11 @@ map.
   street names, about 2.2 MB gzipped as a compact index. Needs type-ahead that
   tolerates how people write Edmonton addresses ("10220 104 Ave", "104 Avenue
   NW") without sending keystrokes anywhere.
+
+- **Neighbourhood search.** 407 neighbourhood names, a few kB, so it works
+  before the address index has loaded. A neighbourhood that a boundary line
+  divides (§4.2: 13 for provincial ridings, 8 federal, 2 council, 2 Catholic
+  school) shows each district it touches and asks for an address.
 
 - **Point-in-polygon in the browser** across all five layers, with a
   "near a boundary, check the official lookup" note within about 20 m of a
@@ -140,11 +146,18 @@ judgement to the reader. It never says a line is good or bad.
   over that?
 - **Use.** A population density map of the city. Ward boundaries are an
   overlay the reader can add to compare roughly by eye. **No number is attached
-  to a ward** and wards are not ranked.
+  to a ward in this lens** and wards are not ranked. (The lookup still shows a
+  ward's population beside any ward-level figure, as the brief requires.)
 - **Data.** 2021 Census population for 278 neighbourhoods, and neighbourhood
-  areas. Finer census geography has not been looked at yet.
+  areas. The City's neighbourhood layer has 407 polygons, residential and
+  industrial; the two have not been joined yet, so which of the other 129 have
+  no residents and which are missing a census row is not known. Finer census
+  geography has not been looked at yet.
 - **Open.** Whether density is shown flat (shaded areas) or in 3D (height).
-  The owner wants to see examples of both before deciding. A later part of
+  Showing density as height is currently ruled out by the locked decision that
+  3D never encodes a quantity (`docs/DECISIONS.md`). That decision stands until
+  the owner has seen examples of both, and would have to be reopened first. A
+  later part of
   this lens is growth: where population is forecast to go, starting from how
   the City itself forecasts. No forecast dataset has been found yet.
 - **Needs.** A choropleth at least; possibly extruded areas or a density
@@ -170,9 +183,15 @@ Proposed, not yet confirmed by the owner:
    is done.
 2. **Terrain**: real elevation or a flat drawing of the river valley.
 3. **Buildings**: tiles or simplification, and how current the source needs to
-   be given the City's layer is from 2019.
+   be given the City's layer is from 2019. Also whether tile files are
+   committed under `site/data/` like the other published files or built at
+   deploy: binary tiles give no readable diff, which is the reason that rule
+   exists.
 4. **Density in 2D or 3D.**
-5. **Sources still missing**: community league boundaries, river valley edge,
+5. **The basemap**: none (boundaries, river, major roads and ghost buildings
+   drawn from our own files, as `edmonton-tax-viz` does) or a street basemap
+   served as a tile file from the site. A hosted provider is out for now (§2).
+6. **Sources still missing**: community league boundaries, river valley edge,
    rail lines, terrain, population forecasts.
 
 ## 7. Research request
@@ -184,17 +203,21 @@ stack and to go and look at working examples.
 complete combination: rendering library, tile format and how tiles are built
 and served from static hosting, front-end framework and build tooling if any,
 and in-browser address search. Exclude the combination in §2 that
-`edmonton-tax-viz` already uses, though a stack may share one component with
-it if you say why. For each:
+`edmonton-tax-viz` already uses. Say plainly whether robust, maintained
+alternatives to MapLibre GL JS and to deck.gl exist for this job; if they do
+not, say so and recommend a stack that reuses one of them and differs
+elsewhere. For each:
 
 - how it handles each item in §3 and each lens in §4, noting anything it
   cannot do or does awkwardly;
 - 3D buildings and terrain on a mid-range phone: what is known about
   performance, with sources;
-- fit with §2: static hosting only, no address leaving the browser, builds
+- fit with §2: static hosting only, no request to any outside service, builds
   unattended in GitHub Actions, free to run;
-- published size limits that matter (GitHub Pages site and file size, and
-  alternatives such as Cloudflare Pages if tiles outgrow it);
+- time to the answer on a mid-range phone: what must download before an
+  address or neighbourhood lookup returns its cards, and what can wait;
+- published size against the GitHub Pages limits in §2, and what would have
+  to move elsewhere if tiles outgrow them;
 - maturity, licence, how actively it is maintained, and how much of it one
   person can reasonably learn and own.
 
@@ -213,15 +236,20 @@ do not recommend, since the owner wants to compare 2D and 3D before deciding.
 2. What open terrain data covers Edmonton at a useful resolution, under what
    licence, and how is it packaged for the web?
 3. How do comparable sites do address type-ahead entirely in the browser at
-   this scale?
+   this scale, and can a 2.2 MB index be split so a search fetches only a
+   small part of it?
 4. Is there prior work on showing where electoral boundaries divide
    neighbourhoods or follow physical barriers, and how was it presented without
    editorialising?
 
-**D. What not to recommend.** Anything that needs a server we run, a paid or
-usage-billed map or geocoding service, sending addresses to a third party, or
-scoring of officials or boundaries. `docs/SCOPE.md` lists what has already been
-turned down.
+5. No basemap, or a street basemap served as one tile file from GitHub Pages:
+   which gets a phone to a usable map sooner, and what does each cost in
+   published size?
+
+**D. What not to recommend.** Anything that needs a server we run, a hosted map,
+tile, font or geocoding service, sending addresses to a third party, or
+scoring of officials or boundaries. `docs/BRIEF.md`, "Out of scope", lists what
+has already been turned down.
 
 Say plainly where a claim is from documentation, from a benchmark, or from your
 own judgement, and give links. End with the reply format in `docs/BRIEF.md`.

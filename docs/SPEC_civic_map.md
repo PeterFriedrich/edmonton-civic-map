@@ -64,6 +64,25 @@ in `docs/DECISIONS.md` point here.
   - **Growth.** When it is taken up, start from how the City itself forecasts
     population and what it has stated, not from our own projection. Leads and
     what was found so far: `data/DATA.md`, "Population and growth".
+- 2026-10-13 — **Self-contained on GitHub Pages, for now** (owner). The page
+  makes no request to an outside service: no hosted basemap or tile provider,
+  no CDN, no geocoder. This settles §5's "vetted service" as none for now. The
+  owner's test for revisiting it is speed, not privacy: a hosted basemap is
+  common practice and was not turned down on principle.
+- 2026-10-13 — **"A different stack" is conditional** (owner). It holds where
+  alternatives to MapLibre or deck.gl exist and are robust and appropriate. If
+  they are not, reusing either is fine.
+- 2026-10-13 — **Neighbourhood is a way into the lookup** (owner: "the main
+  thing people will look up is their own address, or neighbourhood"). The
+  answer comes first and the map after it. Geography and buildings are an
+  independent layer, and whether they are doable is tested early, before the
+  stack is chosen: `TODO.md`, "Map detail phase".
+- 2026-10-13 — **The text below is the brief as it was handed to this repo on
+  2026-10-10.** A reconciliation in the claude.ai Project (2026-10-12) reports
+  that the Project's own copy now reads "Civic Map" with the name settled on
+  2026-10-09, so that copy was edited afterwards. The name was chosen in the
+  first session, which ran across midnight Edmonton time on 2026-10-09 and is
+  dated 2026-10-10 (UTC) throughout this repo.
 
 ---
 
