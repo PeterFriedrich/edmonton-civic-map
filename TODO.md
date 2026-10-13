@@ -12,7 +12,6 @@ symptom and re-measure the stated cause before acting on it.
 
 ### Waiting on the owner
 
-- [ ] **Map: pick the stack.** The owner is taking `docs/SPEC_lenses.md` §7 to a Claude web chat for a report on candidate stacks and example projects. When the reply comes back, file it under `/home/opc/research/edmonton-civic-map/` first, then triage it here. Done when a `docs/DECISIONS.md` row names the stack.
 - [ ] **Tile files: committed under `site/data/` or built at deploy.** Binary tiles give no readable diff, which is what the commit rule is for, and they grow the repo. Informed by the buildings size measurement below. Done when a `docs/DECISIONS.md` row says which (`docs/SPEC_lenses.md` §6 item 3).
 - [ ] **Reopen "3D never encodes a quantity" for the density lens, or not.** Waits on the owner seeing 2D and 3D density examples from the stack report.
 - [ ] **Confirm the Project picker has the synced set ticked.** The 2026-10-12 reconciliation chat reported only `docs/BRIEF.md`, `docs/DECISIONS.md` and `docs/SPEC_civic_map.md`; the set in `docs/CLAUDE_WEB.md` also has `docs/SPEC_lenses.md`, `docs/SPEC_data_schema.md` and `data/DATA.md`. Blocks the stack research run.
@@ -26,13 +25,15 @@ symptom and re-measure the stated cause before acting on it.
 - [ ] **Join the 278 census neighbourhoods to the 407 neighbourhood polygons** (`eg3i-f4bj` to `65fr-66s6`). Done when `data/DATA.md` says which of the other 129 are industrial or unpopulated and which, if any, are missing a census row.
 - [ ] **A ward population newer than the 2021 Census**, from a primary source. Done when found, or when recorded as not existing.
 - [ ] **School-ward boundaries used in the 2025 election** — confirm against each board's ward bylaw that they match the City layers.
-- [ ] **Recheck the provincial boundary process after 2026-11-02**, when the Select Special Committee on Electoral Boundaries must report. Done when `data/DATA.md` records what was tabled and whether anything is enacted.
+- [ ] **Check the provincial boundary process now, and again after 2026-11-02**, when the Select Special Committee on Electoral Boundaries must report. The 2026-10-13 stack report says the commission's final report gives Edmonton 21 electoral divisions, where the map in force has 20; not verified against `assembly.ab.ca`. Done when `data/DATA.md` records what was tabled, whether anything is enacted, and which map applies to the next provincial election.
 
 ### Map detail phase
 
-- [ ] **Buildings feasibility, step 1: package the rooflines and measure the size.** Proposed 2026-10-13, awaiting the owner's go. Turn the 384,228 polygons of `jpxi-a9a5` into a tile file at a few detail levels and record each size against the Pages limits (100 MB per file, about 1 GB per site). Needs no stack, so it can run before the research report. Lives in `prototype/`. Done when `prototype/README.md` has the sizes.
-- [ ] **Terrain: read the Edmonton window of MRDEM-30 and check it.** Sources are in `data/DATA.md`, "Terrain and elevation"; nothing has been read yet. Done when the ledger records CRS, vertical datum, the elevation range across the city, the depth of the river valley as the data shows it, and the gzipped size of the window at 30 m. Then decide whether the 1 m federal lidar (`AB-Edmonton-1m`, 2.38 GB) resampled to about 10 m is worth it.
-- [ ] **Buildings feasibility, step 2: draw the same tile file on each candidate stack on a real phone** (the owner's; this server has no GPU). Record first-load time and frame rate, flat and tilted. Done when the numbers are recorded and feed the stack decision.
+- [ ] **Buildings, step 1: one trial tippecanoe build of the rooflines to PMTiles, and record the size.** Turn the 384,228 polygons of `jpxi-a9a5` into PMTiles at z12–z15, height as the only attribute, and record bytes per zoom (`pmtiles show`). Replaces the report's 10–30 MB estimate. Lives in `prototype/`. Done when `prototype/README.md` has the sizes.
+- [ ] **Terrain: read the Edmonton window of MRDEM-30, check it, and pack it as elevation PMTiles.** Sources are in `data/DATA.md`, "Terrain and elevation"; nothing has been read yet. Done when the ledger records CRS, vertical datum, the elevation range across the city and the depth of the river valley as the data shows it, and `prototype/README.md` has the PMTiles size (the report estimates 3–10 MB; encode at 0.1 m steps, since 1 m steps look blocky). Then decide whether the 1 m federal lidar (`AB-Edmonton-1m`, 2.38 GB) resampled to about 5–10 m is worth it.
+- [ ] **Buildings, step 2: draw the tile files in MapLibre on a real phone** (the owner's; this server has no GPU). With one stack chosen this is a feasibility check, not a comparison. Record first-load time and frame rate, flat and tilted, faint-solid against translucent buildings. Done when the numbers are in `prototype/README.md`.
+- [ ] **Check that GitHub Pages serves a `.pmtiles` file by range request, uncompressed, from a test deploy.** `edmonton-tax-viz` recorded Pages answering range requests on 2026-08-07, but not for this file type. Done when a test deploy reads one tile.
+- [ ] **Build glyph files for Noto Sans and Noto Sans Canadian Aboriginal and test pihêsiwin and ᐱᐦᐁᓯᐏᐣ** on Android, iOS and desktop. Done when a test page shows both from our own files.
 - [ ] **Find how much geographic detail the site can carry.** Start with "ghost buildings" (faint, translucent, from the 2019 rooflines layer `jpxi-a9a5`), then add terrain and detail in steps; at each step measure the published size against the host's limits, first-load time and frame rate on a mid-range phone. Done when the limits and the chosen level are recorded with their numbers, and a test holds the size budget.
 
 ### Lenses
@@ -49,6 +50,8 @@ symptom and re-measure the stated cause before acting on it.
 
 ### Build
 
+- [ ] **Propose: districts worked out per address at build time** (`docs/SPEC_lenses.md` §8). Changes the published data, so write the proposal first: the index format per street, what happens to the 9,923 parcel rows that share a house number and street with another row, how the diff check covers the index, and a test that compares every stored district with point-in-polygon.
+- [ ] **Propose: the Vite build and what it changes in CI.** Adds a Node toolchain to a Python project and replaces the template's cache-busting step (`docs/WEB_CACHE_BUSTING.md`). Propose before writing.
 - [ ] **Downloaders, one per source in `data/DATA.md`**, each checking its row count and writing a `sources.json` entry.
 - [ ] **Boundary build**: reproject, clip provincial and federal layers to the city, simplify at the recorded tolerance, with a test that no parcel address changes district against full resolution.
 - [ ] **Diff check and staleness guard** per `docs/SPEC_data_schema.md` §5–§6.
@@ -56,5 +59,9 @@ symptom and re-measure the stated cause before acting on it.
 - [ ] **Replace the template `README.md`** with one for this project.
 
 ## Done
+
+Closed items moved out of `## Open work` live in **`docs/TODO_archive.md`** — one line each below, reasoning there.
+
+- [x] **Map: pick the stack.** — 2026-10-13 · `docs/TODO_archive.md`
 
 - [x] 2026-10-10 — Brief §10 tasks 1–4: sources located and verified (`data/DATA.md`), point-in-polygon prototype measured (`prototype/README.md`), schema drafted (`docs/SPEC_data_schema.md`).

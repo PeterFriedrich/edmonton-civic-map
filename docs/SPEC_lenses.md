@@ -3,7 +3,7 @@
 **Read when:** choosing the front-end stack, designing a lens, or briefing an
 outside researcher on what the map has to do.
 
-**Status: 2026-10-13.** Nothing here is built. It gathers the owner's
+**Status: 2026-10-13.** Nothing here is built. The stack is chosen (§8); §7 is kept as the request that was sent. It gathers the owner's
 decisions from `docs/SPEC_civic_map.md` (amendments) and the measurements in
 `data/DATA.md` into one place, written to stand alone. §7 is the research
 request this document was written to support.
@@ -30,7 +30,7 @@ Any stack has to fit these. The "Status" column says which are locked rows in
 |---|---|---|
 | Static site on GitHub Pages, no backend of ours | Everything is files. No server-side rendering at request time, no database, no API we operate. | Locked |
 | An address never leaves the browser | Address search and point-in-polygon run client-side against data we ship. | Locked |
-| Self-contained on GitHub Pages, for now | The page makes no request to an outside service: no hosted basemap or tile provider, no font or script CDN, no geocoder. Any basemap, tiles, fonts and libraries are files in the site, inside the Pages limits (100 MB per file, about 1 GB per site, 100 GB a month). | Locked 2026-10-13, "for now" |
+| Self-contained on GitHub Pages, for now | The page makes no request to an outside service: no hosted basemap or tile provider, no font or script CDN, no geocoder. Any basemap, tiles, fonts and libraries are files in the site, inside the Pages limits (about 1 GB per site, a soft 100 GB a month, a 10-minute deploy). The 100 MB per-file limit is git's, so it applies only to files committed to the repo. | Locked 2026-10-13, "for now" |
 | Data refreshed weekly by GitHub Actions | The build must run unattended in CI and produce the published files. A change in any of them is held for the owner's review, not published automatically. Map tiles are rebuilt only when their source changes. Whether tiles are committed like the other published files or built at deploy is open (§6). | Locked, except the tiles question |
 | Every record shows its source and last-verified date | Data files carry provenance; the UI shows a staleness warning by comparing dates in the browser. | Locked |
 | The answer comes before the map | Most visitors look up their own address or neighbourhood. The cards must appear without waiting for the map, buildings or terrain, and a slow device still gets its answer. | Owner, 2026-10-10 and 2026-10-13 |
@@ -178,9 +178,7 @@ Proposed, not yet confirmed by the owner:
 
 ## 6. What is open
 
-1. **The stack**: rendering library, how tiles are made and hosted on a static
-   site, whether there is a framework and build step, and how address search
-   is done.
+1. ~~The stack~~ Chosen 2026-10-13: §8.
 2. **Terrain**: real elevation or a flat drawing of the river valley.
 3. **Buildings**: tiles or simplification, and how current the source needs to
    be given the City's layer is from 2019. Also whether tile files are
@@ -253,3 +251,35 @@ has already been turned down.
 
 Say plainly where a claim is from documentation, from a benchmark, or from your
 own judgement, and give links. End with the reply format in `docs/BRIEF.md`.
+
+## 8. The stack (chosen 2026-10-13)
+
+From the report at `/home/opc/research/edmonton-civic-map/stack_reply_2026-10-13.md`
+(Claude web, 2026-10-13). Library versions were checked against the npm
+registry the same day: `maplibre-gl` 6.14.0, `pmtiles` 4.5.0, `vite` 8.3.4.
+
+| Part | Choice | Why |
+|---|---|---|
+| Rendering | MapLibre GL JS 6, its own layers only: `fill`, `line`, `fill-extrusion`, `hillshade`, terrain | One engine does flat and tilted views, buildings and relief. deck.gl is not needed. |
+| Tiles | PMTiles files built with tippecanoe (vector) and GDAL (elevation), read in the browser through the `pmtiles` protocol | One file per layer, read in pieces from static hosting. |
+| Build | Vite, plain JavaScript modules, no framework | Bundles the libraries into the site, fingerprints files, and lets the cards load before the map. |
+| Address search | A static index: the street list loads with the page, then one small file per street | Fastest lookup; the owner's choice over mixed buckets. |
+| Basemap | None. Our own river, roads and ghost buildings, with shading from the elevation file | Decided in §2 and §6. |
+| Labels | Glyph files built by us from Noto Sans and Noto Sans Canadian Aboriginal | Ward names in syllabics must render with no outside font service. |
+
+**Recommended by the report, not yet decided:**
+
+- Work out all five districts and the near-boundary flag for every address at
+  build time and store them in the index, so an address lookup needs no
+  geometry and no map. Point-in-polygon stays for map clicks. This changes the
+  published data, so it is proposed before it is built.
+- Keep the view's state in our own URL parameters. MapLibre's built-in `hash`
+  option writes the camera position, which after an address search is the
+  address's location.
+- Tile files built at deploy with a committed text manifest, against
+  committing the files. Open: `TODO.md`, "Waiting on the owner".
+
+**Corrections to the report:** the river is a provincial layer, not City data,
+and no river valley edge is sourced (`data/DATA.md`). Its size figures
+(buildings 10–30 MB, terrain 3–10 MB) are estimates the detail phase replaces
+with measurements.
