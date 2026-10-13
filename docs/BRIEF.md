@@ -45,13 +45,13 @@ the brief wins.
 - **2026-10-13** — **Self-contained on GitHub Pages, for now: the page makes no request to an outside service.** … Rejected for now: a hosted basemap (free tiers exist, but each adds a key, a usage cap and an outside dependency).
 - **2026-10-13** — **A different stack from `edmonton-tax-viz` only where a robust, appropriate alternative exists.**
 - **2026-10-13** — **The answer comes before the map, and a neighbourhood name is a way into the lookup alongside address, map click and ward list.**
+- **2026-10-13** — **The site works on phone and desktop; neither is "first".** … Rejected: "mobile-first" as a constraint, which was this repo's wording and not the owner's.
 
 ## Open work
 
 **Waiting on the owner**
 - **Map: pick the stack.** The owner is taking `docs/SPEC_lenses.md` §7 to a Claude web chat for a report on candidate stacks and example projects. When the reply comes back, file it under `/home/opc/research/edmonton-civic-map/` first, then triage it here. Done when a …
 - **Tile files: committed under `site/data/` or built at deploy.** Binary tiles give no readable diff, which is what the commit rule is for, and they grow the repo. Informed by the buildings size measurement below. Done when a `docs/DECISIONS.md` row says which …
-- **Is "mobile-first" a locked constraint or a preference?** The brief says "mobile-friendly"; `docs/SPEC_lenses.md` §2 now carries it as not locked. Done when a row locks it or the owner says leave it.
 - **Reopen "3D never encodes a quantity" for the density lens, or not.** Waits on the owner seeing 2D and 3D density examples from the stack report.
 - **Confirm the Project picker has the synced set ticked.** The 2026-10-12 reconciliation chat reported only `docs/BRIEF.md`, `docs/DECISIONS.md` and `docs/SPEC_civic_map.md`; the set in `docs/CLAUDE_WEB.md` also has `docs/SPEC_lenses.md`, `docs/SPEC_data_schema.md` and …
 - **Report data defects to the City.** The owner will send one report later, collecting what `docs/DATA_ISSUES.md` holds by then (2026-10-10). Done when each row there has a status other than NOT SENT.
