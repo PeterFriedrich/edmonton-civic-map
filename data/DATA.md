@@ -173,7 +173,7 @@ portal's API; **no geometry has been downloaded or checked yet.**
 | Roads by class | `9j8t-zm52` Road Network | 53,873 segments | rows updated 2026-10-10 | `functional_class_code` separates arterials (classes A–D, about 8,900 segments; class A is primary highway) from collectors and locals. 14,229 segments have no class. |
 | River valley | none found as a boundary layer | | | `6w3s-58pv` Zoning Overlays may carry the river valley overlay; not checked. `edmonton-tax-viz` has no edge either, only two proxies: zoning codes `A` and `NA` (River Valley), and neighbourhoods in `65fr-66s6` named "RIVER VALLEY ...". An edge could also be derived from terrain, if terrain is sourced. |
 | Rail lines | `9j8t-zm52` Road Network, rows with `centerline_type = 'Railway'` | 2,117 rows, 704 km (as counted by `edmonton-tax-viz`) | | Reported by the `edmonton-tax-viz` session 2026-10-13; not checked here. A City feed, so expect it to stop at the municipal boundary. Federal alternative, not checked: Natural Resources Canada's National Railway Network. |
-| Terrain | none found on the City portal | | | `v59u-75mc` is only the tiling grid for the City's remote-sensing data. `edmonton-tax-viz` never sourced or evaluated any elevation data. |
+| Terrain | found 2026-10-13; see "Terrain and elevation" below | | | The 2026-10-10 search missed these: it did not try "elevation", "lidar" or "contour". |
 
 **Sources `edmonton-tax-viz` already uses** (reported by that session
 2026-10-13 from its `data/DATA.md` and build scripts; none re-checked here, and
@@ -192,6 +192,31 @@ each needs its licence confirmed before this project ships it):
 
 `edmonton-tax-viz` never touched the Rooflines layer, so there is no size or
 quality record to borrow.
+
+### Terrain and elevation (candidates, catalogue metadata only)
+Found 2026-10-13 through the federal STAC catalogue
+(`https://datacube.services.geo.ca/stac/api`, searched with an Edmonton
+bounding box) and the City portal's catalogue API. Sizes are from HTTP headers
+and portal metadata. **No elevation values have been read or checked yet**, and
+vertical datum and CRS are as stated by the publisher, not verified.
+
+| Dataset | Publisher | Resolution | Vintage | Size and format | Licence, as stated |
+|---|---|---|---|---|---|
+| MRDEM-30, STAC collection `mrdem-30`, `https://canelevation-dem.s3.ca-central-1.amazonaws.com/mrdem-30/mrdem-30-dtm.tif` | Natural Resources Canada | 30 m, bare ground (DTM) and surface (DSM) | file dated 2026-06-24 | one national cloud-optimised GeoTIFF, 83.9 GB; the server accepts range requests, so the Edmonton window can be read without the rest | OGL-Canada-2.0 |
+| HRDEM by lidar project, STAC collection `hrdem-lidar`, item `AB-Edmonton-1m` | Natural Resources Canada | 1 m, DTM and DSM | flown 2018-05-12 | DTM 2.38 GB, cloud-optimised GeoTIFF | OGL-Canada-2.0 |
+| same collection, item `NRCAN-Edmonton_2018-1m` | Natural Resources Canada | 1 m, DTM and DSM | flown 2018-05-12 | DTM 18.78 GB; a wider area than the item above, extent not compared yet. `AB-St_Albert_UTM12_2018-1m` also intersects the box. | OGL-Canada-2.0 |
+| HRDEM mosaics, `hrdem-mosaic-1m` and `hrdem-mosaic-2m`, tile `3_4` | Natural Resources Canada | 1 m and 2 m | mosaic dated 2024-10-19 | 368 GB and 96 GB per regional tile; range-readable | OGL-Canada-2.0 |
+| `i85g-8mg6` 2025 Lidar - Bare Earth | City of Edmonton | not stated in the part of the description read | flown 2025-06-29 and 30; 859.6 km², city limit plus 100 m | one 26.7 GB zip | "See Terms of Use" |
+| `8tsc-dykz` 2019 Lidar - Bare Earth | City of Edmonton | includes a 50 cm hydro-flattened DEM | flown 2019-09-04 to 13; 816 km², city limit plus 200 m; datum CGVD28, 3TM 114 | one 25.5 GB zip | "See Terms of Use" |
+| `n6cj-24tp` Contour Lines LL - WGS84 | City of Edmonton | 0.5 m contour interval | 2016 | 383,934 lines, `elevation` + geometry, queryable through the API | none stated on the dataset |
+| `nppw-6ykk`, `4zih-x3jw` DEM Points and Break Lines 3TM | City of Edmonton | points and break lines | 2009 | 37 MB and 154 MB zips | "See Terms of Use" |
+| `tarx-cg5m` Spot Elevation | City of Edmonton | hill tops and pit bottoms | 2009 | 686,638 points | "See Terms of Use"; described as "will likely be replaced or removed" |
+
+- **Full-feature lidar** (surface with buildings and trees) is also published: `sz3i-y5ze` (2025, 42.7 GB) and `bf5f-8bzd` (2019, 15.3 GB).
+- **`78sz-qcfr` 3D Buildings**: a City 3D model built from the 2019 rooflines `jpxi-a9a5` and the 2019 lidar. One 225 MB file geodatabase zip, 3TM 114, made public 2023-06-15, static. No licence stated on the dataset. Not opened; whether it adds anything over extruding the rooflines by `building_height` is unknown.
+- **Scale check, arithmetic only:** the city is roughly 30 km across, so a 30 m grid is about 1,000 by 1,000 heights and a 10 m grid about 3,000 by 3,000.
+- **River valley edge:** not a layer anywhere found, but derivable from any of the bare-ground models above as the line where slope steepens, or readable from the City's contours.
+- **Not usable as found:** the Alberta Provincial DEM (25 m and 100 m rasters) is built from 1955–1996 photogrammetry; listed only so it is not rediscovered.
 
 384,228 roofline polygons is the storage question for the detail phase: far too
 large to ship as GeoJSON, so buildings mean vector tiles or heavy
