@@ -49,11 +49,11 @@ the brief wins.
 - **2026-10-13** — **Buildings are the 2019 rooflines (`jpxi-a9a5`) pushed up to a flat roof by their recorded height: the simplest form.** … Rejected: the City's "3D Buildings" model `78sz-qcfr` (about three times the triangles, roof shapes that look like a tool default, no licence stated) and modelling roof shapes ourselves.
 - **2026-10-13** — **The stack: MapLibre GL JS 6 with its own layers only (no deck.gl); every map layer served as PMTiles files we build with tippecanoe and GDAL; Vite with plain JavaScript modules; a static address … Rejected: OpenLayers (flat only), CesiumJS (heavy, globe-first), deck.gl without MapLibre (weaker cartography, v10 churn), Leaflet (flat, stable line frozen since 2023), a heavy framework.
 - **2026-10-13** — **The address index is split per street: the fastest fetch.** … Rejected: mixing streets into hash buckets so the host cannot tell which street was searched (about 70 kB a lookup against 1–2 kB); the owner chose speed, having already said that what a static host …
+- **2026-10-13** — **Tile files are committed under `site/data/` like the other published files, each with a text manifest beside it** (source URL and fingerprint, tool versions and command, feature count, bytes per … Rejected: building tiles at every deploy (the sources are a 2019 snapshot and terrain, so rebuilding buys nothing and ties publishing to the City portal and an expiring cache).
 
 ## Open work
 
 **Waiting on the owner**
-- **Tile files: committed under `site/data/` or built at deploy.** Binary tiles give no readable diff, which is what the commit rule is for, and they grow the repo. Informed by the buildings size measurement below. Done when a `docs/DECISIONS.md` row says which …
 - **Reopen "3D never encodes a quantity" for the density lens, or not.** Waits on the owner seeing 2D and 3D density examples from the stack report.
 - **Confirm the Project picker has the synced set ticked.** The 2026-10-12 reconciliation chat reported only `docs/BRIEF.md`, `docs/DECISIONS.md` and `docs/SPEC_civic_map.md`; the set in `docs/CLAUDE_WEB.md` also has `docs/SPEC_lenses.md`, `docs/SPEC_data_schema.md` and …
 - **Report data defects to the City.** The owner will send one report later, collecting what `docs/DATA_ISSUES.md` holds by then (2026-10-10). Done when each row there has a status other than NOT SENT.
