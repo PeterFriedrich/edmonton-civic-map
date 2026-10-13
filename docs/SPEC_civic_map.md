@@ -85,6 +85,10 @@ in `docs/DECISIONS.md` point here.
   up to a flat roof by their height. The City's separate "3D Buildings" model
   with roof shapes is not used. Measurements: `data/DATA.md`, "Terrain and
   elevation".
+- 2026-10-13 — **The stack is chosen** (owner, from the Claude web report):
+  MapLibre GL JS 6 with its own layers and no deck.gl, PMTiles built by us,
+  Vite with plain JavaScript, and a static address index split per street
+  ("fastest"). Detail: `docs/SPEC_lenses.md` §8.
 - 2026-10-13 — **The text below is the brief as it was handed to this repo on
   2026-10-10.** A reconciliation in the claude.ai Project (2026-10-12) reports
   that the Project's own copy now reads "Civic Map" with the name settled on
