@@ -13,6 +13,10 @@ symptom and re-measure the stated cause before acting on it.
 ### Waiting on the owner
 
 - [ ] **Map: pick the stack.** The owner is taking `docs/SPEC_lenses.md` §7 to a Claude web chat for a report on candidate stacks and example projects. When the reply comes back, file it under `/home/opc/research/edmonton-civic-map/` first, then triage it here. Done when a `docs/DECISIONS.md` row names the stack.
+- [ ] **Tile files: committed under `site/data/` or built at deploy.** Binary tiles give no readable diff, which is what the commit rule is for, and they grow the repo. Informed by the buildings size measurement below. Done when a `docs/DECISIONS.md` row says which (`docs/SPEC_lenses.md` §6 item 3).
+- [ ] **Is "mobile-first" a locked constraint or a preference?** The brief says "mobile-friendly"; `docs/SPEC_lenses.md` §2 now carries it as not locked. Done when a row locks it or the owner says leave it.
+- [ ] **Reopen "3D never encodes a quantity" for the density lens, or not.** Waits on the owner seeing 2D and 3D density examples from the stack report.
+- [ ] **Confirm the Project picker has the synced set ticked.** The 2026-10-12 reconciliation chat reported only `docs/BRIEF.md`, `docs/DECISIONS.md` and `docs/SPEC_civic_map.md`; the set in `docs/CLAUDE_WEB.md` also has `docs/SPEC_lenses.md`, `docs/SPEC_data_schema.md` and `data/DATA.md`. Blocks the stack research run.
 - [ ] **Report data defects to the City.** The owner will send one report later, collecting what `docs/DATA_ISSUES.md` holds by then (2026-10-10). Done when each row there has a status other than NOT SENT.
 
 ### Sources still to verify
@@ -20,12 +24,15 @@ symptom and re-measure the stated cause before acting on it.
 - [ ] **Licence for the Elections Alberta boundary shapefile.** None is stated on the download page (`data/DATA.md`, "Provincial ridings"). Done when a written licence or permission is recorded there; until then the provincial layer cannot ship.
 - [ ] **Exact attribution text for the Open Government Licence – Edmonton**, and Statistics Canada's for the ward populations. Done when `data/DATA.md` quotes both.
 - [ ] **Post-2025-election ward boundary report (Policy C469A).** Not found; the City's ward-boundary-review page returned 404 on 2026-10-10. Done when the report's status and any proposed adjustments are recorded in `data/DATA.md`.
+- [ ] **Join the 278 census neighbourhoods to the 407 neighbourhood polygons** (`eg3i-f4bj` to `65fr-66s6`). Done when `data/DATA.md` says which of the other 129 are industrial or unpopulated and which, if any, are missing a census row.
 - [ ] **A ward population newer than the 2021 Census**, from a primary source. Done when found, or when recorded as not existing.
 - [ ] **School-ward boundaries used in the 2025 election** — confirm against each board's ward bylaw that they match the City layers.
 - [ ] **Recheck the provincial boundary process after 2026-11-02**, when the Select Special Committee on Electoral Boundaries must report. Done when `data/DATA.md` records what was tabled and whether anything is enacted.
 
-### Map detail phase (after the lookup works on the chosen stack)
+### Map detail phase
 
+- [ ] **Buildings feasibility, step 1: package the rooflines and measure the size.** Proposed 2026-10-13, awaiting the owner's go. Turn the 384,228 polygons of `jpxi-a9a5` into a tile file at a few detail levels and record each size against the Pages limits (100 MB per file, about 1 GB per site). Needs no stack, so it can run before the research report. Lives in `prototype/`. Done when `prototype/README.md` has the sizes.
+- [ ] **Buildings feasibility, step 2: draw the same tile file on each candidate stack on a real phone** (the owner's; this server has no GPU). Record first-load time and frame rate, flat and tilted. Done when the numbers are recorded and feed the stack decision.
 - [ ] **Find how much geographic detail the site can carry.** Start with "ghost buildings" (faint, translucent, from the 2019 rooflines layer `jpxi-a9a5`), then add terrain and detail in steps; at each step measure the published size against the host's limits, first-load time and frame rate on a mid-range phone. Done when the limits and the chosen level are recorded with their numbers, and a test holds the size budget.
 
 ### Lenses

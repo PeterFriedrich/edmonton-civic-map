@@ -40,24 +40,34 @@ the brief wins.
 - **2026-10-10** — **Tier 2 ("who is responsible for what") starts from what a primary source states plainly and a script can refresh, and moves up to written content only where that runs out.** … Rejected: writing all of Tier 2 by hand from the start.
 - **2026-10-10** — **Launch is Tier 1 (the lookup); Tier 2 entries have no deadline and are added one at a time as each is ready.** … Rejected: holding launch for a set of Tier 2 entries.
 - **2026-10-10** — **Static site hosted on GitHub Pages, no backend of ours.** … Rejected: a small backend (addresses would pass through it).
-- **2026-10-10** — **The site has a geographic map with 2D and 3D views, on a different front-end stack from `edmonton-tax-viz`** (which is frameworkless MapLibre + deck.gl). … The stack itself and what 3D shows are not chosen.
+- **2026-10-10** — AMENDED 2026-10-13 (the different stack is conditional; see that row). … The stack itself and what 3D shows are not chosen.
 - **2026-10-10** — **The map's main view is rough geography, possibly with buildings; 3D shows the city's shape and never encodes a quantity.** … Rejected: extruding ward-level numbers, which would turn a lookup into a comparison.
+- **2026-10-13** — **Self-contained on GitHub Pages, for now: the page makes no request to an outside service.** … Rejected for now: a hosted basemap (free tiers exist, but each adds a key, a usage cap and an outside dependency).
+- **2026-10-13** — **A different stack from `edmonton-tax-viz` only where a robust, appropriate alternative exists.**
+- **2026-10-13** — **The answer comes before the map, and a neighbourhood name is a way into the lookup alongside address, map click and ward list.**
 
 ## Open work
 
 **Waiting on the owner**
 - **Map: pick the stack.** The owner is taking `docs/SPEC_lenses.md` §7 to a Claude web chat for a report on candidate stacks and example projects. When the reply comes back, file it under `/home/opc/research/edmonton-civic-map/` first, then triage it here. Done when a …
+- **Tile files: committed under `site/data/` or built at deploy.** Binary tiles give no readable diff, which is what the commit rule is for, and they grow the repo. Informed by the buildings size measurement below. Done when a `docs/DECISIONS.md` row says which …
+- **Is "mobile-first" a locked constraint or a preference?** The brief says "mobile-friendly"; `docs/SPEC_lenses.md` §2 now carries it as not locked. Done when a row locks it or the owner says leave it.
+- **Reopen "3D never encodes a quantity" for the density lens, or not.** Waits on the owner seeing 2D and 3D density examples from the stack report.
+- **Confirm the Project picker has the synced set ticked.** The 2026-10-12 reconciliation chat reported only `docs/BRIEF.md`, `docs/DECISIONS.md` and `docs/SPEC_civic_map.md`; the set in `docs/CLAUDE_WEB.md` also has `docs/SPEC_lenses.md`, `docs/SPEC_data_schema.md` and …
 - **Report data defects to the City.** The owner will send one report later, collecting what `docs/DATA_ISSUES.md` holds by then (2026-10-10). Done when each row there has a status other than NOT SENT.
 
 **Sources still to verify**
 - **Licence for the Elections Alberta boundary shapefile.** None is stated on the download page (`data/DATA.md`, "Provincial ridings"). Done when a written licence or permission is recorded there; until then the provincial layer cannot ship.
 - **Exact attribution text for the Open Government Licence – Edmonton**, and Statistics Canada's for the ward populations. Done when `data/DATA.md` quotes both.
 - **Post-2025-election ward boundary report (Policy C469A).** Not found; the City's ward-boundary-review page returned 404 on 2026-10-10. Done when the report's status and any proposed adjustments are recorded in `data/DATA.md`.
+- **Join the 278 census neighbourhoods to the 407 neighbourhood polygons** (`eg3i-f4bj` to `65fr-66s6`). Done when `data/DATA.md` says which of the other 129 are industrial or unpopulated and which, if any, are missing a census row.
 - **A ward population newer than the 2021 Census**, from a primary source. Done when found, or when recorded as not existing.
 - **School-ward boundaries used in the 2025 election** — confirm against each board's ward bylaw that they match the City layers.
 - **Recheck the provincial boundary process after 2026-11-02**, when the Select Special Committee on Electoral Boundaries must report. Done when `data/DATA.md` records what was tabled and whether anything is enacted.
 
-**Map detail phase (after the lookup works on the chosen stack)**
+**Map detail phase**
+- **Buildings feasibility, step 1: package the rooflines and measure the size.** Proposed 2026-10-13, awaiting the owner's go. Turn the 384,228 polygons of `jpxi-a9a5` into a tile file at a few detail levels and record each size against the Pages limits (100 MB per file, about 1 …
+- **Buildings feasibility, step 2: draw the same tile file on each candidate stack on a real phone** (the owner's; this server has no GPU). Record first-load time and frame rate, flat and tilted. Done when the numbers are recorded and feed the stack decision.
 - **Find how much geographic detail the site can carry.** Start with "ghost buildings" (faint, translucent, from the 2019 rooflines layer `jpxi-a9a5`), then add terrain and detail in steps; at each step measure the published size against the host's limits, first-load time and …
 
 **Lenses**

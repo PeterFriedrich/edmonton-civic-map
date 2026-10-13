@@ -179,6 +179,10 @@ approves the report. "Stop" means nothing is produced. If nothing moved, only
   Proposed: **office holders 45 days, boundaries and population 180 days.**
 - The UI compares `last_verified` with today in the browser and shows the
   warning itself, so a site nobody has rebuilt still tells the truth.
+- The threshold measures when we last checked the source, not how old the
+  data is. The 2021 Census population passes for as long as it is rechecked
+  within 180 days; its census year has to be shown beside the figure, and the
+  schema has no field for that yet.
 - A calendar file lists the dates that force a full recheck regardless of
   thresholds: municipal election 2029-10, the Alberta committee report due
   2026-11-02, the next provincial and federal general elections.
