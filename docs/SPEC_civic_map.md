@@ -81,6 +81,10 @@ in `docs/DECISIONS.md` point here.
   (owner). "Mobile-first" was this repo's wording in `docs/SPEC_lenses.md`, not
   the owner's; the brief says "mobile-friendly". The owner expects phones to be
   an interface question more than a performance one.
+- 2026-10-13 — **Buildings stay simplest** (owner). The 2019 rooflines pushed
+  up to a flat roof by their height. The City's separate "3D Buildings" model
+  with roof shapes is not used. Measurements: `data/DATA.md`, "Terrain and
+  elevation".
 - 2026-10-13 — **The text below is the brief as it was handed to this repo on
   2026-10-10.** A reconciliation in the claude.ai Project (2026-10-12) reports
   that the Project's own copy now reads "Civic Map" with the name settled on

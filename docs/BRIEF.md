@@ -46,6 +46,7 @@ the brief wins.
 - **2026-10-13** — **A different stack from `edmonton-tax-viz` only where a robust, appropriate alternative exists.**
 - **2026-10-13** — **The answer comes before the map, and a neighbourhood name is a way into the lookup alongside address, map click and ward list.**
 - **2026-10-13** — **The site works on phone and desktop; neither is "first".** … Rejected: "mobile-first" as a constraint, which was this repo's wording and not the owner's.
+- **2026-10-13** — **Buildings are the 2019 rooflines (`jpxi-a9a5`) pushed up to a flat roof by their recorded height: the simplest form.** … Rejected: the City's "3D Buildings" model `78sz-qcfr` (about three times the triangles, roof shapes that look like a tool default, no licence stated) and modelling roof shapes ourselves.
 
 ## Open work
 
