@@ -171,9 +171,27 @@ portal's API; **no geometry has been downloaded or checked yet.**
 | Buildings with height | `jpxi-a9a5` City of Edmonton - Rooflines (as of 2019) | 384,228 | 2019; rows updated 2021-01-20 | `building_height`, `elevation_ground`, `elevation_rooftop`, `area`. Mean height 5.7 m, tallest 146.8 m, 597 over 20 m. **Seven years old**: newer neighbourhoods will be missing buildings. |
 | Buildings, older | `6n9r-ddf8` Building Footprint | 365,822 | May 2017 | no height column; superseded by the 2019 layer |
 | Roads by class | `9j8t-zm52` Road Network | 53,873 segments | rows updated 2026-10-10 | `functional_class_code` separates arterials (classes A–D, about 8,900 segments; class A is primary highway) from collectors and locals. 14,229 segments have no class. |
-| River valley | none found as a boundary layer | | | `6w3s-58pv` Zoning Overlays may carry the river valley overlay; not checked |
-| Rail lines | none found on the City portal | | | likely a federal source (Natural Resources Canada's National Railway Network); not checked |
-| Terrain | none found on the City portal | | | `v59u-75mc` is only the tiling grid for the City's remote-sensing data |
+| River valley | none found as a boundary layer | | | `6w3s-58pv` Zoning Overlays may carry the river valley overlay; not checked. `edmonton-tax-viz` has no edge either, only two proxies: zoning codes `A` and `NA` (River Valley), and neighbourhoods in `65fr-66s6` named "RIVER VALLEY ...". An edge could also be derived from terrain, if terrain is sourced. |
+| Rail lines | `9j8t-zm52` Road Network, rows with `centerline_type = 'Railway'` | 2,117 rows, 704 km (as counted by `edmonton-tax-viz`) | | Reported by the `edmonton-tax-viz` session 2026-10-13; not checked here. A City feed, so expect it to stop at the municipal boundary. Federal alternative, not checked: Natural Resources Canada's National Railway Network. |
+| Terrain | none found on the City portal | | | `v59u-75mc` is only the tiling grid for the City's remote-sensing data. `edmonton-tax-viz` never sourced or evaluated any elevation data. |
+
+**Sources `edmonton-tax-viz` already uses** (reported by that session
+2026-10-13 from its `data/DATA.md` and build scripts; none re-checked here, and
+each needs its licence confirmed before this project ships it):
+
+| Need | Source | Licence, as reported | Notes |
+|---|---|---|---|
+| River | Alberta `base_water_feature` MapServer layer 72 "Lake/River (20K)", `NAME='North Saskatchewan River'`, https://geospatial.alberta.ca/titan/rest/services/environment/base_water_feature/MapServer/72/query | Open Government Licence – Alberta | Polygons. Simplified there at 25 m in EPSG:3400. |
+| City limit and neighbouring municipalities | Alberta `urban_and_rural_municipality` MapServer, layer 78 for Edmonton, https://geospatial.alberta.ca/titan/rest/services/base/urban_and_rural_municipality/MapServer/78/query | Open Government Licence – Alberta | Edmonton outline 782.38 km² after 100 m simplification. |
+| Highways | OpenStreetMap through Overpass, classes motorway and trunk | ODbL, attribution required | **Not a primary source.** Usable here only as drawn context, and only if the owner agrees; `docs/SCOPE.md` rules out community wikis as data. The City feed `9j8t-zm52` has the same highways as Province rows (1,164) but they stop at the municipal boundary, which may be enough for a city-only map. |
+| Arterial, collector and local roads | `9j8t-zm52`, `centerline_type == 'Road'`, City-owned rows | Open Government Licence – City of Edmonton | Its build script is `src/load_roads.py` in that repo: dissolved, welded and simplified to 272 kB gzipped. Its filter drops 12,088 alley rows and the Railway and Province rows. |
+
+⚠️ **Alberta MapServer layers can return features with NULL geometry and HTTP
+200.** `edmonton-tax-viz` found `transportation/highways_public` returning all
+510 features with no geometry. Check geometry, not counts.
+
+`edmonton-tax-viz` never touched the Rooflines layer, so there is no size or
+quality record to borrow.
 
 384,228 roofline polygons is the storage question for the detail phase: far too
 large to ship as GeoJSON, so buildings mean vector tiles or heavy
