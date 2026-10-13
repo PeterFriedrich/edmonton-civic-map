@@ -213,7 +213,13 @@ vertical datum and CRS are as stated by the publisher, not verified.
 | `tarx-cg5m` Spot Elevation | City of Edmonton | hill tops and pit bottoms | 2009 | 686,638 points | "See Terms of Use"; described as "will likely be replaced or removed" |
 
 - **Full-feature lidar** (surface with buildings and trees) is also published: `sz3i-y5ze` (2025, 42.7 GB) and `bf5f-8bzd` (2019, 15.3 GB).
-- **`78sz-qcfr` 3D Buildings**: a City 3D model built from the 2019 rooflines `jpxi-a9a5` and the 2019 lidar. One 225 MB file geodatabase zip, 3TM 114, made public 2023-06-15, static. No licence stated on the dataset. Not opened; whether it adds anything over extruding the rooflines by `building_height` is unknown.
+- **`78sz-qcfr` 3D Buildings**: a City 3D model built from the 2019 rooflines `jpxi-a9a5` and the 2019 lidar. One 225 MB file geodatabase zip (453 MB unpacked), 3TM 114, made public 2023-06-15, static. No licence stated on the dataset.
+  - **Opened and counted 2026-10-13** (every feature read through GDAL; triangles counted, coordinates not checked): one layer `Building_MP_Merge`, 383,329 buildings, all with geometry, stored as triangle meshes (OGR type TIN Z). Fields `PRESEG_FID`, `District`, `BLDGHEIGHT`, `ROOFFORM`, `BASEELEV`.
+  - **13.8 million triangles** in all. Per building: median 28, mean 36, 95th percentile 88, largest 2,848. A four-cornered footprint pushed up to a flat roof is 10.
+  - **`ROOFFORM`:** Gable 362,319 · Flat 20,084 · Hip 383 · Vault 304 · Mansard 67 · Shed 65 · Dome 19 · empty 84. Gable on 94.5% of buildings, sheds and garages included, reads like the modelling tool's default more than a survey of roofs; not checked against imagery.
+  - **`BLDGHEIGHT`:** median 5.5 m, tallest 198.9 m, 439 over 20 m, 46 at zero or below. The rooflines layer's catalogue figures differ (tallest 146.8 m, 597 over 20 m, 384,228 rows); the two have not been reconciled.
+  - `BASEELEV` gives each building's ground height, which a terrain view needs to seat buildings on the slope.
+  - Reading it: `pyogrio` refuses the geometry type; it was read by calling the GDAL library bundled with `pyogrio` directly.
 - **Scale check, arithmetic only:** the city is roughly 30 km across, so a 30 m grid is about 1,000 by 1,000 heights and a 10 m grid about 3,000 by 3,000.
 - **River valley edge:** not a layer anywhere found, but derivable from any of the bare-ground models above as the line where slope steepens, or readable from the City's contours.
 - **Not usable as found:** the Alberta Provincial DEM (25 m and 100 m rasters) is built from 1955–1996 photogrammetry; listed only so it is not rediscovered.
