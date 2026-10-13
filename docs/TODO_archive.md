@@ -8,4 +8,6 @@ Items are verbatim as they were closed, newest-moved first in the order they app
 
 ---
 
+- [x] **Tile files: committed under `site/data/` or built at deploy.** Decided 2026-10-13: committed, each with a text manifest beside it, while each file is under 100 MB (`docs/DECISIONS.md`).
+
 - [x] **Map: pick the stack.** Chosen 2026-10-13: MapLibre GL JS 6 native layers, PMTiles, Vite with plain JavaScript, per-street address index (`docs/DECISIONS.md`; `docs/SPEC_lenses.md` §8). The report is filed at `/home/opc/research/edmonton-civic-map/stack_reply_2026-10-13.md`.

@@ -31,7 +31,7 @@ Any stack has to fit these. The "Status" column says which are locked rows in
 | Static site on GitHub Pages, no backend of ours | Everything is files. No server-side rendering at request time, no database, no API we operate. | Locked |
 | An address never leaves the browser | Address search and point-in-polygon run client-side against data we ship. | Locked |
 | Self-contained on GitHub Pages, for now | The page makes no request to an outside service: no hosted basemap or tile provider, no font or script CDN, no geocoder. Any basemap, tiles, fonts and libraries are files in the site, inside the Pages limits (about 1 GB per site, a soft 100 GB a month, a 10-minute deploy). The 100 MB per-file limit is git's, so it applies only to files committed to the repo. | Locked 2026-10-13, "for now" |
-| Data refreshed weekly by GitHub Actions | The build must run unattended in CI and produce the published files. A change in any of them is held for the owner's review, not published automatically. Map tiles are rebuilt only when their source changes. Whether tiles are committed like the other published files or built at deploy is open (§6). | Locked, except the tiles question |
+| Data refreshed weekly by GitHub Actions | The build must run unattended in CI and produce the published files. A change in any of them is held for the owner's review, not published automatically. Map tiles are rebuilt only when their source changes. Tile files are committed like the other published files, each with a text manifest beside it. | Locked |
 | Every record shows its source and last-verified date | Data files carry provenance; the UI shows a staleness warning by comparing dates in the browser. | Locked |
 | The answer comes before the map | Most visitors look up their own address or neighbourhood. The cards must appear without waiting for the map, buildings or terrain, and a slow device still gets its answer. | Owner, 2026-10-10 and 2026-10-13 |
 | Works on phone and desktop | Neither comes first. The owner expects the phone work to be mostly interface (layout, touch, the cards and the map sharing a small screen) more than raw performance. Phone performance is still measured for the 3D layers in the detail phase. | Locked 2026-10-13 |
@@ -181,10 +181,9 @@ Proposed, not yet confirmed by the owner:
 1. ~~The stack~~ Chosen 2026-10-13: §8.
 2. **Terrain**: real elevation or a flat drawing of the river valley.
 3. **Buildings**: tiles or simplification, and how current the source needs to
-   be given the City's layer is from 2019. Also whether tile files are
-   committed under `site/data/` like the other published files or built at
-   deploy: binary tiles give no readable diff, which is the reason that rule
-   exists.
+   be given the City's layer is from 2019. Tile files are committed with a
+   text manifest beside each, which carries the readable diff (decided
+   2026-10-13).
 4. **Density in 2D or 3D.**
 5. **The basemap**: none (boundaries, river, major roads and ghost buildings
    drawn from our own files, as `edmonton-tax-viz` does) or a street basemap
@@ -276,8 +275,8 @@ registry the same day: `maplibre-gl` 6.14.0, `pmtiles` 4.5.0, `vite` 8.3.4.
 - Keep the view's state in our own URL parameters. MapLibre's built-in `hash`
   option writes the camera position, which after an address search is the
   address's location.
-- Tile files built at deploy with a committed text manifest, against
-  committing the files. Open: `TODO.md`, "Waiting on the owner".
+- ~~Tile files built at deploy.~~ Decided 2026-10-13 the other way: tile
+  files are committed, and the report's manifest idea is kept beside them.
 
 **Corrections to the report:** the river is a provincial layer, not City data,
 and no river valley edge is sourced (`data/DATA.md`). Its size figures
