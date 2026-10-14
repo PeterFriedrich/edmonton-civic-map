@@ -1,0 +1,24 @@
+# Manifest for buildings.pmtiles. Text, so a rebuild shows as a readable diff
+# (docs/DECISIONS.md, 2026-10-13, tile files). Trial build, prototype/README.md.
+file: buildings.pmtiles
+source: City of Edmonton - Rooflines (as of 2019), jpxi-a9a5
+source_url: https://data.edmonton.ca/d/jpxi-a9a5
+source_rows_updated: 2021-01-20
+retrieved: 2026-10-14
+last_verified: 2026-10-14
+licence: Open Government Licence - City of Edmonton (the dataset's licence field reads "See Terms of Use")
+source_rows: 384228
+source_sha256: 258d687f407be88b5f95ceed117c727002db33b6b9c14827abe6041e3ae024e9 (rooflines.ndjson as written by prototype/rooflines.py)
+features: 384228
+layer: buildings
+attributes: h (building height in metres, one decimal)
+tool: tippecanoe v2.72.0 (PyPI wheel)
+command: tippecanoe -P -f -o buildings.pmtiles -l buildings -n buildings -N "City of Edmonton Rooflines (as of 2019), jpxi-a9a5, height only" -Z12 -z15 --no-feature-limit --no-tile-size-limit heights.ndjson
+# tiles_sha256 covers every tile's z/x/y and content. It is stable across rebuilds;
+# the file's own bytes are not (tippecanoe's metadata block differs run to run).
+tiles_sha256: 5593b3648b1520fb9449e5e7cd03290b7ec4e4aaae9cd4fb174d7d5937fe3ba8
+z12: 36 tiles, 4636442 bytes
+z13: 117 tiles, 5900231 bytes
+z14: 417 tiles, 7293546 bytes
+z15: 1385 tiles, 8964860 bytes
+total: 1955 tiles, 26795079 bytes of tiles
