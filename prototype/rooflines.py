@@ -3,8 +3,9 @@
     python prototype/rooflines.py OUT_DIR
 
 Writes OUT_DIR/rooflines.ndjson (as published) and OUT_DIR/heights.ndjson (one
-`h` attribute, metres), the input to the tippecanoe build in README.md. Exits
-non-zero if the row count is short or any row lacks a height or an outline.
+`h` attribute, metres, and the zoom each building first appears at), the input
+to the tippecanoe build in README.md. Exits non-zero if the row count is short
+or any row lacks a height or an outline.
 """
 import collections
 import json
@@ -18,6 +19,9 @@ import shapely
 
 BASE = "https://data.edmonton.ca"
 PAGE = 50000
+# Smallest footprint (m2) drawn at each zoom below 13, so the zoomed-out tiles
+# stay as light as the z12 ones the phone test passed. Everything shows from z13.
+MIN_AREA = ((10, 400), (11, 150), (12, 50))
 
 
 def get(url):
@@ -67,7 +71,10 @@ def check(src, dst):
                 continue
             geoms.append(shapely.geometry.shape(g))
             heights.append(h)
-            out.write(json.dumps({"type": "Feature", "properties": {"h": round(h, 1)}, "geometry": g},
+            area = float(ft["properties"]["area"])
+            minzoom = next((z for z, a in MIN_AREA if area >= a), 13)
+            out.write(json.dumps({"type": "Feature", "tippecanoe": {"minzoom": minzoom},
+                                  "properties": {"h": round(h, 1)}, "geometry": g},
                                  separators=(",", ":")) + "\n")
     G, h = np.array(geoms), np.array(heights)
     report = {

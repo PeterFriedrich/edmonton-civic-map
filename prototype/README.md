@@ -170,3 +170,48 @@ venv/bin/pip install rasterio pillow 'shapely>=2.1' pmtiles
 curl -o wards.geojson 'https://data.edmonton.ca/resource/b4er-5rp2.geojson'
 venv/bin/python prototype/terrain.py wards.geojson work/   # 15 s, reads ~15 MB
 ```
+
+# Buildings at z10 and z11 (2026-10-14)
+
+The first build started at z12, so buildings vanished when the map was zoomed
+out, and in tilted views the far distance (drawn from lower-zoom tiles) had
+none. The build now starts at z10, and each zoom below 13 draws only
+footprints above a size (`MIN_AREA` in `prototype/rooflines.py`):
+
+| Zoom | Footprints drawn | Buildings in tiles* | Size | Largest tile |
+|---|---|---|---|---|
+| z10 | ≥ 400 m² (4%) | 16,777 | 0.22 MB | 83 kB |
+| z11 | ≥ 150 m² (37%) | 149,588 | 1.65 MB | 454 kB |
+| z12 | ≥ 50 m² (82%) | 335,999 | 3.99 MB | 402 kB |
+| z13–z15 | all | | 22.16 MB | 173 kB |
+| **File** | | | **28.0 MB** | |
+
+\* Counted per tile, so a building crossing a tile edge counts twice.
+
+- The cut-offs keep the busiest z10–z12 tiles at or under the z12 tile
+  (463 kB) the iPhone test drew at 60 fps.
+- Tried and not taken: z10 ≥ 200 m² and z11 ≥ 50 m² (3.7 MB more, busiest
+  z11 tile 989 kB).
+- Holding back buildings under 50 m² from z12 saved 0.65 MB, less than z10
+  and z11 add, so the file is 1.2 MB larger than the z12–z15 build. Half of
+  all footprints are under 123 m²; most under 50 m² are also under 4 m tall,
+  which fits sheds and garages. That reading comes from size and height; the
+  data has no building type.
+
+# Terrain on a real phone (2026-10-14)
+
+`TODO.md` "Terrain, step 2". The live test page with `terrain.pmtiles` as
+hillshade and as 3D ground, buildings seated on it.
+
+| Device | View | Frame rate |
+|---|---|---|
+| iPhone 14 Plus, Safari | flat, solid, 3D ground | 60 fps, slowest 5% under 17 ms |
+| iPhone 14 Plus, Safari | tilted, solid, 3D ground | 60 fps, slowest 5% under 17 ms |
+| Owner's laptop, 144 Hz screen | flat, solid, 3D ground | 144 fps, slowest 5% under 7 ms |
+| Owner's laptop, 144 Hz screen | tilted, solid, 3D ground | 133 fps, slowest 5% under 14 ms |
+
+- Tilted with 3D ground is the first mode below the screen's refresh rate,
+  and only on the laptop; the phone held 60.
+- Not measured: tilted, translucent, with 3D ground.
+- **The owner judged 30 m terrain "plenty"**, so the 1 m federal lidar is not
+  needed (`docs/DECISIONS.md`, 2026-10-14).
