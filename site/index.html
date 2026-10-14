@@ -63,6 +63,19 @@ const $ = (id) => document.getElementById(id);
 const dark = matchMedia("(prefers-color-scheme: dark)").matches;
 const colors = dark ? { bg: "#16181b", building: "#b9b4a8" } : { bg: "#f4f3ef", building: "#8a8478" };
 
+// Count tile bytes as they arrive: Resource Timing reports 0 for these on some
+// browsers, which made the first phone readings useless.
+const realFetch = window.fetch.bind(window);
+let tileBytes = 0, tileRequests = 0;
+window.fetch = async (input, init) => {
+  const r = await realFetch(input, init);
+  if (String(input.url || input).endsWith(".pmtiles")) {
+    tileRequests++;
+    tileBytes += (await r.clone().arrayBuffer()).byteLength;
+  }
+  return r;
+};
+
 const protocol = new pmtiles.Protocol();
 maplibregl.addProtocol("pmtiles", protocol.tile);
 
@@ -90,18 +103,15 @@ map.once("idle", () => {
   $("loaded").textContent = (performance.now() / 1000).toFixed(2) + " s after the page started";
 });
 
-function tileBytes() {
-  const entries = performance.getEntriesByType("resource").filter((e) => e.name.endsWith(".pmtiles"));
-  const total = entries.reduce((s, e) => s + (e.transferSize || e.encodedBodySize || 0), 0);
-  $("bytes").textContent = (total / 1e6).toFixed(2) + " MB in " + entries.length + " requests";
-}
-map.on("idle", tileBytes);
+map.on("idle", () => {
+  $("bytes").textContent = (tileBytes / 1e6).toFixed(2) + " MB in " + tileRequests + " requests";
+});
 const showZoom = () => ($("zoom").textContent = map.getZoom().toFixed(1) + ", pitch " + Math.round(map.getPitch()) + "°");
 map.on("move", showZoom);
 showZoom();
 
 // Answers "does the host serve this file in pieces?" directly: 206 and no content-encoding.
-fetch(TILES, { headers: { Range: "bytes=0-15" }, cache: "no-store" }).then((r) => {
+realFetch(TILES, { headers: { Range: "bytes=0-15" }, cache: "no-store" }).then((r) => {
   const enc = r.headers.get("content-encoding") || "none";
   $("range").textContent = r.status + (r.status === 206 ? " (partial, works)" : " (NOT partial)") + ", encoding " + enc;
 }).catch((e) => ($("range").textContent = "failed: " + e.message));
