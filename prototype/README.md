@@ -47,3 +47,46 @@ curl -o wards.geojson 'https://data.edmonton.ca/resource/b4er-5rp2.geojson'
 pip install 'shapely>=2.1' pyproj numpy
 python prototype/check_pip.py --wards wards.geojson --addresses 'parcels*.csv'
 ```
+
+# Trial building tiles (2026-10-14)
+
+`TODO.md` "Buildings, step 1". A size measurement, not a published layer.
+
+Input: all 384,228 rooflines of `jpxi-a9a5`, retrieved 2026-10-14 (count matches
+`count(*)`). Every row has a height and an outline; 325 outlines are
+self-intersecting and were tiled as published, not repaired or dropped.
+Height (`h`, metres, one decimal) is the only attribute.
+
+| Zoom | Tiles | Size | Largest tile | Mean tile |
+|---|---|---|---|---|
+| z12 | 36 | 4.64 MB | 463.4 kB | 128.8 kB |
+| z13 | 117 | 5.90 MB | 172.6 kB | 50.4 kB |
+| z14 | 417 | 7.29 MB | 70.7 kB | 17.5 kB |
+| z15 | 1,385 | 8.96 MB | 25.3 kB | 6.5 kB |
+| **File** | 1,955 | **26.8 MB** | | |
+
+Sizes are gzipped, as stored and as sent. Build time 21 s on this server.
+
+- The file is **26.8 MB**, inside the stack report's 10–30 MB estimate and
+  under git's 100 MB limit, which the tile-files decision depends on.
+- tippecanoe's default 500 kB tile cap was never reached: a build with
+  `--drop-smallest-as-needed` and a build with no cap are the same size. The
+  busiest z12 tile is 463 kB, so there is little room at z12 for a second
+  attribute.
+- tippecanoe replaces polygons too small to draw with a placeholder: 2,541 at
+  z12, 275 at z13, 230 at z14, 153 at z15. Nothing else is dropped.
+- Not measured here: drawing speed. That is step 2, on a real phone.
+
+## Re-running
+
+```bash
+python3.12 -m venv venv && venv/bin/pip install tippecanoe==2.72.0 'shapely>=2.1' numpy pmtiles
+venv/bin/python prototype/rooflines.py work/          # download + check, ~220 MB
+venv/bin/tippecanoe -P -f -o work/buildings.pmtiles -l buildings -Z12 -z15 \
+    --no-feature-limit --no-tile-size-limit work/heights.ndjson
+```
+
+The PyPI `tippecanoe` wheel carries an aarch64 binary (2.72.0, 2024-12-10;
+upstream is at 2.79.0), so nothing needs compiling on this server. Per-zoom
+sizes come from summing tile lengths with the `pmtiles` Python reader;
+`pmtiles show` (go-pmtiles 1.31.2) gives only the totals.
