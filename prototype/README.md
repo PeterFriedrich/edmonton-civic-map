@@ -115,8 +115,8 @@ deployed by `.github/workflows/pages.yml` (run 38508834542).
 
 # Buildings on a real phone (2026-10-14)
 
-`TODO.md` "Buildings, step 2". The owner's phone (model and browser not
-recorded) on the live test page, all 384,228 buildings, opening view z14 over
+`TODO.md` "Buildings, step 2". The owner's iPhone 14 Plus in Safari, on
+the live test page, all 384,228 buildings, opening view z14 over
 downtown.
 
 | Reading | Result |
