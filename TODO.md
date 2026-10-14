@@ -29,8 +29,6 @@ symptom and re-measure the stated cause before acting on it.
 ### Map detail phase
 
 - [ ] **Terrain: read the Edmonton window of MRDEM-30, check it, and pack it as elevation PMTiles.** Sources are in `data/DATA.md`, "Terrain and elevation"; nothing has been read yet. Done when the ledger records CRS, vertical datum, the elevation range across the city and the depth of the river valley as the data shows it, and `prototype/README.md` has the PMTiles size (the report estimates 3–10 MB; encode at 0.1 m steps, since 1 m steps look blocky). Then decide whether the 1 m federal lidar (`AB-Edmonton-1m`, 2.38 GB) resampled to about 5–10 m is worth it.
-- [ ] **Buildings, step 2: draw the tile files in MapLibre on a real phone** (the owner's; this server has no GPU). With one stack chosen this is a feasibility check, not a comparison. Record first-load time and frame rate, flat and tilted, faint-solid against translucent buildings. Done when the numbers are in `prototype/README.md`.
-- [ ] **Check that GitHub Pages serves a `.pmtiles` file by range request, uncompressed, from a test deploy.** `edmonton-tax-viz` recorded Pages answering range requests on 2026-08-07, but not for this file type. Done when a test deploy reads one tile.
 - [ ] **Build glyph files for Noto Sans and Noto Sans Canadian Aboriginal and test pihêsiwin and ᐱᐦᐁᓯᐏᐣ** on Android, iOS and desktop. Done when a test page shows both from our own files.
 - [ ] **Find how much geographic detail the site can carry.** Start with "ghost buildings" (faint, translucent, from the 2019 rooflines layer `jpxi-a9a5`), then add terrain and detail in steps; at each step measure the published size against the host's limits, first-load time and frame rate on a mid-range phone. Done when the limits and the chosen level are recorded with their numbers, and a test holds the size budget.
 
@@ -59,6 +57,10 @@ symptom and re-measure the stated cause before acting on it.
 ## Done
 
 Closed items moved out of `## Open work` live in **`docs/TODO_archive.md`** — one line each below, reasoning there.
+
+- [x] **Buildings, step 2: draw the tile files in MapLibre on a real phone** · `docs/TODO_archive.md`
+
+- [x] **Check that GitHub Pages serves a `.pmtiles` file by range request, uncompressed, from a test deploy.** — 2026-08-07 · `docs/TODO_archive.md`
 
 - [x] **Buildings, step 1: one trial tippecanoe build of the rooflines to PMTiles, and record the size.** · `docs/TODO_archive.md`
 

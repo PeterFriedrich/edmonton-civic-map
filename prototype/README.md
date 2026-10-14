@@ -90,3 +90,48 @@ The PyPI `tippecanoe` wheel carries an aarch64 binary (2.72.0, 2024-12-10;
 upstream is at 2.79.0), so nothing needs compiling on this server. Per-zoom
 sizes come from summing tile lengths with the `pmtiles` Python reader;
 `pmtiles show` (go-pmtiles 1.31.2) gives only the totals.
+
+# GitHub Pages and range requests (2026-10-14)
+
+`TODO.md` "Check that GitHub Pages serves a `.pmtiles` file by range request".
+Checked against the live test page, https://peterfriedrich.github.io/edmonton-civic-map/,
+deployed by `.github/workflows/pages.yml` (run 38508834542).
+
+- **A browser gets what PMTiles needs.** The page's own check, run on the
+  owner's phone, got `206` with no `content-encoding`, and the buildings drew.
+- **That depends on the browser, not on Pages.** Pages serves the file as
+  `application/octet-stream` and compresses it on the fly for any client that
+  accepts gzip. Asked for a range with `Accept-Encoding: gzip`, it answers
+  `206` with ranges of the *gzipped* stream (`content-range: .../26793940`
+  against the file's 26,800,417 bytes), which a PMTiles reader cannot use.
+  Asked with no `Accept-Encoding` or with `identity`, it answers ranges of the
+  real file. Browsers send `identity` on any request that carries a `Range`
+  header (Fetch standard), which is why the page works.
+- So: test with a browser, or with curl and no `Accept-Encoding`. A curl run
+  with `--compressed` or a gzip header will look broken when it is not.
+- Pages sends `cache-control: max-age=600` and a weak `etag` on the file. The
+  PMTiles reader ignores weak etags, so a rebuilt file within those 10 minutes
+  is not caught by etag.
+
+# Buildings on a real phone (2026-10-14)
+
+`TODO.md` "Buildings, step 2". The owner's iPhone 14 Plus in Safari, on
+the live test page, all 384,228 buildings, opening view z14 over
+downtown.
+
+| Reading | Result |
+|---|---|
+| First full draw, private window (nothing cached) | 1.25 s after the page started |
+| Tile bytes for that view | 0.21 MB in 8 requests |
+| Code over the wire (HTML, MapLibre, worker, CSS, PMTiles reader, gzipped) | 457 kB |
+| Frame rate, tilted 60°, solid | 60 fps average, slowest 5% of frames under 17 ms |
+| Frame rate, tilted 60°, translucent (opacity 0.35) | 60 fps average, slowest 5% of frames under 17 ms |
+
+- 60 fps with no slow frames is the screen's refresh rate: in the heaviest
+  modes the buildings cost nothing visible on this phone. Flat modes draw less
+  and were not measured.
+- A first visit to this view moves about 0.67 MB in all.
+- One phone, one view. A low-end phone and the densest z12 tiles (463 kB) are
+  untested.
+- The repeat-visit readings (0.22 s, "0.00 MB in 30 requests") came from the
+  browser cache: Resource Timing reports cached responses as 0 bytes.
