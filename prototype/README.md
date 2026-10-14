@@ -112,3 +112,26 @@ deployed by `.github/workflows/pages.yml` (run 38508834542).
 - Pages sends `cache-control: max-age=600` and a weak `etag` on the file. The
   PMTiles reader ignores weak etags, so a rebuilt file within those 10 minutes
   is not caught by etag.
+
+# Buildings on a real phone (2026-10-14)
+
+`TODO.md` "Buildings, step 2". The owner's phone (model and browser not
+recorded) on the live test page, all 384,228 buildings, opening view z14 over
+downtown.
+
+| Reading | Result |
+|---|---|
+| First full draw, private window (nothing cached) | 1.25 s after the page started |
+| Tile bytes for that view | 0.21 MB in 8 requests |
+| Code over the wire (HTML, MapLibre, worker, CSS, PMTiles reader, gzipped) | 457 kB |
+| Frame rate, tilted 60°, solid | 60 fps average, slowest 5% of frames under 17 ms |
+| Frame rate, tilted 60°, translucent (opacity 0.35) | 60 fps average, slowest 5% of frames under 17 ms |
+
+- 60 fps with no slow frames is the screen's refresh rate: in the heaviest
+  modes the buildings cost nothing visible on this phone. Flat modes draw less
+  and were not measured.
+- A first visit to this view moves about 0.67 MB in all.
+- One phone, one view. A low-end phone and the densest z12 tiles (463 kB) are
+  untested.
+- The repeat-visit readings (0.22 s, "0.00 MB in 30 requests") came from the
+  browser cache: Resource Timing reports cached responses as 0 bytes.
