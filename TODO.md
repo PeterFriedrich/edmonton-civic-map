@@ -28,6 +28,7 @@ symptom and re-measure the stated cause before acting on it.
 
 ### Map detail phase
 
+- [ ] **Measure data used per view and per session, zoomed out and tilted.** A zoomed-out tilted session on the phone fetched 13.33 MB (`prototype/README.md`, "Buildings at z10 and z11"), most of it from the frame-rate fly-over. Done when the cost of the opening view and of a typical look around (zoom out, tilt, pan across the river) is recorded, and a size budget for one view is set, or the current cost is judged fine.
 - [ ] **Build glyph files for Noto Sans and Noto Sans Canadian Aboriginal and test pihêsiwin and ᐱᐦᐁᓯᐏᐣ** on Android, iOS and desktop. Done when a test page shows both from our own files.
 - [ ] **Find how much geographic detail the site can carry.** Start with "ghost buildings" (faint, translucent, from the 2019 rooflines layer `jpxi-a9a5`), then add terrain and detail in steps; at each step measure the published size against the host's limits, first-load time and frame rate on a mid-range phone. Done when the limits and the chosen level are recorded with their numbers, and a test holds the size budget.
 
