@@ -1,0 +1,41 @@
+name: Pages
+
+# Publishes site/ as it is committed: no build step yet. The Vite build and its
+# cache-busting replace this when they land (TODO.md "Build", proposal first).
+# The vendored libraries are checked against their recorded hashes before
+# upload, so a changed file stops the deploy and the last good site stays live.
+
+on:
+  push:
+    branches: [master]
+    paths: ['site/**', '.github/workflows/pages.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      - name: Check vendored files against SHA256SUMS
+        working-directory: site/vendor
+        run: sha256sum --check --strict SHA256SUMS
+
+      - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
+        with:
+          path: site
+
+      - id: deployment
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1

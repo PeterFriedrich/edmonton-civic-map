@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Building Tiles Test</title>
+<link rel="stylesheet" href="vendor/maplibre-gl.css">
+<style>
+  :root { --bg: #f4f3ef; --fg: #1d1d1b; --muted: #5d5c57; --panel: rgba(255,255,255,.92); --line: #d4d2cb; --accent: #2f5d8a; }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) { --bg: #16181b; --fg: #e8e6e1; --muted: #a3a19b; --panel: rgba(30,32,36,.92); --line: #3a3d42; --accent: #8db4dc; }
+  }
+  :root[data-theme="dark"] { --bg: #16181b; --fg: #e8e6e1; --muted: #a3a19b; --panel: rgba(30,32,36,.92); --line: #3a3d42; --accent: #8db4dc; }
+  html, body { margin: 0; height: 100%; background: var(--bg); color: var(--fg);
+    font: 14px/1.4 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  #map { position: absolute; inset: 0; }
+  #panel { position: absolute; top: 12px; left: 12px; right: 12px; max-width: 360px; padding: 12px 14px;
+    background: var(--panel); border: 1px solid var(--line); border-radius: 8px; }
+  h1 { font-size: 15px; margin: 0 0 4px; }
+  p { margin: 0 0 8px; color: var(--muted); }
+  .row { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
+  button { font: inherit; padding: 6px 10px; border-radius: 6px; border: 1px solid var(--line);
+    background: transparent; color: var(--fg); cursor: pointer; }
+  button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--bg); }
+  button:disabled { opacity: .5; cursor: default; }
+  dl { display: grid; grid-template-columns: auto 1fr; gap: 2px 10px; margin: 8px 0 0; font-variant-numeric: tabular-nums; }
+  dt { color: var(--muted); }
+  dd { margin: 0; }
+  #toggle { position: absolute; top: 8px; right: 8px; padding: 2px 8px; }
+  #panel.min > :not(h1):not(#toggle) { display: none; }
+</style>
+</head>
+<body>
+<div id="map"></div>
+<div id="panel">
+  <h1>Building tiles: test page</h1>
+  <button id="toggle" aria-expanded="true">Hide</button>
+  <p>A load and frame-rate test for the Edmonton Civic Map, not the map itself. 384,228 buildings drawn from one 26.8 MB tile file; nothing else is loaded.</p>
+  <div class="row" role="group" aria-label="View">
+    <button id="flat" aria-pressed="true">Flat</button>
+    <button id="tilted" aria-pressed="false">Tilted</button>
+  </div>
+  <div class="row" role="group" aria-label="Buildings">
+    <button id="solid" aria-pressed="true">Solid</button>
+    <button id="ghost" aria-pressed="false">Translucent</button>
+  </div>
+  <div class="row"><button id="bench">Measure frame rate (10 s fly-over)</button></div>
+  <dl>
+    <dt>First full draw</dt><dd id="loaded">…</dd>
+    <dt>Tile bytes fetched</dt><dd id="bytes">…</dd>
+    <dt>Frame rate</dt><dd id="fps">not measured</dd>
+    <dt>Range request</dt><dd id="range">…</dd>
+    <dt>Zoom</dt><dd id="zoom">…</dd>
+  </dl>
+  <p style="margin-top:8px">Buildings: City of Edmonton, Rooflines (as of 2019), data.edmonton.ca, Open Government Licence – City of Edmonton. Heights are from 2019; newer buildings are missing.</p>
+</div>
+<script src="vendor/pmtiles.js"></script>
+<script type="module">
+import * as maplibregl from "./vendor/maplibre-gl.mjs";
+
+const TILES = new URL("data/buildings.pmtiles", location.href).href;
+const $ = (id) => document.getElementById(id);
+const dark = matchMedia("(prefers-color-scheme: dark)").matches;
+const colors = dark ? { bg: "#16181b", building: "#b9b4a8" } : { bg: "#f4f3ef", building: "#8a8478" };
+
+const protocol = new pmtiles.Protocol();
+maplibregl.addProtocol("pmtiles", protocol.tile);
+
+const map = new maplibregl.Map({
+  container: "map",
+  center: [-113.4938, 53.5444],
+  zoom: 14,
+  minZoom: 12,
+  maxPitch: 70,
+  attributionControl: false,
+  style: {
+    version: 8,
+    sources: { buildings: { type: "vector", url: "pmtiles://" + TILES } },
+    layers: [
+      { id: "bg", type: "background", paint: { "background-color": colors.bg } },
+      { id: "buildings", type: "fill-extrusion", source: "buildings", "source-layer": "buildings",
+        paint: { "fill-extrusion-color": colors.building, "fill-extrusion-height": ["get", "h"],
+                 "fill-extrusion-base": 0, "fill-extrusion-opacity": 1 } },
+    ],
+  },
+});
+map.addControl(new maplibregl.NavigationControl({ visualizePitch: true }), "bottom-right");
+
+map.once("idle", () => {
+  $("loaded").textContent = (performance.now() / 1000).toFixed(2) + " s after the page started";
+});
+
+function tileBytes() {
+  const entries = performance.getEntriesByType("resource").filter((e) => e.name.endsWith(".pmtiles"));
+  const total = entries.reduce((s, e) => s + (e.transferSize || e.encodedBodySize || 0), 0);
+  $("bytes").textContent = (total / 1e6).toFixed(2) + " MB in " + entries.length + " requests";
+}
+map.on("idle", tileBytes);
+const showZoom = () => ($("zoom").textContent = map.getZoom().toFixed(1) + ", pitch " + Math.round(map.getPitch()) + "°");
+map.on("move", showZoom);
+showZoom();
+
+// Answers "does the host serve this file in pieces?" directly: 206 and no content-encoding.
+fetch(TILES, { headers: { Range: "bytes=0-15" }, cache: "no-store" }).then((r) => {
+  const enc = r.headers.get("content-encoding") || "none";
+  $("range").textContent = r.status + (r.status === 206 ? " (partial, works)" : " (NOT partial)") + ", encoding " + enc;
+}).catch((e) => ($("range").textContent = "failed: " + e.message));
+
+function press(on, off) { $(on).setAttribute("aria-pressed", "true"); $(off).setAttribute("aria-pressed", "false"); }
+$("flat").onclick = () => { press("flat", "tilted"); map.easeTo({ pitch: 0, bearing: 0 }); };
+$("tilted").onclick = () => { press("tilted", "flat"); map.easeTo({ pitch: 60, bearing: -20 }); };
+$("solid").onclick = () => { press("solid", "ghost"); map.setPaintProperty("buildings", "fill-extrusion-opacity", 1); };
+$("ghost").onclick = () => { press("ghost", "solid"); map.setPaintProperty("buildings", "fill-extrusion-opacity", 0.35); };
+$("toggle").onclick = () => {
+  const min = $("panel").classList.toggle("min");
+  $("toggle").textContent = min ? "Show" : "Hide";
+  $("toggle").setAttribute("aria-expanded", String(!min));
+};
+
+// The same 10-second camera path on every device, so numbers compare across phones.
+$("bench").onclick = () => {
+  const b = $("bench"); b.disabled = true; $("fps").textContent = "measuring…";
+  const frames = []; let last = performance.now(), running = true;
+  const tick = (t) => { frames.push(t - last); last = t; if (running) requestAnimationFrame(tick); };
+  requestAnimationFrame(tick);
+  const start = { center: map.getCenter(), zoom: map.getZoom(), pitch: map.getPitch(), bearing: map.getBearing() };
+  map.easeTo({ center: [-113.47, 53.535], zoom: 15, bearing: start.bearing + 120, duration: 5000, essential: true });
+  map.once("moveend", () => {
+    map.easeTo({ center: start.center, zoom: start.zoom, bearing: start.bearing, duration: 5000, essential: true });
+    map.once("moveend", () => {
+      running = false; b.disabled = false;
+      const d = frames.slice(1).sort((x, y) => x - y);
+      const mean = 1000 / (d.reduce((s, x) => s + x, 0) / d.length);
+      const p95 = d[Math.floor(d.length * 0.95)];
+      const style = ($("tilted").getAttribute("aria-pressed") === "true" ? "tilted" : "flat") + ", " +
+                    ($("ghost").getAttribute("aria-pressed") === "true" ? "translucent" : "solid");
+      $("fps").textContent = mean.toFixed(0) + " fps average, slowest 5% of frames over " + p95.toFixed(0) + " ms (" + style + ")";
+    });
+  });
+};
+</script>
+</body>
+</html>
