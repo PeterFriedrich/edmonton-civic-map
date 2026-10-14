@@ -35,7 +35,7 @@
 <div id="panel">
   <h1>Building tiles: test page</h1>
   <button id="toggle" aria-expanded="true">Hide</button>
-  <p>A load and frame-rate test for the Edmonton Civic Map, not the map itself. 384,228 buildings from one 26.8 MB tile file, and the ground from a 2.69 MB elevation file; nothing else is loaded.</p>
+  <p>A load and frame-rate test for the Edmonton Civic Map, not the map itself. 384,228 buildings from one 28.0 MB tile file (smaller ones appear as you zoom in), and the ground from a 2.69 MB elevation file; nothing else is loaded.</p>
   <div class="row" role="group" aria-label="View">
     <button id="flat" aria-pressed="true">Flat</button>
     <button id="tilted" aria-pressed="false">Tilted</button>
@@ -77,7 +77,7 @@ const map = new maplibregl.Map({
   container: "map",
   center: [-113.4938, 53.5444],
   zoom: 14,
-  minZoom: 10,  // buildings start at z12; below that only the ground shows
+  minZoom: 10,
   maxPitch: 70,
   attributionControl: false,
   style: {

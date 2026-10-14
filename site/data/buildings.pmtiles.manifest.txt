@@ -12,13 +12,16 @@ source_sha256: 258d687f407be88b5f95ceed117c727002db33b6b9c14827abe6041e3ae024e9 
 features: 384228
 layer: buildings
 attributes: h (building height in metres, one decimal)
+minzoom_by_footprint: z10 >= 400 m2, z11 >= 150 m2, z12 >= 50 m2, all from z13 (MIN_AREA in prototype/rooflines.py)
 tool: tippecanoe v2.72.0 (PyPI wheel)
-command: tippecanoe -P -f -o buildings.pmtiles -l buildings -n buildings -N "City of Edmonton Rooflines (as of 2019), jpxi-a9a5, height only" -Z12 -z15 --no-feature-limit --no-tile-size-limit heights.ndjson
+command: tippecanoe -P -f -o buildings.pmtiles -l buildings -n buildings -N "City of Edmonton Rooflines (as of 2019), jpxi-a9a5, height only" -Z10 -z15 --no-feature-limit --no-tile-size-limit heights.ndjson
 # tiles_sha256 covers every tile's z/x/y and content. It is stable across rebuilds;
 # the file's own bytes are not (tippecanoe's metadata block differs run to run).
-tiles_sha256: 5593b3648b1520fb9449e5e7cd03290b7ec4e4aaae9cd4fb174d7d5937fe3ba8
-z12: 36 tiles, 4636442 bytes
+tiles_sha256: f4194045b5244bc3fe73b5423a2f9daf7fd6e04b55315ae9d1ad86875eeaad20
+z10: 4 tiles, 220103 bytes
+z11: 11 tiles, 1649681 bytes
+z12: 36 tiles, 3990316 bytes
 z13: 117 tiles, 5900231 bytes
 z14: 417 tiles, 7293546 bytes
 z15: 1385 tiles, 8964860 bytes
-total: 1955 tiles, 26795079 bytes of tiles
+total: 1970 tiles, 28018737 bytes of tiles

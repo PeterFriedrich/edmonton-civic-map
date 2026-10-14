@@ -8,6 +8,8 @@ Items are verbatim as they were closed, newest-moved first in the order they app
 
 ---
 
+- [x] **Terrain, step 2: draw the terrain under the buildings and decide whether 30 m is enough.** Add `terrain.pmtiles` (2.69 MB, `prototype/README.md`) to the test page as hillshade and as 3D terrain, with buildings seated on it, and look at the river valley on the owner's phone. Then decide whether the 1 m federal lidar (`AB-Edmonton-1m`, 2.38 GB) resampled to about 5–10 m is worth its size. Done when the choice is recorded with the sizes and a phone frame rate.
+
 - [x] **Terrain: read the Edmonton window of MRDEM-30, check it, and pack it as elevation PMTiles.** Sources are in `data/DATA.md`, "Terrain and elevation"; nothing has been read yet. Done when the ledger records CRS, vertical datum, the elevation range across the city and the depth of the river valley as the data shows it, and `prototype/README.md` has the PMTiles size (the report estimates 3–10 MB; encode at 0.1 m steps, since 1 m steps look blocky). Then decide whether the 1 m federal lidar (`AB-Edmonton-1m`, 2.38 GB) resampled to about 5–10 m is worth it.
 
 - [x] **Buildings, step 2: draw the tile files in MapLibre on a real phone** (the owner's; this server has no GPU). With one stack chosen this is a feasibility check, not a comparison. Record first-load time and frame rate, flat and tilted, faint-solid against translucent buildings. Done when the numbers are in `prototype/README.md`.

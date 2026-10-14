@@ -28,7 +28,6 @@ symptom and re-measure the stated cause before acting on it.
 
 ### Map detail phase
 
-- [ ] **Terrain, step 2: draw the terrain under the buildings and decide whether 30 m is enough.** Add `terrain.pmtiles` (2.69 MB, `prototype/README.md`) to the test page as hillshade and as 3D terrain, with buildings seated on it, and look at the river valley on the owner's phone. Then decide whether the 1 m federal lidar (`AB-Edmonton-1m`, 2.38 GB) resampled to about 5–10 m is worth its size. Done when the choice is recorded with the sizes and a phone frame rate.
 - [ ] **Build glyph files for Noto Sans and Noto Sans Canadian Aboriginal and test pihêsiwin and ᐱᐦᐁᓯᐏᐣ** on Android, iOS and desktop. Done when a test page shows both from our own files.
 - [ ] **Find how much geographic detail the site can carry.** Start with "ghost buildings" (faint, translucent, from the 2019 rooflines layer `jpxi-a9a5`), then add terrain and detail in steps; at each step measure the published size against the host's limits, first-load time and frame rate on a mid-range phone. Done when the limits and the chosen level are recorded with their numbers, and a test holds the size budget.
 
@@ -57,6 +56,8 @@ symptom and re-measure the stated cause before acting on it.
 ## Done
 
 Closed items moved out of `## Open work` live in **`docs/TODO_archive.md`** — one line each below, reasoning there.
+
+- [x] **Terrain, step 2: draw the terrain under the buildings and decide whether 30 m is enough.** · `docs/TODO_archive.md`
 
 - [x] **Terrain: read the Edmonton window of MRDEM-30, check it, and pack it as elevation PMTiles.** · `docs/TODO_archive.md`
 

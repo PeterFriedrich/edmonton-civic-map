@@ -50,6 +50,7 @@ the brief wins.
 - **2026-10-13** — **The stack: MapLibre GL JS 6 with its own layers only (no deck.gl); every map layer served as PMTiles files we build with tippecanoe and GDAL; Vite with plain JavaScript modules; a static address … Rejected: OpenLayers (flat only), CesiumJS (heavy, globe-first), deck.gl without MapLibre (weaker cartography, v10 churn), Leaflet (flat, stable line frozen since 2023), a heavy framework.
 - **2026-10-13** — **The address index is split per street: the fastest fetch.** … Rejected: mixing streets into hash buckets so the host cannot tell which street was searched (about 70 kB a lookup against 1–2 kB); the owner chose speed, having already said that what a static host …
 - **2026-10-13** — **Tile files are committed under `site/data/` like the other published files, each with a text manifest beside it** (source URL and fingerprint, tool versions and command, feature count, bytes per … Rejected: building tiles at every deploy (the sources are a 2019 snapshot and terrain, so rebuilding buys nothing and ties publishing to the City portal and an expiring cache).
+- **2026-10-14** — **Terrain is the federal 30 m bare-ground model (MRDEM-30), not the 1 m lidar.** … Rejected: the 1 m federal lidar `AB-Edmonton-1m` (2.38 GB) resampled to 5–10 m, and the City's 2019 and 2025 lidar (about 26 GB each).
 
 ## Open work
 
@@ -68,7 +69,6 @@ the brief wins.
 - **Check the provincial boundary process now, and again after 2026-11-02**, when the Select Special Committee on Electoral Boundaries must report. The 2026-10-13 stack report says the commission's final report gives Edmonton 21 electoral divisions, where the map in force has 20; …
 
 **Map detail phase**
-- **Terrain, step 2: draw the terrain under the buildings and decide whether 30 m is enough.** Add `terrain.pmtiles` (2.69 MB, `prototype/README.md`) to the test page as hillshade and as 3D terrain, with buildings seated on it, and look at the river valley on the owner's phone. …
 - **Build glyph files for Noto Sans and Noto Sans Canadian Aboriginal and test pihêsiwin and ᐱᐦᐁᓯᐏᐣ** on Android, iOS and desktop. Done when a test page shows both from our own files.
 - **Find how much geographic detail the site can carry.** Start with "ghost buildings" (faint, translucent, from the 2019 rooflines layer `jpxi-a9a5`), then add terrain and detail in steps; at each step measure the published size against the host's limits, first-load time and …
 
