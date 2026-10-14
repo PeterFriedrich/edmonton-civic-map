@@ -102,3 +102,55 @@ curl -o wards.geojson 'https://data.edmonton.ca/resource/b4er-5rp2.geojson'
 venv/bin/python prototype/terrain.py wards.geojson work/
 ```
 Check free disk first (`df -h /`); keep downloads out of the repo.
+
+---
+
+# Addendum — 2026-10-14, short session after `/clear` (disk clean-up only)
+
+## 0. Session Metadata
+- **Model:** Opus 5.5 (`claude-opus-5-5`), from the session's own context. No `/model` switch.
+- **Effort:** `$CLAUDE_EFFORT` reads `medium` (checked at handoff).
+- **Date / session #:** 2026-10-14, a short session after S3. Not numbered separately.
+
+## 1. Goal
+Read the S3 handoff, then answer a disk clean-up request from the `server` session. No project code changed.
+
+## 2. Current State
+### ✅ Completed
+- **Disk clean-up, asked for by `server`:** the disk reached 95% today. I deleted three old scratch folders from S1–S3 under `/tmp/claude-1000/-home-opc-edmonton-civic-map/` (`f01be396…`, `200b59bb…` and `e045f768…`, ~2.2 GB of tiles, venvs and downloads). `/` went from 6.0 GB to **8.2 GB free (78%)**. I replied to `server`.
+- **Helper scripts kept** in the git-ignored `output/s3_helpers/` (44 KB, local to this machine, not in git):
+  - `serve.py`: an http.server that answers Range requests with 206;
+  - `perzoom.py`: per-zoom tile sizes;
+  - `bytes_z11.py`, `zoomed.py`;
+  - `shot*.py`: Playwright screenshots;
+  - `check.py`, `dl.py`, `reg.py`, `tsne_check.py`.
+
+  I didn't review each one, so read a script before reusing it.
+- **Memory saved:** `disk-scratch-discipline`. Keep build intermediates in one scratch work dir, run `df -h /` before a build, and delete intermediates afterwards.
+- **No open GitHub issues** at session start.
+
+### ⚠️ In Progress
+Nothing. The owner was asked whether to start with the two proposals or with the template update, and hasn't answered.
+
+### ❌ Blocking Issues
+None.
+
+## 3. Technical Learnings
+- `/tmp/claude-1000/<project>/e045f768…/tasks/` is recreated empty (0 bytes) because the harness writes a shell's output there. Deleting it breaks one Bash result ("output file … could not be read (ENOENT)"), though the command still ran. Leave it alone.
+- The disk is 36 GB with about 8 GB free. A tile build peaks at about 1 GB.
+
+## 4. Next Steps (prioritized)
+The S3 list above still holds, unchanged:
+1. **Press Sync in the claude.ai Project** (owner), if not done since S3:
+   ```
+   docs/BRIEF.md
+   data/DATA.md
+   ```
+2. **Write the two proposals:** (a) districts worked out per address at build time; (b) the Vite build and its CI changes.
+3. Glyph files for Noto Sans and Noto Sans Canadian Aboriginal.
+4. Measure data per view and per session. `output/s3_helpers/serve.py` and `perzoom.py` may help.
+5. **Evaluate the template update** (`scripts/handoff_gap.py`, `tests/test_handoff_gap.py`, `474d0b1...2696438`). Still not evaluated; the notice appeared again at this session's start.
+6. Carried from S2: the "21 provincial divisions" check; `docs/SPEC_lenses.md` §5 and the highways source (owner).
+
+## 5. Restoration Procedure
+Same as S3 §5. Run `df -h /` before any build.
