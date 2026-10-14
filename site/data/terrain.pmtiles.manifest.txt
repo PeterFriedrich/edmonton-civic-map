@@ -1,0 +1,21 @@
+# Manifest for terrain.pmtiles. Text, so a rebuild shows as a readable diff
+# (docs/DECISIONS.md, 2026-10-13, tile files). Trial build, prototype/README.md.
+file: terrain.pmtiles
+source: Natural Resources Canada, MRDEM-30 DTM (STAC collection mrdem-30, item mrdem)
+source_url: https://canelevation-dem.s3.ca-central-1.amazonaws.com/mrdem-30/mrdem-30-dtm.tif
+source_file_date: 2026-06-22
+retrieved: 2026-10-14
+last_verified: 2026-10-14
+licence: Open Government Licence - Canada (OGL-Canada-2.0)
+window: the z9 tiles covering the bounding box of the 12 wards of b4er-5rp2, plus 8 cells; no no-data cells
+encoding: Mapbox Terrain-RGB, height = -10000 + (R*65536 + G*256 + B) * 0.1 m; 256 px PNG; bilinear from 30 m
+vertical_datum: not stated by the publisher (data/DATA.md, Terrain and elevation)
+tool: prototype/terrain.py (rasterio 1.5.2, GDAL 3.12.2, pmtiles 3.8.1)
+command: python prototype/terrain.py wards.geojson OUT_DIR
+# tiles_sha256 covers every tile's z/x/y and content.
+tiles_sha256: 5dfe0be77c290771d047ab9b86546d3f2020608b43328cc555b4b1443d35fac1
+z9: 1 tiles, 66222 bytes
+z10: 4 tiles, 230185 bytes
+z11: 12 tiles, 583097 bytes
+z12: 48 tiles, 1808988 bytes
+total: 65 tiles, 2688492 bytes of tiles
