@@ -135,3 +135,38 @@ downtown.
   untested.
 - The repeat-visit readings (0.22 s, "0.00 MB in 30 requests") came from the
   browser cache: Resource Timing reports cached responses as 0 bytes.
+
+# Trial terrain tiles (2026-10-14)
+
+`TODO.md` "Terrain". The Edmonton window of the federal MRDEM-30 bare-ground
+model, packed as elevation tiles. A size measurement, not a published layer.
+What the heights say (CRS, datum, range, valley depth) is in `data/DATA.md`,
+"Terrain and elevation".
+
+256 px PNG tiles in Mapbox Terrain-RGB encoding at 0.1 m steps, covering the
+city's bounding box, resampled bilinear from the 30 m grid. z12 is 22.7 m a
+pixel at Edmonton's latitude, the nearest zoom to the source.
+
+| Zoom | Tiles | Size |
+|---|---|---|
+| z9 | 1 | 66 kB |
+| z10 | 4 | 230 kB |
+| z11 | 12 | 583 kB |
+| z12 | 48 | 1.81 MB |
+| **File** | 65 | **2.69 MB** |
+
+- Below the stack report's 3–10 MB estimate. PNG is already compressed, so
+  this is also roughly what goes over the wire.
+- Encoding and decoding every tile gives back the resampled heights to within
+  0.05 m, half a step.
+- MapLibre draws terrain past z12 by stretching z12 tiles, so the 30 m source
+  sets the detail at every zoom. Whether that looks good enough beside the
+  buildings, or the 1 m federal lidar resampled to 5–10 m is worth its size,
+  is a visual call not made here.
+- Not drawn yet: nothing here has been rendered.
+
+```bash
+venv/bin/pip install rasterio pillow 'shapely>=2.1' pmtiles
+curl -o wards.geojson 'https://data.edmonton.ca/resource/b4er-5rp2.geojson'
+venv/bin/python prototype/terrain.py wards.geojson work/   # 15 s, reads ~15 MB
+```

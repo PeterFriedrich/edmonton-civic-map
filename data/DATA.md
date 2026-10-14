@@ -197,8 +197,8 @@ quality record to borrow.
 Found 2026-10-13 through the federal STAC catalogue
 (`https://datacube.services.geo.ca/stac/api`, searched with an Edmonton
 bounding box) and the City portal's catalogue API. Sizes are from HTTP headers
-and portal metadata. **No elevation values have been read or checked yet**, and
-vertical datum and CRS are as stated by the publisher, not verified.
+and portal metadata. Elevation values have been read for MRDEM-30 only (below); the other rows are
+catalogue metadata, with vertical datum and CRS as stated by the publisher.
 
 | Dataset | Publisher | Resolution | Vintage | Size and format | Licence, as stated |
 |---|---|---|---|---|---|
@@ -220,6 +220,12 @@ vertical datum and CRS are as stated by the publisher, not verified.
   - **`BLDGHEIGHT`:** median 5.5 m, tallest 198.9 m, 439 over 20 m, 46 at zero or below. The rooflines layer's catalogue figures differ (tallest 146.8 m, 597 over 20 m, 384,228 rows); the two have not been reconciled.
   - `BASEELEV` gives each building's ground height, which a terrain view needs to seat buildings on the slope.
   - Reading it: `pyogrio` refuses the geometry type; it was read by calling the GDAL library bundled with `pyogrio` directly.
+- **MRDEM-30 DTM, Edmonton window read 2026-10-14** (`prototype/terrain.py`; range-read, about 1,900 by 1,900 cells):
+  - **CRS:** EPSG:3979, NAD83(CSRS) / Canada Atlas Lambert; 30 m cells, float32, no-data −32767, LZW, overviews to 1:513. File date 2026-06-22. No no-data cells in the Edmonton window.
+  - **Vertical datum: not stated** in the file or in the STAC collection and item. Against the City's own ground heights (`elevation_ground` of a 5% sample of the rooflines, 19,110 buildings), MRDEM reads **0.48 m lower** at the median (5th to 95th percentile −1.11 to +0.17 m; 0.2% differ by more than 3 m). That fits a CGVD2013 against CGVD28 offset, the City's 2019 lidar being CGVD28, but neither datum is confirmed for these two layers. Half a metre does not show on a map; it matters only if heights are ever quoted.
+  - **Range inside the city** (the 12 wards of `b4er-5rp2` unioned, 759.7 km²): **602.1 to 752.2 m**, median 679.3 m, 1st to 99th percentile 611.0 to 736.0 m.
+  - **River valley depth:** on four north–south cross-sections, the valley floor is 611.5–620.1 m and the higher ground on each side 659–674 m, so the valley is **about 48–59 m deep** (Capilano 48–53, Terwillegar 49–54, Groat Road 52–55, downtown 53–59). "Higher ground" is the highest cell within about 2.5 km on each side of the floor, which can include rises beyond the rim.
+  - Packed as elevation tiles: 2.69 MB (`prototype/README.md`).
 - **Scale check, arithmetic only:** the city is roughly 30 km across, so a 30 m grid is about 1,000 by 1,000 heights and a 10 m grid about 3,000 by 3,000.
 - **River valley edge:** not a layer anywhere found, but derivable from any of the bare-ground models above as the line where slope steepens, or readable from the City's contours.
 - **Not usable as found:** the Alberta Provincial DEM (25 m and 100 m rasters) is built from 1955–1996 photogrammetry; listed only so it is not rediscovered.
