@@ -90,3 +90,25 @@ The PyPI `tippecanoe` wheel carries an aarch64 binary (2.72.0, 2024-12-10;
 upstream is at 2.79.0), so nothing needs compiling on this server. Per-zoom
 sizes come from summing tile lengths with the `pmtiles` Python reader;
 `pmtiles show` (go-pmtiles 1.31.2) gives only the totals.
+
+# GitHub Pages and range requests (2026-10-14)
+
+`TODO.md` "Check that GitHub Pages serves a `.pmtiles` file by range request".
+Checked against the live test page, https://peterfriedrich.github.io/edmonton-civic-map/,
+deployed by `.github/workflows/pages.yml` (run 38508834542).
+
+- **A browser gets what PMTiles needs.** The page's own check, run on the
+  owner's phone, got `206` with no `content-encoding`, and the buildings drew.
+- **That depends on the browser, not on Pages.** Pages serves the file as
+  `application/octet-stream` and compresses it on the fly for any client that
+  accepts gzip. Asked for a range with `Accept-Encoding: gzip`, it answers
+  `206` with ranges of the *gzipped* stream (`content-range: .../26793940`
+  against the file's 26,800,417 bytes), which a PMTiles reader cannot use.
+  Asked with no `Accept-Encoding` or with `identity`, it answers ranges of the
+  real file. Browsers send `identity` on any request that carries a `Range`
+  header (Fetch standard), which is why the page works.
+- So: test with a browser, or with curl and no `Accept-Encoding`. A curl run
+  with `--compressed` or a gzip header will look broken when it is not.
+- Pages sends `cache-control: max-age=600` and a weak `etag` on the file. The
+  PMTiles reader ignores weak etags, so a rebuilt file within those 10 minutes
+  is not caught by etag.
