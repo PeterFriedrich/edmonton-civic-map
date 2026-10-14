@@ -192,6 +192,17 @@ footprints above a size (`MIN_AREA` in `prototype/rooflines.py`):
   (463 kB) the iPhone test drew at 60 fps.
 - Tried and not taken: z10 ≥ 200 m² and z11 ≥ 50 m² (3.7 MB more, busiest
   z11 tile 989 kB).
+- On the live page, zoomed out and tilted 60° with 3D ground, after the
+  fixed 10-second fly-over:
+
+  | Device | Zoom | Frame rate | Tile bytes since the page opened |
+  |---|---|---|---|
+  | iPhone 14 Plus, Safari | 10.4 | 59 fps, slowest 5% of frames over 18 ms | 13.33 MB in 156 requests |
+  | Owner's laptop, 144 Hz | 11.0 | 127 fps, slowest 5% of frames over 14 ms | 15.67 MB in 245 requests |
+
+  The phone's first dip below 60, and too small to see. The byte counts
+  include the fly-over, which dives from z11 to z15 across a wide area, so
+  they are not the cost of one view.
 - Holding back buildings under 50 m² from z12 saved 0.65 MB, less than z10
   and z11 add, so the file is 1.2 MB larger than the z12–z15 build. Half of
   all footprints are under 123 m²; most under 50 m² are also under 4 m tall,
