@@ -1,7 +1,7 @@
 """Build the per-street address index (docs/SPEC_data_schema.md §9).
 
 For every City parcel address, the five districts at full resolution and a
-near-edge bitmask, written as one file per street under site/data/addresses/
+near-edge bitmask, written as one file per street under site/public/data/addresses/
 with streets.json and manifest.txt beside them. Runs after src.build_boundaries.
 
 Before anything is written, two checks run every parcel row through
@@ -11,7 +11,7 @@ prototype/pip.js under node, a second implementation of the lookup:
    give its stored districts, so a click on an address agrees with typing it.
 Either failing stops the build. So does a parcel row left unaccounted for.
 
-    python -m src.build_address_index [--raw data/raw] [--out site/data]
+    python -m src.build_address_index [--raw data/raw] [--out site/public/data]
 """
 import argparse
 import collections
@@ -159,7 +159,7 @@ def check_published(streets, boundaries_dir):
 def manifest(parcel_fetch, layer_fetches, rows, streets, split, dist, near, files):
     n_recs = sum(len(rs) for h in streets.values() for rs in h.values())
     lines = [
-        "# site/data/addresses: built by src/build_address_index.py (docs/SPEC_data_schema.md §9)",
+        "# site/public/data/addresses: built by src/build_address_index.py (docs/SPEC_data_schema.md §9)",
         "",
         "## Sources",
         f"coe_parcels  sha256 {parcel_fetch['sha256']}  retrieved {parcel_fetch['retrieved_at']}",
@@ -237,7 +237,7 @@ def build(raw, out):
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--raw", type=Path, default=REPO / "data" / "raw")
-    ap.add_argument("--out", type=Path, default=REPO / "site" / "data")
+    ap.add_argument("--out", type=Path, default=REPO / "site" / "public" / "data")
     args = ap.parse_args(argv)
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s %(message)s")
     try:

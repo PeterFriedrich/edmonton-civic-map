@@ -1,4 +1,4 @@
-# site/data/addresses: built by src/build_address_index.py (docs/SPEC_data_schema.md §9)
+# site/public/data/addresses: built by src/build_address_index.py (docs/SPEC_data_schema.md §9)
 
 ## Sources
 coe_parcels  sha256 59cb2826f78b28e84b0793073bca5cc27d1bbb46ee8da0bd446c304055b751d4  retrieved 2026-10-15T21:25:08Z

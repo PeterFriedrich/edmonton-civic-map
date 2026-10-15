@@ -16,7 +16,7 @@ sys.path.insert(0, str(REPO))
 ai = importlib.import_module("src.build_address_index")
 bb = importlib.import_module("src.build_boundaries")
 
-ADDR = REPO / "site" / "data" / "addresses"
+ADDR = REPO / "site" / "public" / "data" / "addresses"
 
 
 def test_street_file_names():
@@ -64,10 +64,10 @@ def test_record_point_is_one_of_the_rows():
 def committed():
     if not (ADDR / "streets.json").exists():
         pytest.skip("no committed index")
-    layers = json.loads((REPO / "site" / "data" / "layers.json").read_text(encoding="utf-8"))
+    layers = json.loads((REPO / "site" / "public" / "data" / "layers.json").read_text(encoding="utf-8"))
     ids = {}
     for layer in layers:
-        fc = json.loads((REPO / "site" / "data" / layer["file"]).read_text(encoding="utf-8"))
+        fc = json.loads((REPO / "site" / "public" / "data" / layer["file"]).read_text(encoding="utf-8"))
         ids[layer["id"]] = {f["properties"]["district_id"] for f in fc["features"]}
     return json.loads((ADDR / "streets.json").read_text(encoding="utf-8")), layers, ids
 

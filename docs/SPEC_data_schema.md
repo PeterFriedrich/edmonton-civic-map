@@ -201,7 +201,7 @@ approves the report. "Stop" means nothing is produced. If nothing moved, only
    controls display. Not decided: whether the lens does anything beyond the
    card text, such as colouring the map. Until that is asked for, it does not.
 2. **Where the published files live — decided 2026-10-10, for now:** committed
-   under `site/data/`, so every change to who represents whom is a reviewable
+   under `site/public/data/`, so every change to who represents whom is a reviewable
    diff in git history.
 3. **Thresholds — decided 2026-10-10:** office holders 45 days, boundaries and
    population 180 days (§6).
@@ -281,7 +281,7 @@ reader rule). Point-in-polygon in the browser stays, for map clicks only.
 
 ### 9.2 The files
 
-All under `site/data/addresses/`, committed like the other published files
+All under `site/public/data/addresses/`, committed like the other published files
 (§7 point 2):
 
 - `streets.json`: the 2,800 street names, sorted, each with its file name

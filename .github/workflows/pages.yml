@@ -1,14 +1,15 @@
 name: Pages
 
-# Publishes site/ as it is committed: no build step yet. The Vite build and its
-# cache-busting replace this when they land (TODO.md "Build", proposal first).
-# The vendored libraries are checked against their recorded hashes before
-# upload, so a changed file stops the deploy and the last good site stays live.
+# Builds site/ with Vite and publishes dist/. Every check runs before upload, so
+# a red run leaves the last good site live: the Python tests (the published data
+# and its guards), the build, check_dist.mjs (hashed code, data copied intact)
+# and the browser check on the built site. npm ci verifies every library against
+# the lockfile's checksums, which replaced the vendored SHA256SUMS.
 
 on:
   push:
     branches: [master]
-    paths: ['site/**', '.github/workflows/pages.yml']
+    paths: ['site/**', 'package.json', 'package-lock.json', 'vite.config.js', 'playwright.config.js', 'smoke/**', 'scripts/check_dist.mjs', '.github/workflows/pages.yml']
   workflow_dispatch:
 
 permissions:
@@ -28,14 +29,42 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          fetch-depth: 0  # tests/test_loaded_path.py reads git history
 
-      - name: Check vendored files against SHA256SUMS
-        working-directory: site/vendor
-        run: sha256sum --check --strict SHA256SUMS
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: requirements-ci.txt
+
+      - name: Run tests
+        run: |
+          pip install -r requirements-ci.txt
+          python -m pytest tests/ -q
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Install site dependencies and the test browser
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+
+      - name: Build the site
+        run: npm run build
+
+      - name: Check the built site
+        run: npm run check:dist
+
+      - name: Browser check on the built site
+        run: npm run smoke
 
       - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
         with:
-          path: site
+          path: dist
 
       - id: deployment
         uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1

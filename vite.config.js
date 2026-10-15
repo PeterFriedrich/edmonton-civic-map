@@ -1,0 +1,12 @@
+import { defineConfig } from "vite";
+
+// Pages serves the site under /edmonton-civic-map/, so every URL is relative.
+// site/public/ (published data, and the libraries' licences, which the minifier
+// strips from the bundle) is copied as-is; everything else is bundled with
+// content-hashed file names, which is the cache busting.
+export default defineConfig({
+  root: "site",
+  base: "./",
+  // MapLibre alone is about 1 MB minified; one bundle is expected for now.
+  build: { outDir: "../dist", emptyOutDir: true, chunkSizeWarningLimit: 1200 },
+});

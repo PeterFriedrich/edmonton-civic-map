@@ -31,7 +31,7 @@ six sources into `data/raw/<id>/` (git-ignored), each with a `fetch.json`
 sources are still candidates.
 
 **Boundary build, 2026-10-15:** `python -m src.build_boundaries` turns the five
-layers into `site/data/boundaries/<layer>.geojson` and `site/data/layers.json`.
+layers into `site/public/data/boundaries/<layer>.geojson` and `site/public/data/layers.json`.
 No City boundary file is sourced, so the city outline is the union of the 12
 council wards (783.0 km², one piece; 28 pinholes totalling 67 m²). Clipped to
 it: 29 provincial divisions (20 Edmonton, 9 neighbours with 0.001–0.34 km²

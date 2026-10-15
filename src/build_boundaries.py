@@ -3,7 +3,7 @@
 Reads the five downloaded layers, clips the provincial and federal ridings to
 the city (the union of the council wards; no City boundary file is sourced),
 simplifies each layer as a coverage so neighbours keep shared edges, and
-writes site/data/boundaries/<layer>.geojson and site/data/layers.json.
+writes site/public/data/boundaries/<layer>.geojson and site/public/data/layers.json.
 
 Stops, writing nothing, if any parcel address changes district between the
 full-resolution source and the published file, or falls in no district or in
@@ -11,7 +11,7 @@ more than one. A failure means the tolerance comes down, never that the check
 loosens. Publisher overlaps and gaps are kept as published and their areas
 recorded (docs/DATA_ISSUES.md).
 
-    python -m src.build_boundaries [--raw data/raw] [--out site/data]
+    python -m src.build_boundaries [--raw data/raw] [--out site/public/data]
 """
 import argparse
 import csv
@@ -263,7 +263,7 @@ def build(raw, out):
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--raw", type=Path, default=REPO / "data" / "raw")
-    ap.add_argument("--out", type=Path, default=REPO / "site" / "data")
+    ap.add_argument("--out", type=Path, default=REPO / "site" / "public" / "data")
     args = ap.parse_args(argv)
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s %(message)s")
     try:

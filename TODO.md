@@ -46,15 +46,16 @@ symptom and re-measure the stated cause before acting on it.
 
 ### Build
 
-- [ ] **Propose: the Vite build and what it changes in CI.** Adds a Node toolchain to a Python project and replaces the template's cache-busting step (`docs/WEB_CACHE_BUSTING.md`). Propose before writing.
 - [ ] **Downloaders for the office-holder sources** (`e9qt-cc3j`, `fv5x-8efu`, `eg3i-f4bj`, Assembly `contacts.csv`, House of Commons CSV, the two trustee pages), added to `src/download.py`, each checking its row count and writing `fetch.json`. The trustee scrapers must fail on a layout change, never return an empty roster. The six map and address sources are done (2026-10-15, `data/DATA.md` "In use").
-- [ ] **Diff check and staleness guard** per `docs/SPEC_data_schema.md` §5–§6, including the address-index rows in §9.4 (not built with the index; it compares against `site/data/addresses/manifest.txt`).
+- [ ] **Diff check and staleness guard** per `docs/SPEC_data_schema.md` §5–§6, including the address-index rows in §9.4 (not built with the index; it compares against `site/public/data/addresses/manifest.txt`).
 - [ ] **Weekly refresh workflow on GitHub Actions** per `docs/SPEC_data_schema.md` §8: auto-publish when nothing changed, hold and file an issue otherwise. Changes CI, so propose the workflow before writing it.
 - [ ] **Replace the template `README.md`** with one for this project.
 
 ## Done
 
 Closed items moved out of `## Open work` live in **`docs/TODO_archive.md`** — one line each below, reasoning there.
+
+- [x] **Vite build and what it changes in CI** — DONE 2026-10-15 · `docs/TODO_archive.md`
 
 - [x] **Build `src/build_address_index.py`** — DONE 2026-10-15 · `docs/TODO_archive.md`
 
@@ -72,7 +73,7 @@ Closed items moved out of `## Open work` live in **`docs/TODO_archive.md`** — 
 
 - [x] **Buildings, step 1: one trial tippecanoe build of the rooflines to PMTiles, and record the size.** · `docs/TODO_archive.md`
 
-- [x] **Tile files: committed under `site/data/` or built at deploy.** — DECIDED 2026-10-13 · `docs/TODO_archive.md`
+- [x] **Tile files: committed under `site/public/data/` or built at deploy.** — DECIDED 2026-10-13 · `docs/TODO_archive.md`
 
 - [x] **Map: pick the stack.** — 2026-10-13 · `docs/TODO_archive.md`
 
