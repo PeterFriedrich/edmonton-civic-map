@@ -54,3 +54,22 @@ jobs:
       # supersedes an earlier one has that row marked in place.
       - name: Check decisions log
         run: python scripts/check_decisions_log.py
+
+      # The site build: a PR that breaks the Vite build or ships an unhashed
+      # file goes red here, before merge. The browser check runs at deploy
+      # (pages.yml), where it gates what goes live.
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Install site dependencies
+        run: npm ci
+        env:
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
+
+      - name: Build the site
+        run: npm run build
+
+      - name: Check the built site
+        run: npm run check:dist

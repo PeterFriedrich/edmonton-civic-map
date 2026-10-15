@@ -28,6 +28,10 @@ the brief wins.
 - numpy==2.5.4
 - pyproj==3.8.0
 - shapely==2.2.0
+- maplibre-gl 6.14.0
+- pmtiles 4.5.0
+- @playwright/test 1.63.0 (dev)
+- vite 8.3.4 (dev)
 
 ## Locked decisions
 
@@ -38,7 +42,7 @@ the brief wins.
 - **2026-10-09** — **Currency by design.**
 - **2026-10-09** — **Primary sources only.**
 - **2026-10-10** — **The name is "Edmonton Civic Map"**, chosen by the owner as the more common phrasing over the brief's working title "Edmonton Civic Atlas".
-- **2026-10-10** — **Published data files are committed under `site/data/`** ("for now", owner), not built only at deploy: every change to who represents whom is then a reviewable git diff.
+- **2026-10-10** — AMENDED 2026-10-15 (the folder is now `site/public/data/`).
 - **2026-10-10** — **Staleness thresholds: office holders 45 days; boundaries and population 180 days.**
 - **2026-10-10** — **Party or caucus is shown for MLAs and MPs only, on their cards, behind an opt-in lens that is off by default.** … Rejected: showing none at all (people will look for it anyway) and showing it by default (the tool should not lead with it).
 - **2026-10-10** — **The refresh runs weekly on GitHub Actions and splits on the diff check: no change publishes automatically; any change or broken scraper is held, files an issue, and publishes only when the owner … Rejected: server cron (the run cannot deploy, and depends on the server), auto-publishing changes with an issue afterwards (as `edmonton-tax-viz` does; a wrong name is worse than a late one), …
@@ -54,12 +58,13 @@ the brief wins.
 - **2026-10-13** — **Buildings are the 2019 rooflines (`jpxi-a9a5`) pushed up to a flat roof by their recorded height: the simplest form.** … Rejected: the City's "3D Buildings" model `78sz-qcfr` (about three times the triangles, roof shapes that look like a tool default, no licence stated) and modelling roof shapes ourselves.
 - **2026-10-13** — **The stack: MapLibre GL JS 6 with its own layers only (no deck.gl); every map layer served as PMTiles files we build with tippecanoe and GDAL; Vite with plain JavaScript modules; a static address … Rejected: OpenLayers (flat only), CesiumJS (heavy, globe-first), deck.gl without MapLibre (weaker cartography, v10 churn), Leaflet (flat, stable line frozen since 2023), a heavy framework.
 - **2026-10-13** — **The address index is split per street: the fastest fetch.** … Rejected: mixing streets into hash buckets so the host cannot tell which street was searched (about 70 kB a lookup against 1–2 kB); the owner chose speed, having already said that what a static host …
-- **2026-10-13** — **Tile files are committed under `site/data/` like the other published files, each with a text manifest beside it** (source URL and fingerprint, tool versions and command, feature count, bytes per … Rejected: building tiles at every deploy (the sources are a 2019 snapshot and terrain, so rebuilding buys nothing and ties publishing to the City portal and an expiring cache).
+- **2026-10-13** — AMENDED 2026-10-15 (the folder is now `site/public/data/`). … Rejected: building tiles at every deploy (the sources are a 2019 snapshot and terrain, so rebuilding buys nothing and ties publishing to the City portal and an expiring cache).
 - **2026-10-14** — **Terrain is the federal 30 m bare-ground model (MRDEM-30), not the 1 m lidar.** … Rejected: the 1 m federal lidar `AB-Edmonton-1m` (2.38 GB) resampled to 5–10 m, and the City's 2019 and 2025 lidar (about 26 GB each).
 - **2026-10-15** — **Highways and arterial roads come from the City's road network feed, not OpenStreetMap.** … Rejected: OpenStreetMap roads.
 - **2026-10-15** — **Every lens shares five behaviours:** layers switch without a reload; the selected address or district survives a lens change; each lens has its own legend and source-and-date line; the view (place, …
 - **2026-10-15** — **Districts are worked out per address at build time and stored in the per-street index**, at full resolution; point-in-polygon in the browser is for map clicks only. … Rejected: choosing one parcel row for a split address; holding every weekly refresh for new addresses; one near-edge flag for all five layers.
 - **2026-10-15** — **Boundaries ship as GeoJSON, not PMTiles**: an exception to the stack row of 2026-10-13. … Rejected: shipping each layer twice (GeoJSON and PMTiles); dropping edge ridings that hold no addresses; GEOS coverage clean-up (moved small ridings by up to 9.7 km).
+- **2026-10-15** — **The site is built with Vite, and its content-hashed file names are the cache busting** (owner approved the proposal in session). … Rejected: keeping `site/data/` and copying it in CI (a local `vite preview` would show no data); stamping every data URL (2,800 street files would need a hash manifest).
 
 ## Open work
 
@@ -91,9 +96,8 @@ the brief wins.
 - **Survey what Tier 2 can say by automation.** For each issue in brief §3 (potholes, snow clearing, zoning and infill, transit, policing, schools, water and stormwater, property tax and assessment), find whether a primary source states the responsible body and the way to engage …
 
 **Build**
-- **Propose: the Vite build and what it changes in CI.** Adds a Node toolchain to a Python project and replaces the template's cache-busting step (`docs/WEB_CACHE_BUSTING.md`). Propose before writing.
 - **Downloaders for the office-holder sources** (`e9qt-cc3j`, `fv5x-8efu`, `eg3i-f4bj`, Assembly `contacts.csv`, House of Commons CSV, the two trustee pages), added to `src/download.py`, each checking its row count and writing `fetch.json`. The trustee scrapers must fail on a …
-- **Diff check and staleness guard** per `docs/SPEC_data_schema.md` §5–§6, including the address-index rows in §9.4 (not built with the index; it compares against `site/data/addresses/manifest.txt`).
+- **Diff check and staleness guard** per `docs/SPEC_data_schema.md` §5–§6, including the address-index rows in §9.4 (not built with the index; it compares against `site/public/data/addresses/manifest.txt`).
 - **Weekly refresh workflow on GitHub Actions** per `docs/SPEC_data_schema.md` §8: auto-publish when nothing changed, hold and file an issue otherwise. Changes CI, so propose the workflow before writing it.
 - **Replace the template `README.md`** with one for this project.
 

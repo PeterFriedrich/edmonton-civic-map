@@ -8,6 +8,8 @@ Items are verbatim as they were closed, newest-moved first in the order they app
 
 ---
 
+- [x] **Vite build and what it changes in CI** — DONE 2026-10-15. Proposal approved in session; built as proposed: Vite with hashed file names, data in `site/public/data/`, `site/vendor/` replaced by npm, `scripts/check_dist.mjs` on every PR, Playwright check at deploy, Python tests before deploy (`docs/DECISIONS.md`).
+
 - [x] **Build `src/build_address_index.py`** per `docs/SPEC_data_schema.md` §9: the street files and `manifest.txt` under `site/data/addresses/`, the §9.4 diff-check rows and the §9.5 tests. Needs the address downloader and the boundary build first (items below). Done when the index is committed and all four §9.5 tests pass. DONE 2026-10-15: `site/data/addresses/`, 2,800 street files; pip.js agrees with the build on all 298,453 parcel rows at full resolution and on all 288,534 records against the published boundaries.
 
 - [x] **Boundary build**: reproject, clip provincial and federal layers to the city, simplify at the recorded tolerance, with a test that no parcel address changes district against full resolution. DONE 2026-10-15: `src/build_boundaries.py`, `site/data/boundaries/`, `site/data/layers.json`; every one of 298,453 parcel addresses keeps its district at 5 m on all five layers.
