@@ -2,3 +2,5 @@
 # installs; keep the two in lockstep.
 pytest==9.0.3
 copier==9.18.2
+certifi==2026.7.22
+pyshp==3.1.6

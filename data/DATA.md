@@ -22,6 +22,14 @@ entry below was inspected on 2026-10-10 from the live source, and the figures
 are from that inspection. A source moves from "candidate" to "in use" when a
 downloader exists for it.
 
+**In use (downloader exists), 2026-10-15:** `python -m src.download` fetches
+six sources into `data/raw/<id>/` (git-ignored), each with a `fetch.json`
+(`docs/SPEC_data_schema.md` §2): `coe_parcels` (`ut27-nrpn`, `PARCEL` rows),
+`coe_wards`, `coe_public_school_wards`, `coe_catholic_school_wards`,
+`ab_ridings`, `fed_ridings`. All six passed on the first live run
+(298,453 / 12 / 9 / 7 / 87 / 343 rows; about 30 s, 43 MB). The office-holder
+sources are still candidates.
+
 **Primary sources only** (`docs/SPEC_civic_map.md` §4). News and Wikipedia are
 context, never data.
 

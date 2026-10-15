@@ -23,6 +23,8 @@ the brief wins.
 
 - pytest==9.0.3
 - copier==9.18.2
+- certifi==2026.7.22
+- pyshp==3.1.6
 
 ## Locked decisions
 
@@ -87,7 +89,7 @@ the brief wins.
 **Build**
 - **Build `src/build_address_index.py`** per `docs/SPEC_data_schema.md` §9: the street files and `manifest.txt` under `site/data/addresses/`, the §9.4 diff-check rows and the §9.5 tests. Needs the address downloader and the boundary build first (items below). Done when the index …
 - **Propose: the Vite build and what it changes in CI.** Adds a Node toolchain to a Python project and replaces the template's cache-busting step (`docs/WEB_CACHE_BUSTING.md`). Propose before writing.
-- **Downloaders, one per source in `data/DATA.md`**, each checking its row count and writing a `sources.json` entry.
+- **Downloaders for the office-holder sources** (`e9qt-cc3j`, `fv5x-8efu`, `eg3i-f4bj`, Assembly `contacts.csv`, House of Commons CSV, the two trustee pages), added to `src/download.py`, each checking its row count and writing `fetch.json`. The trustee scrapers must fail on a …
 - **Boundary build**: reproject, clip provincial and federal layers to the city, simplify at the recorded tolerance, with a test that no parcel address changes district against full resolution.
 - **Diff check and staleness guard** per `docs/SPEC_data_schema.md` §5–§6.
 - **Weekly refresh workflow on GitHub Actions** per `docs/SPEC_data_schema.md` §8: auto-publish when nothing changed, hold and file an issue otherwise. Changes CI, so propose the workflow before writing it.
