@@ -226,3 +226,44 @@ hillshade and as 3D ground, buildings seated on it.
 - Not measured: tilted, translucent, with 3D ground.
 - **The owner judged 30 m terrain "plenty"**, so the 1 m federal lidar is not
   needed (`docs/DECISIONS.md`, 2026-10-14).
+
+# Districts per address (2026-10-15)
+
+`TODO.md` "Propose: districts worked out per address at build time"; the
+proposal is `docs/SPEC_data_schema.md` §9. `address_districts.py` assigns
+every parcel address to its five districts at full resolution (EPSG:3776) and
+sizes the proposed index. Prints a report; writes nothing.
+
+Inputs, retrieved 2026-10-15: 298,453 `PARCEL` rows of `ut27-nrpn` (count
+matches `count(*)`); `b4er-5rp2`, `d7pj-rist`, `pwzf-sjj2`; the Elections
+Alberta 2017 divisions; the Elections Canada 2023 districts.
+
+| Layer | Districts holding addresses | In none | In more than one | Within 20 m of an edge |
+|---|---|---|---|---|
+| Council wards | 12 | 0 | 0 | 521 |
+| Public school wards | 9 | 0 | 0 | 340 |
+| Catholic school wards | 7 | 0 | 0 | 123 |
+| Provincial ridings | 21 | 0 | 0 | 246 |
+| Federal ridings | 11 | 0 | 0 | 380 |
+
+1,342 addresses are within 20 m of an edge on at least one layer.
+
+- **Shared house number + street:** 288,526 distinct pairs; 2,477 on more than
+  one row (9,927 extra rows; largest 1025 Secord Promenade NW, 141 rows). Rows
+  of one pair lie a median 22.4 m apart (90th percentile 130 m, max 2,979 m;
+  26 over 500 m).
+- **8 pairs have rows in different districts**; the other 2,469 agree on all
+  five layers. The eight are listed in the proposal, §9.3.
+- **Index size:** 2,800 street files, 288,534 records, 2.33 MB gzipped in all;
+  median street 397 B, largest 8,659 B (80 Avenue NW); street list 11.1 kB.
+
+## Re-running
+
+```bash
+python3.12 -m venv venv && venv/bin/pip install 'shapely>=2.1' pyproj numpy pyshp certifi
+# into one work dir: parcels.csv (house_number, street_name, latitude,
+# longitude; page ut27-nrpn on :id, object_type='PARCEL'), the three City
+# layers as <id>.geojson, the Elections Alberta zip unpacked into ab/ and the
+# Elections Canada zip into fed/ (URLs and fetch quirks: data/DATA.md)
+venv/bin/python prototype/address_districts.py work/
+```

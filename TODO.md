@@ -46,7 +46,7 @@ symptom and re-measure the stated cause before acting on it.
 
 ### Build
 
-- [ ] **Propose: districts worked out per address at build time** (`docs/SPEC_lenses.md` §8). Changes the published data, so write the proposal first: the index format per street, what happens to the 9,923 parcel rows that share a house number and street with another row, how the diff check covers the index, and a test that compares every stored district with point-in-polygon.
+- [ ] **Districts worked out per address at build time: proposal written, waiting on the owner.** `docs/SPEC_data_schema.md` §9 (2026-10-15) has the format, the 8 split addresses, the diff-check rows and the tests; §9.6 lists four points to settle. Done when the owner settles them and a DECISIONS row records it; building `src/build_address_index.py` is then its own item.
 - [ ] **Propose: the Vite build and what it changes in CI.** Adds a Node toolchain to a Python project and replaces the template's cache-busting step (`docs/WEB_CACHE_BUSTING.md`). Propose before writing.
 - [ ] **Downloaders, one per source in `data/DATA.md`**, each checking its row count and writing a `sources.json` entry.
 - [ ] **Boundary build**: reproject, clip provincial and federal layers to the city, simplify at the recorded tolerance, with a test that no parcel address changes district against full resolution.

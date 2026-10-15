@@ -107,7 +107,7 @@ Use Python with `certifi`'s bundle. Do not disable verification.
 - **Vintage:** `EDS_ENACTED_BILL33_15DEC2017` — the divisions enacted in 2017, in force since 2019-03-19. These are the divisions the current 31st Legislature sits for.
 - **⚠️ Change pending.** The Electoral Boundaries Commission's final report (tabled 2026-03-26) was set aside. Government Motion 37 (passed 2026-04-21) created the Select Special Committee on Electoral Boundaries, which must report to the Assembly by **2026-11-02**. Nothing was enacted as of 2026-10-09. A new map would apply from the next general election, so MLAs keep representing the 2017 divisions until then; the tool will need to show current ridings and, once enacted, label the future ones as future. Source: https://www.assembly.ab.ca/assembly-business/committees/CEB
 - **Coverage of Edmonton, measured:** 20 "Edmonton-" divisions. All 298,238 City parcel addresses fall in exactly one division; **1 address falls in Morinville-St. Albert**. Eight other neighbouring divisions overlap the City's area by slivers under 0.4 km² each, with no addresses in them.
-- **Quirks:** no licence or terms of use are stated on the download page. The open.alberta.ca "electoral division" dataset describes the 2010 boundaries; do not use it.
+- **Quirks:** the server answers 403 to Python's default User-Agent; send one naming the project (2026-10-15). No licence or terms of use are stated on the download page. The open.alberta.ca "electoral division" dataset describes the 2010 boundaries; do not use it.
 
 ### MLAs — Legislative Assembly of Alberta
 - **Publisher / URL:** https://www.assembly.ab.ca/members/members-of-the-legislative-assembly → `https://www.assembly.ab.ca/txt/mla_home/contacts.csv`
@@ -138,7 +138,8 @@ Use Python with `certifi`'s bundle. Do not disable verification.
 - **Size, measured:** 288,315 distinct house number + street pairs across 2,800 street names. As a compact JSON index (street → house number, lat, lon to 5 decimals) it is 8.4 MB, **2.2 MB gzipped**.
 - **Quirks:**
   - **`record_id` is not unique within `PARCEL` rows** (298,238 rows, 298,154 distinct ids), so `$order=record_id` is not a stable paging order. Page on Socrata's `:id` and check the total against `count(*)`.
-  - 2,474 house number + street pairs appear on more than one parcel row. Check whether duplicates ever straddle a boundary before collapsing them.
+  - 2,474 house number + street pairs appear on more than one parcel row (2,477 on 2026-10-15, 9,927 rows beyond the first). **8 of them have rows in different districts** on at least one layer, so they cannot be collapsed to one answer; the other 2,469 agree on all five layers. Measured 2026-10-15, `prototype/README.md` "Districts per address".
+  - 298,453 `PARCEL` rows on 2026-10-15 (298,238 on 2026-10-10).
   - `street_name` is upper case with the quadrant suffix (`ALEXANDER CIRCLE NW`). No postal code.
   - A single 300,000-row CSV request stalled twice; 50,000-row pages return in about 9 s each.
 

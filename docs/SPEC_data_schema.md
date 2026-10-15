@@ -260,3 +260,144 @@ that was live for four days.
 list, so the amount of checking can be traded against effort later. A possible
 later step, the owner's call: an unattended agent run that opens the PR itself
 when an issue is filed.
+
+## 9. The address index: districts worked out per address at build time (PROPOSED 2026-10-15)
+
+**Status: proposal, waiting on the owner (§9.6).** `TODO.md` "Build";
+recommended by the stack report (`docs/SPEC_lenses.md` §8). Measured on
+2026-10-15 with `prototype/address_districts.py`; numbers in
+`prototype/README.md` "Districts per address".
+
+### 9.1 What changes
+
+Today's plan (brief §5): the browser geocodes an address against a local
+address list, then runs point-in-polygon against the five boundary files. The
+proposal moves the point-in-polygon to the build. For every City parcel
+address the build works out all five districts at **full resolution** and
+writes them into the per-street address index. Typing an address then needs
+one small file and no geometry and no map: the lookup and cards work before
+the map loads, and without it (`docs/SPEC_lenses.md` §5, keyboard and screen
+reader rule). Point-in-polygon in the browser stays, for map clicks only.
+
+### 9.2 The files
+
+All under `site/data/addresses/`, committed like the other published files
+(§7 point 2):
+
+- `streets.json`: the 2,800 street names, sorted, each with its file name
+  (`"124 STREET NW"` → `124-street-nw.json`). 11 kB gzipped; loads with the
+  page.
+- `<street>.json`, one per street: house number → list of records.
+
+  ```json
+  { "10024": [[53.54053, -113.53362, "council_ward:odaymin", "public_school_ward:D",
+               "catholic_school_ward:75", "provincial_riding:29", "federal_riding:48015", 0],
+              [53.54112, -113.5365, "council_ward:odaymin", "public_school_ward:D",
+               "catholic_school_ward:75", "provincial_riding:32", "federal_riding:48015", 3]] }
+  ```
+
+  (10024 124 Street NW, one of the eight split addresses in §9.3. The second
+  record's `3` means within 20 m of a council ward edge and a public school
+  ward edge.)
+
+  A record is a point (latitude, longitude, 5 decimals), the five
+  `district_id`s in the order of `layers.json`, and a near-edge bitmask: bit
+  *n* set means the parcel point is within `near_boundary_m` (20 m) of an edge
+  of layer *n*. Nearly every address has one record. There is more than one
+  only when the address's parcel rows fall in different districts (§9.3).
+  The point is a real address point: the row nearest the group's centre, not
+  a computed one.
+- `manifest.txt`, the readable diff, as for the tile files: the source ids
+  with their `sha256` and retrieval dates, parcel rows in and records out,
+  addresses per district per layer, the near-edge counts, every split address
+  (§9.3) written out, and one hash over all street files.
+
+**Measured size:** 288,534 records in 2,800 files, **2.33 MB gzipped in all**.
+The median street file is 0.4 kB and the largest is 8.7 kB (80 Avenue NW), so
+a lookup costs about the street list plus one file. Splitting per street was
+already decided (DECISIONS 2026-10-13).
+
+The provincial column is the map in force today (§3 `effective_from`). When a
+new provincial map is enacted, the index gains a column for it with its own
+`effective_from`, so the card can show "from the next election" beside the
+current riding.
+
+### 9.3 Addresses on more than one parcel row
+
+298,453 `PARCEL` rows give 288,526 distinct house number + street pairs. 2,477
+pairs sit on more than one row: 9,927 rows beyond the first. The largest is
+1025 Secord Promenade NW with 141 rows. The rows of one pair lie a median 22 m
+apart, and 26 pairs spread over 500 m (up to 3.0 km, 6015 129 Avenue NW).
+
+- **2,469 pairs agree on all five layers.** They become one record.
+- **8 pairs have rows in different districts.** Each distinct set of
+  districts is kept as its own record, and the card says the address covers
+  parcels in more than one district and shows each. **Never pick one.** Six
+  differ in one layer, two in two:
+
+  | Address | Rows | Layers that differ |
+  |---|---|---|
+  | 10024 124 Street NW | 2 | provincial (29, 32) |
+  | 6015 129 Avenue NW | 2 | provincial (35, 27) |
+  | 8132 133 Street NW | 2 | council (sipiwiyiniwak, Nakota Isga) |
+  | 3705 141 Street SW | 104 | federal (94 rows in 48016, 10 in 48020) |
+  | 1650 Hector Road NW | 2 | public school (F, H) |
+  | 12030 River Valley Road NW | 6 | council, public school, provincial |
+  | 12702 St Albert Trail NW | 2 | public school (C, A) |
+  | 19751 Whitemud Drive NW | 2 | provincial (36, 43) |
+
+No parcel row is dropped: every row lands in exactly one record, and the
+build counts rows in against rows accounted for.
+
+`SUITE` rows (478,376) are not indexed. The lookup is by house number and
+street, and a suite shares its parcel's.
+
+### 9.4 How the diff check covers it
+
+The index is derived from two inputs, addresses and boundaries, so a change
+in it is either one of them moving. New rows for the §5 table:
+
+| Change | Severity |
+|---|---|
+| parcel rows in ≠ rows accounted for in the index | stop |
+| an address in no district, or in more than one, on any layer | stop |
+| parcel row count moved more than 1% since the last run | stop |
+| an existing address changed district **while no boundary moved** | review |
+| the list of split addresses (§9.3) changed | review |
+| addresses added or removed, under the 1% line | **pass**, counts in the run log (§9.6 point 2) |
+
+An address that changed district because a boundary moved needs no row of its
+own: the boundary change already holds the run, and the report lists how many
+addresses moved, per district.
+
+### 9.5 Tests
+
+1. **Every stored district matches full resolution, by a second method.** The
+   build uses shapely (GEOS). The check re-derives every parcel row with
+   `prototype/pip.js` (ray casting, run under node) against the
+   full-resolution source layers, and requires every row to match.
+   It needs the downloaded sources, so it runs in the build and the refresh,
+   not in the unit tests.
+2. **A click on the address agrees with typing it.** Every record's point,
+   run through `pip.js` against the **published, simplified** boundary files,
+   must give the stored districts. Zero mismatches; a failure means the
+   tolerance comes down, not that the test loosens. This is also the test the
+   "Boundary build" item in `TODO.md` calls for.
+3. **No silent drops.** Rows in = rows accounted for; every split address is
+   in the manifest.
+4. **Shape.** A unit test over the committed files: every record has five
+   `district_id`s that exist in `layers.json`, and every street in
+   `streets.json` has its file and no file is unlisted.
+
+### 9.6 Points for the owner
+
+1. **Split addresses: show every district set, with a note** (recommended),
+   rather than choosing one row.
+2. **New addresses pass without review** (recommended). The City adds
+   addresses most weeks; each is placed by the same tested code, and the run
+   log counts them. The alternative holds every week's refresh for a person.
+3. **Near-edge note per layer** (recommended): the card says "near the ward
+   edge" for that layer only. 1,342 addresses are within 20 m of an edge on
+   at least one layer. The alternative is one flag for all five.
+4. **The new module is `src/build_address_index.py`**, run after the
+   boundary build and before the diff check.
