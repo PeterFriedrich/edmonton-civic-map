@@ -134,7 +134,9 @@ judgement to the reader. It never says a line is good or bad.
   highways and rail lines are drawn prominently, so it is visible where a
   boundary runs along one and where it does not.
 - **Data.** The City's road network has 53,873 segments with a functional
-  class; about 8,900 are arterials, including primary highways. No ready layer
+  class; about 8,900 are arterials, including primary highways. Highways and
+  arterials come from this City feed, not OpenStreetMap (decided 2026-10-15).
+  No ready layer
   has been found for the river valley edge or rail lines.
 - **Needs.** Line layers filtered by class; strong visual separation between
   "barrier" lines and "boundary" lines, which will often coincide; possibly
