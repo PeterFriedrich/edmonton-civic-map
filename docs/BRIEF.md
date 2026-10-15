@@ -25,6 +25,9 @@ the brief wins.
 - copier==9.18.2
 - certifi==2026.7.22
 - pyshp==3.1.6
+- numpy==2.5.4
+- pyproj==3.8.0
+- shapely==2.2.0
 
 ## Locked decisions
 
@@ -56,6 +59,7 @@ the brief wins.
 - **2026-10-15** — **Highways and arterial roads come from the City's road network feed, not OpenStreetMap.** … Rejected: OpenStreetMap roads.
 - **2026-10-15** — **Every lens shares five behaviours:** layers switch without a reload; the selected address or district survives a lens change; each lens has its own legend and source-and-date line; the view (place, …
 - **2026-10-15** — **Districts are worked out per address at build time and stored in the per-street index**, at full resolution; point-in-polygon in the browser is for map clicks only. … Rejected: choosing one parcel row for a split address; holding every weekly refresh for new addresses; one near-edge flag for all five layers.
+- **2026-10-15** — **Boundaries ship as GeoJSON, not PMTiles**: an exception to the stack row of 2026-10-13. … Rejected: shipping each layer twice (GeoJSON and PMTiles); dropping edge ridings that hold no addresses; GEOS coverage clean-up (moved small ridings by up to 9.7 km).
 
 ## Open work
 
@@ -90,13 +94,13 @@ the brief wins.
 - **Build `src/build_address_index.py`** per `docs/SPEC_data_schema.md` §9: the street files and `manifest.txt` under `site/data/addresses/`, the §9.4 diff-check rows and the §9.5 tests. Needs the address downloader and the boundary build first (items below). Done when the index …
 - **Propose: the Vite build and what it changes in CI.** Adds a Node toolchain to a Python project and replaces the template's cache-busting step (`docs/WEB_CACHE_BUSTING.md`). Propose before writing.
 - **Downloaders for the office-holder sources** (`e9qt-cc3j`, `fv5x-8efu`, `eg3i-f4bj`, Assembly `contacts.csv`, House of Commons CSV, the two trustee pages), added to `src/download.py`, each checking its row count and writing `fetch.json`. The trustee scrapers must fail on a …
-- **Boundary build**: reproject, clip provincial and federal layers to the city, simplify at the recorded tolerance, with a test that no parcel address changes district against full resolution.
 - **Diff check and staleness guard** per `docs/SPEC_data_schema.md` §5–§6.
 - **Weekly refresh workflow on GitHub Actions** per `docs/SPEC_data_schema.md` §8: auto-publish when nothing changed, hold and file an issue otherwise. Changes CI, so propose the workflow before writing it.
 - **Replace the template `README.md`** with one for this project.
 
 ## Known upstream data defects
 
+- 2026-10-15 · City of Edmonton open data: `b4er-5rp2` (council wards), `d7pj-rist` (public school wards), `pwzf-sjj2` (Catholic school wards); Elections Alberta 2017 divisions: Neighbouring districts do not share exact edges: the layers overlap slightly and leave small gaps. Elections Canada's federal layer is clean. — status: NOT SENT
 - 2026-10-10 · City of Edmonton open data: `d7pj-rist` (public school wards), `pwzf-sjj2` (Catholic school wards): The `trustee` column still names the 2021–2025 trustees, although the datasets describe themselves as "the associated board trustee in office" and were refreshed 2026-10-05. — status: NOT SENT
 
 ## Where things live
