@@ -52,6 +52,7 @@ the brief wins.
 - **2026-10-13** — **Tile files are committed under `site/data/` like the other published files, each with a text manifest beside it** (source URL and fingerprint, tool versions and command, feature count, bytes per … Rejected: building tiles at every deploy (the sources are a 2019 snapshot and terrain, so rebuilding buys nothing and ties publishing to the City portal and an expiring cache).
 - **2026-10-14** — **Terrain is the federal 30 m bare-ground model (MRDEM-30), not the 1 m lidar.** … Rejected: the 1 m federal lidar `AB-Edmonton-1m` (2.38 GB) resampled to 5–10 m, and the City's 2019 and 2025 lidar (about 26 GB each).
 - **2026-10-15** — **Highways and arterial roads come from the City's road network feed, not OpenStreetMap.** … Rejected: OpenStreetMap roads.
+- **2026-10-15** — **Every lens shares five behaviours:** layers switch without a reload; the selected address or district survives a lens change; each lens has its own legend and source-and-date line; the view (place, …
 
 ## Open work
 

@@ -167,7 +167,7 @@ judgement to the reader. It never says a line is good or bad.
 
 ## 5. What every lens shares
 
-Proposed, not yet confirmed by the owner:
+Confirmed by the owner 2026-10-15:
 
 - Layers switch on and off without reloading, and a lens can combine a base
   layer, an extra data layer and a boundary overlay.
