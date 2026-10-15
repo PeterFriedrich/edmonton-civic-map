@@ -46,7 +46,7 @@ symptom and re-measure the stated cause before acting on it.
 
 ### Build
 
-- [ ] **Districts worked out per address at build time: proposal written, waiting on the owner.** `docs/SPEC_data_schema.md` §9 (2026-10-15) has the format, the 8 split addresses, the diff-check rows and the tests; §9.6 lists four points to settle. Done when the owner settles them and a DECISIONS row records it; building `src/build_address_index.py` is then its own item.
+- [ ] **Build `src/build_address_index.py`** per `docs/SPEC_data_schema.md` §9: the street files and `manifest.txt` under `site/data/addresses/`, the §9.4 diff-check rows and the §9.5 tests. Needs the address downloader and the boundary build first (items below). Done when the index is committed and all four §9.5 tests pass.
 - [ ] **Propose: the Vite build and what it changes in CI.** Adds a Node toolchain to a Python project and replaces the template's cache-busting step (`docs/WEB_CACHE_BUSTING.md`). Propose before writing.
 - [ ] **Downloaders, one per source in `data/DATA.md`**, each checking its row count and writing a `sources.json` entry.
 - [ ] **Boundary build**: reproject, clip provincial and federal layers to the city, simplify at the recorded tolerance, with a test that no parcel address changes district against full resolution.
@@ -57,6 +57,8 @@ symptom and re-measure the stated cause before acting on it.
 ## Done
 
 Closed items moved out of `## Open work` live in **`docs/TODO_archive.md`** — one line each below, reasoning there.
+
+- [x] **Districts worked out per address at build time: proposal written, waiting on the owner.** — DECIDED 2026-10-15 · `docs/TODO_archive.md`
 
 - [x] **Terrain, step 2: draw the terrain under the buildings and decide whether 30 m is enough.** · `docs/TODO_archive.md`
 

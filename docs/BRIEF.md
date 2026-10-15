@@ -53,6 +53,7 @@ the brief wins.
 - **2026-10-14** — **Terrain is the federal 30 m bare-ground model (MRDEM-30), not the 1 m lidar.** … Rejected: the 1 m federal lidar `AB-Edmonton-1m` (2.38 GB) resampled to 5–10 m, and the City's 2019 and 2025 lidar (about 26 GB each).
 - **2026-10-15** — **Highways and arterial roads come from the City's road network feed, not OpenStreetMap.** … Rejected: OpenStreetMap roads.
 - **2026-10-15** — **Every lens shares five behaviours:** layers switch without a reload; the selected address or district survives a lens change; each lens has its own legend and source-and-date line; the view (place, …
+- **2026-10-15** — **Districts are worked out per address at build time and stored in the per-street index**, at full resolution; point-in-polygon in the browser is for map clicks only. … Rejected: choosing one parcel row for a split address; holding every weekly refresh for new addresses; one near-edge flag for all five layers.
 
 ## Open work
 
@@ -84,7 +85,7 @@ the brief wins.
 - **Survey what Tier 2 can say by automation.** For each issue in brief §3 (potholes, snow clearing, zoning and infill, transit, policing, schools, water and stormwater, property tax and assessment), find whether a primary source states the responsible body and the way to engage …
 
 **Build**
-- **Districts worked out per address at build time: proposal written, waiting on the owner.** `docs/SPEC_data_schema.md` §9 (2026-10-15) has the format, the 8 split addresses, the diff-check rows and the tests; §9.6 lists four points to settle. Done when the owner settles them and …
+- **Build `src/build_address_index.py`** per `docs/SPEC_data_schema.md` §9: the street files and `manifest.txt` under `site/data/addresses/`, the §9.4 diff-check rows and the §9.5 tests. Needs the address downloader and the boundary build first (items below). Done when the index …
 - **Propose: the Vite build and what it changes in CI.** Adds a Node toolchain to a Python project and replaces the template's cache-busting step (`docs/WEB_CACHE_BUSTING.md`). Propose before writing.
 - **Downloaders, one per source in `data/DATA.md`**, each checking its row count and writing a `sources.json` entry.
 - **Boundary build**: reproject, clip provincial and federal layers to the city, simplify at the recorded tolerance, with a test that no parcel address changes district against full resolution.
