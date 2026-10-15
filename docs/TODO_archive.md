@@ -8,6 +8,8 @@ Items are verbatim as they were closed, newest-moved first in the order they app
 
 ---
 
+- [x] **Build `src/build_address_index.py`** per `docs/SPEC_data_schema.md` §9: the street files and `manifest.txt` under `site/data/addresses/`, the §9.4 diff-check rows and the §9.5 tests. Needs the address downloader and the boundary build first (items below). Done when the index is committed and all four §9.5 tests pass. DONE 2026-10-15: `site/data/addresses/`, 2,800 street files; pip.js agrees with the build on all 298,453 parcel rows at full resolution and on all 288,534 records against the published boundaries.
+
 - [x] **Boundary build**: reproject, clip provincial and federal layers to the city, simplify at the recorded tolerance, with a test that no parcel address changes district against full resolution. DONE 2026-10-15: `src/build_boundaries.py`, `site/data/boundaries/`, `site/data/layers.json`; every one of 298,453 parcel addresses keeps its district at 5 m on all five layers.
 
 - [x] **Districts worked out per address at build time: proposal written, waiting on the owner.** `docs/SPEC_data_schema.md` §9 (2026-10-15) has the format, the 8 split addresses, the diff-check rows and the tests; §9.6 lists four points to settle. Done when the owner settles them and a DECISIONS row records it; building `src/build_address_index.py` is then its own item. DECIDED 2026-10-15: all four §9.6 points as recommended.

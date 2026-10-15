@@ -263,7 +263,7 @@ when an issue is filed.
 
 ## 9. The address index: districts worked out per address at build time (decided 2026-10-15)
 
-**Status: decided 2026-10-15 (§9.6), not built.** `TODO.md` "Build";
+**Status: decided 2026-10-15 (§9.6); built the same day by `src/build_address_index.py`.** `TODO.md` "Build";
 recommended by the stack report (`docs/SPEC_lenses.md` §8). Measured on
 2026-10-15 with `prototype/address_districts.py`; numbers in
 `prototype/README.md` "Districts per address".
@@ -314,7 +314,11 @@ All under `site/data/addresses/`, committed like the other published files
 
 **Measured size:** 288,534 records in 2,800 files, **2.33 MB gzipped in all**.
 The median street file is 0.4 kB and the largest is 8.7 kB (80 Avenue NW), so
-a lookup costs about the street list plus one file. Splitting per street was
+a lookup costs about the street list plus one file. **As built** (full
+`district_id`s and 6-decimal points, which check 2 in §9.5 needs: a ~1 m
+point can cross a line): 3.10 MB gzipped, 45 MB uncompressed; median street
+file 0.56 kB; `streets.json` 24.9 kB gzipped. The build takes about 5½
+minutes, nearly all of it the two pip.js checks. Splitting per street was
 already decided (DECISIONS 2026-10-13).
 
 The provincial column is the map in force today (§3 `effective_from`). When a
