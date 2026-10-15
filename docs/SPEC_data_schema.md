@@ -261,9 +261,9 @@ list, so the amount of checking can be traded against effort later. A possible
 later step, the owner's call: an unattended agent run that opens the PR itself
 when an issue is filed.
 
-## 9. The address index: districts worked out per address at build time (PROPOSED 2026-10-15)
+## 9. The address index: districts worked out per address at build time (decided 2026-10-15)
 
-**Status: proposal, waiting on the owner (§9.6).** `TODO.md` "Build";
+**Status: decided 2026-10-15 (§9.6), not built.** `TODO.md` "Build";
 recommended by the stack report (`docs/SPEC_lenses.md` §8). Measured on
 2026-10-15 with `prototype/address_districts.py`; numbers in
 `prototype/README.md` "Districts per address".
@@ -389,7 +389,10 @@ addresses moved, per district.
    `district_id`s that exist in `layers.json`, and every street in
    `streets.json` has its file and no file is unlisted.
 
-### 9.6 Points for the owner
+### 9.6 Points settled with the owner (2026-10-15)
+
+The owner took all four recommendations, "for now":
+
 
 1. **Split addresses: show every district set, with a note** (recommended),
    rather than choosing one row.
