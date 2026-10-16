@@ -272,7 +272,11 @@ that date). Mondays 10:00 UTC, or by hand. A pass copies the rebuild over
 to master as `github-actions[bot]` and starts `pages.yml` (a push made with the
 workflow token starts no workflow). Anything else fails the run and files one
 issue labelled `refresh`, or comments on the open one. While a change is held,
-nothing advances `last_verified`, not only the affected records. If master
+nothing advances `last_verified`, not only the affected records. Before the commit, `scripts/check_refresh_diff.py` checks
+the tree independently of the diff check: only `last_verified` (plus
+`source_sha256` and `addresses_checked` in `layers.json`) and the address
+files may differ. A boundary file that moved by less than the 10 m² geometry
+threshold therefore still holds the run. If master
 gets branch protection, the bot's direct push needs a bypass or a PR.
 
 **A dial, not a fixed line.** Which §5 rows hold and which pass is a config
