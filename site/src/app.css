@@ -74,3 +74,8 @@ input[type="text"]:focus, select:focus, button:focus-visible, a:focus-visible { 
 .map-status { position: absolute; z-index: 2; bottom: 8px; left: 10px; margin: 0; font-size: .8rem; color: var(--muted);
   background: var(--surface); padding: 2px 6px; border-radius: 6px; }
 .map-status:empty { display: none; }
+
+.prose h2 { font-size: 1.05rem; margin: 1.5rem 0 .4rem; }
+.prose li { margin-bottom: .4rem; }
+.sources { border-collapse: collapse; width: 100%; font-size: .9rem; }
+.sources th, .sources td { text-align: left; vertical-align: top; padding: .4rem .5rem .4rem 0; border-bottom: 1px solid var(--line); }

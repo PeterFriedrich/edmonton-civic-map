@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>About · Edmonton Civic Map</title>
+<meta name="description" content="Where the Edmonton Civic Map's information comes from, how current it is, and what it cannot tell you.">
+<link rel="stylesheet" href="./src/app.css">
+</head>
+<body>
+<main class="panel prose">
+  <p><a href="./">← Back to the map</a></p>
+  <h1>About this map</h1>
+
+  <h2>What it is</h2>
+  <p>Type an Edmonton address, or click the map, to see who represents that place on City Council, the public and Catholic school boards, the Legislative Assembly of Alberta and the House of Commons, with a link to each office's own page. It is a reference tool: it does not rank, score or comment on anyone.</p>
+
+  <h2>How council works</h2>
+  <p>City Council decides as a body. The mayor is also a councillor, and each councillor has one vote each time council votes (<a href="https://kings-printer.alberta.ca/documents/Acts/m26.pdf" rel="noopener">Municipal Government Act</a>, sections 154 and 182). Much of what residents meet day to day is delivered by the City's administration, by the Province, or by <a href="https://www.epcor.com/ca/en/ab/edmonton.html" rel="noopener">EPCOR</a>, which runs Edmonton's water delivery, wastewater collection, stormwater facilities and electricity distribution, rather than by an individual councillor. If you are not sure who handles something, <a href="https://www.edmonton.ca/311" rel="noopener">311</a> is the City's starting point.</p>
+
+  <h2>Where the information comes from</h2>
+  <p>Only from the bodies themselves:</p>
+  <table class="sources">
+    <thead><tr><th scope="col">What</th><th scope="col">Source</th></tr></thead>
+    <tbody>
+      <tr><td>Council wards and councillors</td><td><a href="https://data.edmonton.ca/d/b4er-5rp2" rel="noopener">City of Edmonton open data, ward layer</a>, checked against the <a href="https://data.edmonton.ca/d/e9qt-cc3j" rel="noopener">council contacts</a></td></tr>
+      <tr><td>Mayor</td><td><a href="https://data.edmonton.ca/d/e9qt-cc3j" rel="noopener">City of Edmonton open data, council contacts</a>, checked against the <a href="https://data.edmonton.ca/d/fv5x-8efu" rel="noopener">2025 official election results</a></td></tr>
+      <tr><td>School wards</td><td>City of Edmonton open data: <a href="https://data.edmonton.ca/d/d7pj-rist" rel="noopener">public</a>, <a href="https://data.edmonton.ca/d/pwzf-sjj2" rel="noopener">Catholic</a></td></tr>
+      <tr><td>Trustees</td><td>Each board's own page: <a href="https://www.epsb.ca/ourdistrict/board/trustees/" rel="noopener">Edmonton Public Schools</a>, <a href="https://www.ecsd.net/ecsd-trustees" rel="noopener">Edmonton Catholic Schools</a>, checked against the 2025 official results</td></tr>
+      <tr><td>Provincial electoral divisions</td><td><a href="https://www.elections.ab.ca/resources/maps/" rel="noopener">Elections Alberta</a></td></tr>
+      <tr><td>MLAs</td><td><a href="https://www.assembly.ab.ca/members/members-of-the-legislative-assembly" rel="noopener">Legislative Assembly of Alberta</a>: its contact list, checked against its members page</td></tr>
+      <tr><td>Federal electoral districts</td><td><a href="https://open.canada.ca/data/en/dataset/18bf3ea7-1940-46ec-af52-9ba3f77ed708" rel="noopener">Elections Canada</a></td></tr>
+      <tr><td>MPs</td><td><a href="https://www.ourcommons.ca/Members/en/search?province=AB" rel="noopener">House of Commons</a></td></tr>
+      <tr><td>Addresses</td><td><a href="https://data.edmonton.ca/d/ut27-nrpn" rel="noopener">City of Edmonton open data, address points</a></td></tr>
+    </tbody>
+  </table>
+  <p>Every card shows its source and the date it was last checked against it. City of Edmonton data is used under the City's <a href="https://data.edmonton.ca/stories/s/City-of-Edmonton-Open-Data-Terms-of-Use/msh8-if28" rel="noopener">open data terms of use</a>. Contains information licensed under the <a href="https://open.canada.ca/en/open-government-licence-canada" rel="noopener">Open Government Licence – Canada</a>. The other publishers state no licence on the pages used; their own pages remain the source of record.</p>
+
+  <h2>How current it is</h2>
+  <p>Every source is re-checked automatically each week. When nothing has changed, the check dates move forward. When something has changed (a new name, a vacant seat, a moved boundary), nothing is published until a person has checked it against the source. A card warns you if its office holder has not been re-checked in <span data-v="officeholders_days">45</span> days, or its boundaries in <span data-v="boundaries_days">180</span>. Last check: <span data-v="last_check">…</span>.</p>
+  <p>Some dates force a full recheck whatever the last check says:</p>
+  <ul id="recheck"></ul>
+
+  <h2>Known limits</h2>
+  <ul>
+    <li><strong>Near a boundary.</strong> Each address is placed in its districts using the full-detail boundaries. The map draws simplified lines, accurate to within <span data-v="tolerance">5</span> m. An address within <span data-v="near">20</span> m of a line gets a note pointing to that level's official lookup.</li>
+    <li><strong>Addresses on more than one parcel.</strong> A few addresses (<span data-v="split">8</span>) have parcels in different districts. Each district is shown.</li>
+    <li><strong>Gaps and overlaps.</strong> Some neighbouring districts in the published boundary files overlap or leave thin gaps, a few square metres in all. A map click that lands in one says so.</li>
+    <li><strong>Provincial boundaries may change.</strong> A legislature committee is due to report on new electoral divisions (see the recheck dates above). Until a new map is enacted and an election held under it, this site shows the divisions MLAs represent today.</li>
+    <li><strong>Edge ridings.</strong> Some provincial and federal ridings outside Edmonton are included, because a small part of the city falls inside them.</li>
+    <li><strong>Party.</strong> Party or caucus is shown for MLAs and MPs only, and only if you turn it on, taken from the Assembly's and the House of Commons' own lists. The City's and the school boards' lists of who holds office carry no party, so those cards have none.</li>
+  </ul>
+
+  <h2>Your address</h2>
+  <p>The search runs in your browser. To answer, the page downloads one file for the street you choose from this site; the house number is never sent anywhere, and nothing is logged or stored.</p>
+
+  <h2>Corrections</h2>
+  <p>If something looks wrong, the official page linked on the card is authoritative. You can also <a href="https://github.com/PeterFriedrich/edmonton-civic-map/issues" rel="noopener">report it on GitHub</a>.</p>
+</main>
+<script type="module" src="./src/about.js"></script>
+</body>
+</html>

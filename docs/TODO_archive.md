@@ -8,6 +8,8 @@ Items are verbatim as they were closed, newest-moved first in the order they app
 
 ---
 
+- [x] DONE 2026-10-16: `site/about.html`, text approved by the owner in session; its numbers come from the published files; the council note cites MGA s.154 and s.182 and EPCOR's own Edmonton page. **About and methodology page** (brief §7): sources, verification dates, known limits, and the council note (council decides as a body; the mayor has one vote; much of what residents meet is delivered by administration, the province or EPCOR). Written content: draft for the owner's approval.
+
 - [x] DONE 2026-10-16: `src/download.py` GETs each `landing_url` after the fetch; a non-200 fails that source. **Check every `landing_url` resolves** in `src/download.py` (§5 "stop" row; the diff check is offline and skips it). Belongs with the refresh workflow.
 
 - [x] DONE 2026-10-16: `.github/workflows/refresh.yml`, Mondays 10:00 UTC; robots.txt checked once for all 13 sources (`data/DATA.md`). **Weekly refresh workflow on GitHub Actions** per `docs/SPEC_data_schema.md` §8: auto-publish when nothing changed, hold and file an issue otherwise. Changes CI, so propose the workflow before writing it.

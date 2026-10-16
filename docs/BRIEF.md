@@ -69,6 +69,7 @@ the brief wins.
 - **2026-10-16** — **The diff check is `src/diff_check.py`, offline: it compares a scratch rebuild with `site/public/data` and exits 0 pass, 1 review, 2 stop** (owner approved the plan in session).
 - **2026-10-16** — **The weekly refresh is `.github/workflows/refresh.yml`** (owner approved the proposal in session), as §8 set out: download, rebuild into scratch, `src/diff_check.py`. … Rejected: conditional GETs (sha256 already marks an unchanged file); an unattended agent opening the review PR (the owner's later call).
 - **2026-10-16** — **A passing refresh may change dates and address files, nothing else** (owner agreed in session).
+- **2026-10-16** — **The about page is `site/about.html`, text approved by the owner in session**, with corrections routed to GitHub issues (owner's choice; no email published).
 
 ## Open work
 
@@ -103,7 +104,6 @@ the brief wins.
 - **Measure weekly address churn, around 2026-11-27** (after 4–6 refresh runs): read the "N added, M removed" counts in the `Weekly refresh` commit messages and check the 1% stop line (`data/diff_rules.json` `parcel_rows_max_change`) against real weeks. Unmeasured so far: the …
 - **Replace the template `README.md`** with one for this project.
 - **Neighbourhood search** (`docs/SPEC_lenses.md` §3): type a neighbourhood, see its districts; a divided one shows each and asks for an address. Needs the 407 names from `65fr-66s6` published, which is a new published file: propose first.
-- **About and methodology page** (brief §7): sources, verification dates, known limits, and the council note (council decides as a body; the mayor has one vote; much of what residents meet is delivered by administration, the province or EPCOR). Written content: draft for the …
 - **Shareable view link** without the address unless the reader chooses (`docs/SPEC_lenses.md` §5).
 
 ## Known upstream data defects

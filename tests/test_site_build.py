@@ -3,6 +3,7 @@ stamps (docs/WEB_CACHE_BUSTING.md "Guard it"): passes a good dist, and fails a
 dist with an unhashed script or with published data missing or changed."""
 import shutil
 import subprocess
+import sys
 from pathlib import Path
 
 import pytest
@@ -57,3 +58,13 @@ def test_check_dist_flags_published_data_missing_or_changed(site):
     assert r.returncode == 1
     assert "changed in" in r.stderr and "data/layers.json" in r.stderr
     assert "missing from" in r.stderr and "data/terrain.pmtiles" in r.stderr
+
+
+def test_about_page_links_every_source():
+    """The about page names every source the build downloads (src/download.py)."""
+    sys.path.insert(0, str(REPO))
+    from src import download
+    page = (REPO / "site" / "about.html").read_text(encoding="utf-8")
+    for sid, s in download.SOURCES.items():
+        url = f"{download.SOCRATA}/d/{s['dataset']}" if s["kind"] == "socrata" else s.get("landing_url", s["fetch_url"])
+        assert f'href="{url}"' in page, f"{sid}: {url} is not linked on site/about.html"
