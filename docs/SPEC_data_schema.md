@@ -392,6 +392,7 @@ in it is either one of them moving. New rows for the §5 table:
 | an existing address changed district **while no boundary moved** | review |
 | the list of split addresses (§9.3) changed | review |
 | addresses added or removed, under the 1% line | **pass**, counts in the run log (§9.6 point 2) |
+| an address's point moved, its districts did not (added 2026-10-16) | **pass**, listed with the distance in the run log |
 
 An address that changed district because a boundary moved needs no row of its
 own: the boundary change already holds the run, and the report lists how many

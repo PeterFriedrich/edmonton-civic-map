@@ -155,6 +155,12 @@ def test_addresses_added_pass_with_count(tmp_path):
     assert run(tmp_path, f) == ("pass", {"addresses_added_or_removed": ["1 added, 0 removed"]})
 
 
+def test_address_point_moved_passes_with_distance(tmp_path):
+    # 0.0005 degrees of latitude is about 56 m
+    result, hits = run(tmp_path, lambda d: d["streets"]["main-street.json"]["1"][0].__setitem__(0, 53.5055))
+    assert result == "pass" and hits == {"address_point_moved": ["main-street.json 1: point moved 56 m, same districts"]}
+
+
 def test_parcel_rows_over_one_percent_stops(tmp_path):
     result, hits = run(tmp_path, lambda d: d.__setitem__("parcel_rows", 1011))
     assert result == "stop" and list(hits) == ["parcel_rows_moved"]
