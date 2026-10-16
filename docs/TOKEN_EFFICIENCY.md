@@ -75,6 +75,11 @@ venvs, downloads) that ended sessions had left in their scratchpads, about
 - **When the build finishes, delete its intermediates.** Anything worth keeping
   moves to the repo's git-ignored `data/` or `output/` area, where it is
   visible and owned. Don't leave it in scratch.
+- **On the owner's server, scratch untouched for 7 days is deleted** by a daily
+  cleanup (`server-ops/monitor/scratch-clean.sh`). If you need it longer, such
+  as a build you'll resume next session, put a `KEEP` file in the folder saying
+  why, and delete the `KEEP` when done. A `KEEP` older than 30 days raises a
+  warning.
 
 ## Going forward
 
