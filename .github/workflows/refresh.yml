@@ -25,7 +25,11 @@ concurrency:
 
 jobs:
   refresh:
-    runs-on: ubuntu-latest
+    # The published data was built on aarch64 (the owner's server). The same
+    # sources rebuilt on x86_64 differ by float noise after reprojection and
+    # simplification: 13 m² on one provincial edge on 2026-10-16, enough to hold
+    # the run. Build where the committed data was built.
+    runs-on: ubuntu-24.04-arm
     timeout-minutes: 60
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
