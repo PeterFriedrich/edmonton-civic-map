@@ -56,6 +56,13 @@ it: 29 provincial divisions (20 Edmonton, 9 neighbours with 0.001–0.34 km²
 each) and 13 federal districts (9 Edmonton, 4 neighbours with 0.26–0.81 km²).
 Four of the five layers are not clean coverages: `docs/DATA_ISSUES.md`.
 
+**Diff check, 2026-10-16:** a refresh runs the three builders with `--out <scratch>`,
+then `python -m src.diff_check --new <scratch>` compares the result with
+`site/public/data` (severities in `data/diff_rules.json`). Comparing the committed
+files with themselves takes about 7 s. `site/public/data/staleness.json` is
+hand-kept, not built: the 45 and 180 day thresholds and four recheck dates,
+each from the statute or publisher that sets it.
+
 **Primary sources only** (`docs/SPEC_civic_map.md` §4). News and Wikipedia are
 context, never data.
 

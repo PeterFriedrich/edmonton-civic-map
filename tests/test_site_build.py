@@ -20,7 +20,7 @@ def run(dist, public):
 def site(tmp_path):
     public = tmp_path / "public" / "data"
     public.mkdir(parents=True)
-    for name in ["layers.json", "buildings.pmtiles", "terrain.pmtiles", "addresses/streets.json"]:
+    for name in ["layers.json", "staleness.json", "buildings.pmtiles", "terrain.pmtiles", "addresses/streets.json"]:
         (public / name).parent.mkdir(parents=True, exist_ok=True)
         (public / name).write_text(name)
     (public.parent / "licenses").mkdir()

@@ -173,6 +173,13 @@ moved:
 approves the report. "Stop" means nothing is produced. If nothing moved, only
 `last_verified` and `retrieved_at` advance.
 
+**Built 2026-10-16:** `src/diff_check.py`, severities in `data/diff_rules.json`
+(DECISIONS row of that date). It runs offline after the three builders have
+written into a scratch directory, and exits 0 / 1 / 2 for pass / review / stop
+with `report.md` and `report.json`. Not yet covered: the population and
+`Future` rows (nothing built for them), and `landing_url` resolving, which needs
+the network and belongs to the download step.
+
 ## 6. Staleness
 
 - Each kind has a threshold in `layers.json` / a config block, not in code.
@@ -186,6 +193,9 @@ approves the report. "Stop" means nothing is produced. If nothing moved, only
 - A calendar file lists the dates that force a full recheck regardless of
   thresholds: municipal election 2029-10, the Alberta committee report due
   2026-11-02, the next provincial and federal general elections.
+- **Built 2026-10-16:** thresholds and the calendar are
+  `site/public/data/staleness.json`; the page reads both thresholds and warns
+  per card for office holders and per layer for boundaries.
 
 ## 7. Points put to the owner
 

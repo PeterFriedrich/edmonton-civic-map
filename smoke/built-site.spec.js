@@ -50,6 +50,24 @@ test("an address lookup shows every level, then the map draws", async ({ page })
   w.check();
 });
 
+// Staleness comes from staleness.json, not code: with negative thresholds every
+// card warns, once for its office holder and once for its boundaries.
+test("cards warn when office holders or boundaries go unchecked", async ({ page }) => {
+  const w = watch(page);
+  await page.route("**/data/staleness.json", async (route) => {
+    const body = await (await route.fetch()).json();
+    await route.fulfill({ json: { ...body, officeholders_days: -1, boundaries_days: -1 } });
+  });
+  await page.goto("./");
+  await page.getByRole("combobox", { name: "Address" }).fill("10024 124 st");
+  await page.getByRole("option", { name: "10024 124 Street NW" }).click();
+  const results = page.locator("#results");
+  await expect(results.locator(".card")).toHaveCount(7);
+  await expect(results.locator(".warn", { hasText: "Not re-checked against its source" })).toHaveCount(7);
+  await expect(results.locator(".warn", { hasText: "boundaries were last checked" })).toHaveCount(6); // not the mayor
+  w.check();
+});
+
 // The building-tiles test page, kept for phone measurements.
 test("the building-tiles test page draws", async ({ page }) => {
   const w = watch(page);

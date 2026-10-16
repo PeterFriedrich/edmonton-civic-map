@@ -1,0 +1,19 @@
+{
+  "_doc": "Severity of each diff-check rule (docs/SPEC_data_schema.md §5, §8 'a dial', §9.4). stop: nothing is published; review: held for a person; pass: counted in the report only. Read by src/diff_check.py.",
+  "geometry_threshold_m2": 10,
+  "parcel_rows_max_change": 0.01,
+  "severity": {
+    "seat_added_or_removed": "stop",
+    "seat_name_or_vacant": "review",
+    "seat_contact_or_affiliation": "review",
+    "seat_other_field": "review",
+    "layer_added_removed_or_dates": "review",
+    "district_id_or_name": "review",
+    "district_geometry": "review",
+    "parcel_rows_moved": "stop",
+    "address_district_without_boundary_move": "review",
+    "address_district_with_boundary_move": "pass",
+    "split_addresses": "review",
+    "addresses_added_or_removed": "pass"
+  }
+}

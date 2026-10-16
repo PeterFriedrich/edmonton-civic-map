@@ -1,0 +1,15 @@
+{
+  "_doc": "Days since last_verified before the page warns (docs/SPEC_data_schema.md §6, §7 point 3), and dates that force a full recheck whatever the thresholds say.",
+  "officeholders_days": 45,
+  "boundaries_days": 180,
+  "recheck_dates": [
+    {"date": "2026-11-02", "what": "Alberta Select Special Committee on Electoral Boundaries reports to the Assembly",
+     "source_url": "https://www.assembly.ab.ca/assembly-business/committees/CEB"},
+    {"date": "2027-10-18", "what": "Alberta provincial general election (Election Act s. 38.1)",
+     "source_url": "https://www.elections.ab.ca/elections/albertas-next-election/"},
+    {"date": "2029-10-15", "what": "Alberta municipal and school board general election (Local Authorities Election Act s. 10(1)(b), 11(1)(a))",
+     "source_url": "https://kings-printer.alberta.ca/documents/Acts/L21.pdf"},
+    {"date": "2029-10-15", "what": "Federal general election (Canada Elections Act s. 56.1(2))",
+     "source_url": "https://laws-lois.justice.gc.ca/eng/acts/e-2.01/section-56.1.html"}
+  ]
+}
