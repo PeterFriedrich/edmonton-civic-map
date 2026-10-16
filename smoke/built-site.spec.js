@@ -68,6 +68,18 @@ test("cards warn when office holders or boundaries go unchecked", async ({ page 
   w.check();
 });
 
+// The about page quotes the published thresholds and recheck dates, not copies.
+test("the about page fills its numbers from the published data", async ({ page }) => {
+  const w = watch(page);
+  await page.goto("./");
+  await page.getByRole("link", { name: /About this map/ }).click();
+  await expect(page.getByRole("heading", { name: "About this map" })).toBeVisible();
+  const stale = await (await page.request.get("data/staleness.json")).json();
+  await expect(page.locator("#recheck li")).toHaveCount(stale.recheck_dates.length);
+  await expect(page.locator('[data-v="last_check"]')).toHaveText(/^\d{4}-\d{2}-\d{2}$/);
+  w.check();
+});
+
 // The building-tiles test page, kept for phone measurements.
 test("the building-tiles test page draws", async ({ page }) => {
   const w = watch(page);

@@ -12,7 +12,7 @@ export default defineConfig({
     outDir: "../dist",
     emptyOutDir: true,
     chunkSizeWarningLimit: 1200,
-    // The lookup page, and the building-tiles test page kept for phone measurements.
-    rolldownOptions: { input: { main: "site/index.html", buildings: "site/buildings-test.html" } },
+    // The lookup page, the about page, and the building-tiles test page kept for phone measurements.
+    rolldownOptions: { input: { main: "site/index.html", about: "site/about.html", buildings: "site/buildings-test.html" } },
   },
 });

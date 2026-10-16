@@ -49,12 +49,13 @@ symptom and re-measure the stated cause before acting on it.
 - [ ] **Measure weekly address churn, around 2026-11-27** (after 4–6 refresh runs): read the "N added, M removed" counts in the `Weekly refresh` commit messages and check the 1% stop line (`data/diff_rules.json` `parcel_rows_max_change`) against real weeks. Unmeasured so far: the address dataset keeps no history.
 - [ ] **Replace the template `README.md`** with one for this project.
 - [ ] **Neighbourhood search** (`docs/SPEC_lenses.md` §3): type a neighbourhood, see its districts; a divided one shows each and asks for an address. Needs the 407 names from `65fr-66s6` published, which is a new published file: propose first.
-- [ ] **About and methodology page** (brief §7): sources, verification dates, known limits, and the council note (council decides as a body; the mayor has one vote; much of what residents meet is delivered by administration, the province or EPCOR). Written content: draft for the owner's approval.
 - [ ] **Shareable view link** without the address unless the reader chooses (`docs/SPEC_lenses.md` §5).
 
 ## Done
 
 Closed items moved out of `## Open work` live in **`docs/TODO_archive.md`** — one line each below, reasoning there.
+
+- [x] **About and methodology page** — DONE 2026-10-16 · `docs/TODO_archive.md`
 
 - [x] **Check every `landing_url` resolves** — DONE 2026-10-16 · `docs/TODO_archive.md`
 - [x] **Weekly refresh workflow on GitHub Actions** — DONE 2026-10-16 · `docs/TODO_archive.md`
