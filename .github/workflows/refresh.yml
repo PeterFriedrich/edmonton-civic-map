@@ -68,6 +68,10 @@ jobs:
           cp -r "$SCRATCH"/. site/public/data/
           git status --short site/public/data
 
+      # Independent of the diff check: only dates and address files may differ.
+      - name: Check the refresh changed only dates and addresses
+        run: python scripts/check_refresh_diff.py
+
       - name: Run tests on the refreshed data
         run: python -m pytest tests/ -q
 
