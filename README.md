@@ -1,71 +1,96 @@
-# cc-data-project-template
+# Edmonton Civic Map
 
-A GitHub template for a Python data-analysis project worked on with Claude Code.
-It carries the **workflow apparatus** — the parts that stop a session from
-losing context, shipping a wrong number silently, or stranding work — and
-nothing about any particular dataset.
+**Live:** https://peterfriedrich.github.io/edmonton-civic-map/
 
-Extracted from a project where every piece below was earned by a failure it
-now prevents. The theme running through all of it: **a working guard on a
-channel nobody reads is not a guard.**
+Type an Edmonton address, or click the map, to see who represents that place
+at every level: City Council, the public and Catholic school boards, the
+Legislative Assembly of Alberta and the House of Commons. Each card links the
+office's own page, its source and the date it was last checked.
 
-## What's in it
+It is a lookup and explainer built from primary sources, not a politics
+dashboard: no rankings, scores or evaluation of officials. Sources, currency
+and known limits for readers are on the site's
+[About page](https://peterfriedrich.github.io/edmonton-civic-map/about.html).
 
-| Piece | What it prevents |
+## How it works
+
+```
+publishers ──► src/download.py ──► data/raw/            (not committed)
+                                      │
+                 src/build_boundaries.py      five boundary layers, simplified at 5 m
+                 src/build_address_index.py   districts for every address, at full resolution
+                 src/build_officeholders.py   71 seats, each cross-checked against a second source
+                                      │
+                                      ▼
+                             site/public/data/          (committed: every change is a reviewable diff)
+                                      │
+                       Vite ──► dist/ ──► GitHub Pages
+```
+
+- **Districts are worked out per address at build time**, against the
+  full-resolution boundaries, and checked by two independent methods (shapely
+  and the site's own `pip.js`). The browser only looks up one street's file;
+  the house number never leaves the page.
+- **Every published record carries its source and `last_verified` date.** The
+  page warns when a record goes unchecked past its threshold
+  (`site/public/data/staleness.json`).
+- **A weekly refresh** (`.github/workflows/refresh.yml`) re-downloads every
+  source and rebuilds. If nothing moved, it commits the new dates and deploys.
+  If anything moved (a name, a seat, a boundary) it publishes nothing and files
+  an issue for a person to check against the source. The rules are
+  `src/diff_check.py` and `data/diff_rules.json`.
+
+## Running it
+
+Needs Python 3.12 and Node 22 (`.nvmrc`).
+
+```bash
+./bootstrap.sh                          # venv, hooks path, first test run
+npm ci
+.venv/bin/python -m pytest tests -q     # offline; reads committed files only
+npm run test:js
+npm run dev                             # the site, on the committed data
+```
+
+Rebuilding the data from the sources:
+
+```bash
+.venv/bin/python -m src.download        # all 13 sources into data/raw/
+.venv/bin/python -m src.build_boundaries
+.venv/bin/python -m src.build_address_index   # about 6 minutes
+.venv/bin/python -m src.build_officeholders
+```
+
+Build on aarch64: the same sources rebuilt on x86_64 differ by float noise,
+and the next refresh would hold on it (`data/DATA.md`).
+
+## Where things are
+
+| Path | What |
 |---|---|
-| `CLAUDE.md` skeleton | Sessions that start without the rules, or with rules Claude can derive itself |
-| `/handoff` skill + `scripts/handoff_gap.py` (SessionStart/End hooks) | Context wiped without a written record — the hook **names the unrecorded commits** and is silent when nothing is owed |
-| `.githooks/pre-push` | Pushing to a branch whose PR already merged (work reaches origin, never master) |
-| `tests/test_loaded_path.py` | The handoff pile growing into every session's mandatory reading; the archive being deleted instead of appended to |
-| `scripts/check_decisions_log.py` | A decision recorded with no test protecting it; a superseded row left looking current |
-| `scripts/check_doc_citations.py` | A doc citation that rots in place (line numbers banned; `§N` pointers verified) |
-| `tools/todo_archive.py` | Closed work accumulating in the file read first every session |
-| `tools/retrieval_report.py` + Read/Grep/Glob hook | Pruning docs on a guess instead of a read log |
-| `steward` skill (read by the cloud harness on PR events) | Hourly check-ins burning turns overnight while a green PR waits on the owner's merge |
-| `scripts/make_brief.py` + `docs/SCOPE.md` + `docs/CLAUDE_WEB.md` | A Claude web chat briefed from a hand-typed, stale "my situation" block — the brief is generated from the repo's own ledgers and, when committed, gated fresh by `tests/test_brief.py` |
-| `copier.yml` + `docs/COPIER.md` + `tests/test_copier.py` | Template improvements that never reach a project — `copier update` merges them in, keeping the project's own edits |
-| `scripts/template_drift.py` (SessionStart hook) | A project that never learns the template moved on — the hook **names the changed files** and is silent when the project is current |
-| `docs/WEB_CACHE_BUSTING.md` | A deploy that looks half-shipped because the browser kept a stale CSS/JS/data file |
-| `/project-audit` skill + `docs/AUDIT_LEDGER.md` | Audits that sweep broadly, re-run what was already run, or never record their verdict |
-| `docs/DECISIONS.md`, `docs/DATA_ISSUES.md`, `docs/TOKEN_EFFICIENCY.md`, `data/DATA.md` | Format contracts for the ledgers the guards read |
-| `.github/workflows/tests.yml` | A merge gate that is offline, secret-free, and therefore never ignored for flaking |
+| `src/` | Downloader, the three builders, the diff check |
+| `site/` | The Vite site: `index.html` (lookup), `about.html`, `src/` (app code), `public/data/` (published data) |
+| `tests/`, `smoke/` | pytest guards; Playwright browser checks on the built site |
+| `data/DATA.md` | Every source: URL, columns, quirks, what was verified |
+| `docs/SPEC_civic_map.md` | The founding brief, with amendments |
+| `docs/SPEC_data_schema.md` | The published files, the diff check, staleness, the refresh |
+| `docs/DECISIONS.md` | Every locked decision, with the test that protects it |
+| `docs/DATA_ISSUES.md` | Defects found in data we don't control, and whether the publisher has been told |
+| `TODO.md` | What's left |
+| `prototype/` | The measured proofs the build rests on; not the app |
 
-## Use it
+The workflow apparatus (handoff notes, decision-log and citation guards, the
+generated Claude web brief) comes from
+[cc-data-project-template](https://github.com/PeterFriedrich/cc-data-project-template)
+via copier; `docs/COPIER.md` says how updates are pulled. `CLAUDE.md` holds the
+rules sessions work under.
 
-Copier creates the project; it is the first step, not something run later.
+## Data and licences
 
-```bash
-pipx install copier       # once per machine; or: python3 -m pip install --user copier (Python >= 3.9)
-gh repo create <owner>/<new-project> --private --clone
-cd <new-project>
-copier copy --trust gh:<owner>/cc-data-project-template .
-./bootstrap.sh            # hooks path, venv, first pytest, memory seed prompt
-```
-
-Later, to pull template improvements into the project, run from inside it, on
-a clean branch:
-
-```bash
-copier update --trust --defaults
-```
-
-Not GitHub's "Use this template": that copies this repo's own backlog and
-handoffs, and leaves nothing for `copier update` to pull template changes
-through later. Updating, and connecting a project made before copier:
-`docs/COPIER.md`.
-
-Then, in order:
-
-1. Fill every `<placeholder>` in `CLAUDE.md`, `TODO.md`, `data/DATA.md`.
-2. Write `docs/SPEC_phase1.md` before any code (`CONTRIBUTING.md`).
-3. Keep `requirements-ci.txt` to what the merge gate needs.
-4. Delete this section of the README and describe the project.
-
-## What is deliberately NOT here
-
-- Any dataset, downloader, pipeline stage or rendering code.
-- A scheduled data-refresh workflow or a deploy workflow — add them when there
-  is data to refresh and a site to deploy, each with its own pytest step.
-- A plugin/marketplace packaging of `.claude/`. Cloud sessions don't install
-  plugins a repo declares, so copier carries everything instead
-  (`docs/FINDINGS_harvest.md` §"C (sync direction): recommendation").
+City of Edmonton data is used under the City's
+[open data terms of use](https://data.edmonton.ca/stories/s/City-of-Edmonton-Open-Data-Terms-of-Use/msh8-if28).
+Contains information licensed under the
+[Open Government Licence – Canada](https://open.canada.ca/en/open-government-licence-canada).
+Elections Alberta, the Legislative Assembly, the House of Commons and the two
+school boards state no licence on the pages used; each record links back to
+them as the source of record. Per-source detail: `data/DATA.md`.
