@@ -15,7 +15,7 @@
     "gap_m2": 119.1,
     "parts_dropped_by_rounding": 0,
     "area_change_by_rounding_m2": 830.26,
-    "last_verified": "2026-10-15",
+    "last_verified": "2026-10-16",
     "file": "boundaries/council_ward.geojson"
   },
   {
@@ -34,7 +34,7 @@
     "gap_m2": 957.4,
     "parts_dropped_by_rounding": 0,
     "area_change_by_rounding_m2": 606.38,
-    "last_verified": "2026-10-15",
+    "last_verified": "2026-10-16",
     "file": "boundaries/public_school_ward.geojson"
   },
   {
@@ -53,7 +53,7 @@
     "gap_m2": 62.5,
     "parts_dropped_by_rounding": 0,
     "area_change_by_rounding_m2": 459.98,
-    "last_verified": "2026-10-15",
+    "last_verified": "2026-10-16",
     "file": "boundaries/catholic_school_ward.geojson"
   },
   {
@@ -72,7 +72,7 @@
     "gap_m2": 174.6,
     "parts_dropped_by_rounding": 66,
     "area_change_by_rounding_m2": 1513.64,
-    "last_verified": "2026-10-15",
+    "last_verified": "2026-10-16",
     "file": "boundaries/provincial_riding.geojson"
   },
   {
@@ -91,7 +91,7 @@
     "gap_m2": 95.0,
     "parts_dropped_by_rounding": 1,
     "area_change_by_rounding_m2": 1012.75,
-    "last_verified": "2026-10-15",
+    "last_verified": "2026-10-16",
     "file": "boundaries/federal_riding.geojson"
   }
 ]
