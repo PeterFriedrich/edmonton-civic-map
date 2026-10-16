@@ -131,31 +131,61 @@ def test_failure_keeps_the_previous_good_copy(net, tmp_path):
 def test_zip_source_counts_shapefile_rows(net, tmp_path):
     routes, _ = net
     routes.append((lambda u: u.endswith(".zip"),
-                   lambda u: (_shp_zip(87), {"last-modified": "Wed, 11 Sep 2024 16:00:00 GMT"})))
-    routes.append((lambda u: u == dl.SOURCES["ab_ridings"]["landing_url"], lambda u: b"<html>"))
-    rec = dl.download("ab_ridings", tmp_path)
-    assert rec["row_count"] == 87 and rec["publisher_updated_at"] == "2024-09-11"
+                   lambda u: (_shp_zip(343), {"last-modified": "Wed, 11 Sep 2024 16:00:00 GMT"})))
+    routes.append((lambda u: u == dl.SOURCES["fed_ridings"]["landing_url"], lambda u: b"<html>"))
+    rec = dl.download("fed_ridings", tmp_path)
+    assert rec["row_count"] == 343 and rec["publisher_updated_at"] == "2024-09-11"
     assert rec["file"] == "inner/ED.shp"
 
 
 def test_dead_landing_page_fails_and_keeps_the_previous_copy(net, tmp_path):
     routes, _ = net
-    (tmp_path / "ab_ridings").mkdir()
-    (tmp_path / "ab_ridings" / "fetch.json").write_text("previous")
-    routes.append((lambda u: u.endswith(".zip"), lambda u: _shp_zip(87)))
+    (tmp_path / "fed_ridings").mkdir()
+    (tmp_path / "fed_ridings" / "fetch.json").write_text("previous")
+    routes.append((lambda u: u.endswith(".zip"), lambda u: _shp_zip(343)))
 
     def gone(u):
         raise dl.DownloadError(f"HTTP 404 from {u}")
-    routes.append((lambda u: u == dl.SOURCES["ab_ridings"]["landing_url"], gone))
+    routes.append((lambda u: u == dl.SOURCES["fed_ridings"]["landing_url"], gone))
     with pytest.raises(dl.DownloadError, match="404"):
-        dl.download("ab_ridings", tmp_path)
-    assert (tmp_path / "ab_ridings" / "fetch.json").read_text() == "previous"
+        dl.download("fed_ridings", tmp_path)
+    assert (tmp_path / "fed_ridings" / "fetch.json").read_text() == "previous"
 
 
 def test_zip_source_with_wrong_count_fails(net, tmp_path):
     routes, _ = net
-    routes.append((lambda u: u.endswith(".zip"), lambda u: _shp_zip(86)))
-    with pytest.raises(dl.DownloadError, match="expected 87"):
+    routes.append((lambda u: u.endswith(".zip"), lambda u: _shp_zip(342)))
+    with pytest.raises(dl.DownloadError, match="expected 343"):
+        dl.download("fed_ridings", tmp_path)
+
+
+def _arcgis(routes, count, n, truncated=False):
+    layer = dl.SOURCES["ab_ridings"]["fetch_url"]
+    routes.append((lambda u: u.startswith(f"{layer}/query?") and "returnCountOnly" in u,
+                   lambda u: json.dumps({"count": count}).encode()))
+    fc = {"type": "FeatureCollection", "features": [
+        {"type": "Feature", "properties": {"EDNUMBER": str(i), "EDNAME": f"ED {i}"}, "geometry": None} for i in range(n)]}
+    if truncated:
+        fc["exceededTransferLimit"] = True
+    routes.append((lambda u: u.startswith(f"{layer}/query?") and "f=geojson" in u, lambda u: json.dumps(fc).encode()))
+    routes.append((lambda u: u == dl.SOURCES["ab_ridings"]["landing_url"], lambda u: b"<html>"))
+
+
+def test_arcgis_source_writes_geojson_and_checks_the_service_count(net, tmp_path):
+    routes, seen = net
+    _arcgis(routes, 87, 87)
+    rec = dl.download("ab_ridings", tmp_path)
+    assert rec["row_count"] == rec["server_row_count"] == 87 and rec["licence"] == "Open Government Licence – Alberta"
+    assert len(json.loads((tmp_path / "ab_ridings" / rec["file"]).read_text())["features"]) == 87
+    assert any("outSR=4326" in u for u in seen)
+
+
+@pytest.mark.parametrize("count,n,truncated,match", [
+    (87, 80, False, "service count"), (87, 87, True, "truncated"), (86, 86, False, "expected 87")])
+def test_arcgis_source_fails_short_truncated_or_miscounted(net, tmp_path, count, n, truncated, match):
+    routes, _ = net
+    _arcgis(routes, count, n, truncated)
+    with pytest.raises(dl.DownloadError, match=match):
         dl.download("ab_ridings", tmp_path)
 
 
@@ -180,6 +210,19 @@ def test_network_errors_retry_but_http_errors_do_not(monkeypatch):
     with pytest.raises(dl.DownloadError, match="HTTP 403"):
         dl._get("https://example.test/a")
     assert len(calls) == 1
+
+
+def test_gateway_errors_retry_then_fail(monkeypatch):
+    monkeypatch.setattr(dl, "PAUSE_S", 0)
+    calls = []
+
+    def gateway(req, timeout, context):
+        calls.append(req.full_url)
+        raise urllib.error.HTTPError(req.full_url, 504, "Gateway Timeout", {}, None)
+    monkeypatch.setattr(dl.urllib.request, "urlopen", gateway)
+    with pytest.raises(dl.DownloadError, match="HTTP 504"):
+        dl._get("https://example.test/a")
+    assert len(calls) == dl.RETRIES + 1
 
 
 def test_main_reports_failure_with_exit_code(net, tmp_path):

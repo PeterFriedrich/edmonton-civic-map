@@ -8,6 +8,10 @@ Items are verbatim as they were closed, newest-moved first in the order they app
 
 ---
 
+- [x] DONE 2026-10-16: resolved by switching to the Government of Alberta's copy of the same divisions, under OGL – Alberta (`data/DATA.md`, "Provincial ridings"); no permission request needed. **Licence for the Elections Alberta boundary shapefile.** None is stated on the download page (`data/DATA.md`, "Provincial ridings"). Done when a written licence or permission is recorded there; until then the provincial layer cannot ship.
+
+- [x] DONE 2026-10-16 (City part): "Contains information licensed under the Open Government Licence – City of Edmonton.", read from the licence via `data.edmonton.ca/stories/s/msh8-if28.json` (method from edmonton-tax-viz); on the About page and pinned by a test. Statistics Canada's wording waits until ward populations are published. **Exact attribution text for the Open Government Licence – Edmonton**, and Statistics Canada's for the ward populations. Done when `data/DATA.md` quotes both.
+
 - [x] DONE 2026-10-16: what it is, how the data flows, running and rebuilding, where things are, licences. **Replace the template `README.md`** with one for this project.
 
 - [x] DONE 2026-10-16: `site/about.html`, text approved by the owner in session; its numbers come from the published files; the council note cites MGA s.154 and s.182 and EPCOR's own Edmonton page. **About and methodology page** (brief §7): sources, verification dates, known limits, and the council note (council decides as a body; the mayor has one vote; much of what residents meet is delivered by administration, the province or EPCOR). Written content: draft for the owner's approval.

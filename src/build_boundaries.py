@@ -54,7 +54,7 @@ LAYERS = {
     },
     "provincial_riding": {
         "label": "Provincial electoral division", "body": "legislative_assembly_of_alberta", "source_id": "ab_ridings",
-        "key": "EDNumber20", "name": "EDName2017", "effective_from": "2019-03-19",  # in force (data/DATA.md)
+        "key": "EDNUMBER", "name": "EDNAME", "effective_from": "2019-03-19",  # in force (data/DATA.md)
         "clip": True, "must_include": ("Edmonton-", 20),
     },
     "federal_riding": {

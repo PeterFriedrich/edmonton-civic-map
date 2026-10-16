@@ -89,7 +89,10 @@ def build_records(rows, lon, lat, x, y, dist, near):
         recs = []
         for combo, members in sets.items():
             p = np.column_stack([x[members], y[members]])
-            m = members[int(np.argmin(((p - p.mean(0)) ** 2).sum(1)))]  # a real point, nearest the centre
+            # A real point, nearest the centre. Two parcels are always exactly tied, so the
+            # distance is rounded to 0.01 m² and a tie goes to the first row (stable :id order),
+            # not to float noise, which broke 6 ties differently on the CI runner (2026-10-16).
+            m = members[int(np.argmin(np.round(((p - p.mean(0)) ** 2).sum(1), 2)))]
             mask = 0
             for i in members:
                 mask |= int(near[i])

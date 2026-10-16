@@ -70,6 +70,8 @@ the brief wins.
 - **2026-10-16** — **The weekly refresh is `.github/workflows/refresh.yml`** (owner approved the proposal in session), as §8 set out: download, rebuild into scratch, `src/diff_check.py`. … Rejected: conditional GETs (sha256 already marks an unchanged file); an unattended agent opening the review PR (the owner's later call).
 - **2026-10-16** — **A passing refresh may change dates and address files, nothing else** (owner agreed in session).
 - **2026-10-16** — **The about page is `site/about.html`, text approved by the owner in session**, with corrections routed to GitHub issues (owner's choice; no email published).
+- **2026-10-16** — **Provincial boundaries come from the Government of Alberta's "Provincial Electoral Division - Current 2019" layer under OGL – Alberta, not Elections Alberta's shapefile** (owner approved … Rejected: asking Elections Alberta for permission (an explicitly licensed copy exists); taking the layer down meanwhile.
+- **2026-10-16** — **The repo is licensed in three parts, as edmonton-tax-viz is: MIT for code, CC BY 4.0 for prose (`LICENSE-docs`), and the data carved out to its publishers** (owner approved in session). … Rejected: one MIT file over everything (it would claim rights over City, Alberta and federal data); a generated `DATA_LICENCES.md` (no `sources.json` exists to generate it from, and the About page is …
 
 ## Open work
 
@@ -79,8 +81,7 @@ the brief wins.
 - **Report data defects to the City.** The owner will send one report later, collecting what `docs/DATA_ISSUES.md` holds by then (2026-10-10). Done when each row there has a status other than NOT SENT.
 
 **Sources still to verify**
-- **Licence for the Elections Alberta boundary shapefile.** None is stated on the download page (`data/DATA.md`, "Provincial ridings"). Done when a written licence or permission is recorded there; until then the provincial layer cannot ship.
-- **Exact attribution text for the Open Government Licence – Edmonton**, and Statistics Canada's for the ward populations. Done when `data/DATA.md` quotes both.
+- **Statistics Canada attribution wording**, before ward populations are published: quote the Statistics Canada Open Licence's required statement in `data/DATA.md` and on the About page.
 - **Post-2025-election ward boundary report (Policy C469A).** Not found; the City's ward-boundary-review page returned 404 on 2026-10-10. Done when the report's status and any proposed adjustments are recorded in `data/DATA.md`.
 - **Join the 278 census neighbourhoods to the 407 neighbourhood polygons** (`eg3i-f4bj` to `65fr-66s6`). Done when `data/DATA.md` says which of the other 129 are industrial or unpopulated and which, if any, are missing a census row.
 - **A ward population newer than the 2021 Census**, from a primary source. Done when found, or when recorded as not existing.
