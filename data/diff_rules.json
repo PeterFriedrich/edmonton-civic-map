@@ -14,6 +14,7 @@
     "address_district_without_boundary_move": "review",
     "address_district_with_boundary_move": "pass",
     "split_addresses": "review",
-    "addresses_added_or_removed": "pass"
+    "addresses_added_or_removed": "pass",
+    "address_point_moved": "pass"
   }
 }

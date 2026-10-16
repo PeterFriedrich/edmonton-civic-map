@@ -20,6 +20,7 @@ build_boundaries, build_address_index, build_officeholders.
 import argparse
 import json
 import logging
+import math
 import re
 import sys
 from collections import Counter
@@ -118,14 +119,23 @@ def diff_layers(old_dir, new_dir, threshold_m2):
 
 
 def _addresses(adir):
-    """{(street file, house number): set of district tuples}."""
+    """{(street file, house number): its records, [lat, lon, *district_ids, near]}."""
     got = {}
     for f in sorted(adir.glob("*.json")):
         if f.name == "streets.json":
             continue
         for num, recs in _json(f).items():
-            got[(f.name, num)] = {tuple(r[2:-1]) for r in recs}
+            got[(f.name, num)] = recs
     return got
+
+
+def _moved_m(a, b):
+    """What changed in an address whose districts did not, for the report."""
+    if len(a) != len(b):
+        return f"{len(a)} -> {len(b)} parcel rows"
+    d = max(math.hypot((rb[0] - ra[0]) * 111_320, (rb[1] - ra[1]) * 111_320 * math.cos(math.radians(ra[0])))
+            for ra, rb in zip(sorted(a), sorted(b)))
+    return f"point moved {d:,.0f} m" if d >= 0.5 else "near-edge flags changed"
 
 
 def _parcel_rows(adir):
@@ -137,11 +147,14 @@ def _parcel_rows(adir):
 
 def diff_addresses(old_dir, new_dir, layer_ids, moved_layers, max_change):
     out = {"parcel_rows_moved": [], "address_district_without_boundary_move": [],
-           "address_district_with_boundary_move": [], "split_addresses": [], "addresses_added_or_removed": []}
+           "address_district_with_boundary_move": [], "split_addresses": [], "addresses_added_or_removed": [],
+           "address_point_moved": []}
     ra, rb = _parcel_rows(old_dir / "addresses"), _parcel_rows(new_dir / "addresses")
     if ra and abs(rb - ra) / ra > max_change:
         out["parcel_rows_moved"].append(f"parcel rows {ra} -> {rb} ({(rb - ra) / ra:+.2%})")
-    old, new = _addresses(old_dir / "addresses"), _addresses(new_dir / "addresses")
+    old_recs, new_recs = _addresses(old_dir / "addresses"), _addresses(new_dir / "addresses")
+    old = {k: {tuple(r[2:-1]) for r in v} for k, v in old_recs.items()}
+    new = {k: {tuple(r[2:-1]) for r in v} for k, v in new_recs.items()}
     gone, added = old.keys() - new.keys(), new.keys() - old.keys()
     if gone or added:
         out["addresses_added_or_removed"].append(f"{len(added)} added, {len(gone)} removed")
@@ -152,6 +165,8 @@ def diff_addresses(old_dir, new_dir, layer_ids, moved_layers, max_change):
             out["split_addresses"].append(f"{key[0]} {key[1]}: {sorted(a)} -> {sorted(b)}")
             continue
         if a == b:
+            if old_recs[key] != new_recs[key]:
+                out["address_point_moved"].append(f"{key[0]} {key[1]}: {_moved_m(old_recs[key], new_recs[key])}, same districts")
             continue
         (ta,), (tb,) = a, b
         for i, lid in enumerate(layer_ids):
