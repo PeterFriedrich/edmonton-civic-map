@@ -8,6 +8,10 @@ Items are verbatim as they were closed, newest-moved first in the order they app
 
 ---
 
+- [x] DONE 2026-10-16: `src/download.py` GETs each `landing_url` after the fetch; a non-200 fails that source. **Check every `landing_url` resolves** in `src/download.py` (§5 "stop" row; the diff check is offline and skips it). Belongs with the refresh workflow.
+
+- [x] DONE 2026-10-16: `.github/workflows/refresh.yml`, Mondays 10:00 UTC; robots.txt checked once for all 13 sources (`data/DATA.md`). **Weekly refresh workflow on GitHub Actions** per `docs/SPEC_data_schema.md` §8: auto-publish when nothing changed, hold and file an issue otherwise. Changes CI, so propose the workflow before writing it.
+
 - [x] DONE 2026-10-16: `src/diff_check.py` with severities in `data/diff_rules.json`; thresholds and recheck dates in `site/public/data/staleness.json` (DECISIONS row). **Diff check and staleness guard** per `docs/SPEC_data_schema.md` §5–§6, including the address-index rows in §9.4 (not built with the index; it compares against `site/public/data/addresses/manifest.txt`).
 
 - [x] DONE 2026-10-16: the page reads `staleness.json` and warns per layer. **Boundary staleness in the page**: the cards warn after 45 days for office holders; boundaries (180 days, `layers.json` `last_verified`) have no warning yet.

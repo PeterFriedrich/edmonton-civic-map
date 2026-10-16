@@ -266,6 +266,15 @@ that was live for four days.
 - GitHub disables scheduled workflows after 60 days without repository
   activity; the weekly `last_verified` commit keeps this one alive.
 
+**Built 2026-10-16:** `.github/workflows/refresh.yml` (DECISIONS row of
+that date). Mondays 10:00 UTC, or by hand. A pass copies the rebuild over
+`site/public/data`, reruns pytest, the site build and the browser check, commits
+to master as `github-actions[bot]` and starts `pages.yml` (a push made with the
+workflow token starts no workflow). Anything else fails the run and files one
+issue labelled `refresh`, or comments on the open one. While a change is held,
+nothing advances `last_verified`, not only the affected records. If master
+gets branch protection, the bot's direct push needs a bypass or a PR.
+
 **A dial, not a fixed line.** Which §5 rows hold and which pass is a config
 list, so the amount of checking can be traded against effort later. A possible
 later step, the owner's call: an unattended agent run that opens the PR itself

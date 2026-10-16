@@ -284,6 +284,10 @@ def download(sid, out_root):
     retrieved_at = _now()
     try:
         rec = {"socrata": fetch_socrata, "zip": fetch_zip, "page": fetch_page}[src["kind"]](sid, src, partial)
+        # A landing page that stops resolving is a "stop" (docs/SPEC_data_schema.md §5): the
+        # page the site links as the source has moved even if the file has not.
+        if rec["landing_url"] != rec["fetch_url"]:
+            _get(rec["landing_url"])
         rec = {"id": sid, "title": src["title"], **rec, "licence": src["licence"],
                "attribution": None,  # TODO.md "Exact attribution text"
                "retrieved_at": retrieved_at, "expected_row_count": src["expected_row_count"]}

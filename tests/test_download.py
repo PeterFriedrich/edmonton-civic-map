@@ -52,6 +52,7 @@ def _socrata(routes, ds, count, pages, fmt="geojson"):
         return json.dumps({"features": [{"type": "Feature", "properties": {"i": i}, "geometry": None}
                                         for i in range(n)]}).encode()
     routes.append((lambda u: f"/resource/{ds}.{fmt}?" in u, page))
+    routes.append((lambda u: u == f"{dl.SOCRATA}/d/{ds}", lambda u: b"<html>"))
 
 
 def _shp_zip(n):
@@ -131,9 +132,24 @@ def test_zip_source_counts_shapefile_rows(net, tmp_path):
     routes, _ = net
     routes.append((lambda u: u.endswith(".zip"),
                    lambda u: (_shp_zip(87), {"last-modified": "Wed, 11 Sep 2024 16:00:00 GMT"})))
+    routes.append((lambda u: u == dl.SOURCES["ab_ridings"]["landing_url"], lambda u: b"<html>"))
     rec = dl.download("ab_ridings", tmp_path)
     assert rec["row_count"] == 87 and rec["publisher_updated_at"] == "2024-09-11"
     assert rec["file"] == "inner/ED.shp"
+
+
+def test_dead_landing_page_fails_and_keeps_the_previous_copy(net, tmp_path):
+    routes, _ = net
+    (tmp_path / "ab_ridings").mkdir()
+    (tmp_path / "ab_ridings" / "fetch.json").write_text("previous")
+    routes.append((lambda u: u.endswith(".zip"), lambda u: _shp_zip(87)))
+
+    def gone(u):
+        raise dl.DownloadError(f"HTTP 404 from {u}")
+    routes.append((lambda u: u == dl.SOURCES["ab_ridings"]["landing_url"], gone))
+    with pytest.raises(dl.DownloadError, match="404"):
+        dl.download("ab_ridings", tmp_path)
+    assert (tmp_path / "ab_ridings" / "fetch.json").read_text() == "previous"
 
 
 def test_zip_source_with_wrong_count_fails(net, tmp_path):
