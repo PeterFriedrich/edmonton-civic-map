@@ -73,6 +73,14 @@ and Socrata metadata URL is allowed. `data.edmonton.ca`, `elections.ca`,
 `elections.ab.ca` and `epsb.ca` answer 404 (no restrictions). Recheck when a
 source is added.
 
+**Builds are reproducible only on one CPU architecture.** The same source
+bytes rebuilt on x86_64 (GitHub's `ubuntu-latest`) and on aarch64 (this
+server) give boundary files that differ by float noise after reprojection and
+simplification: on 2026-10-16 the shared edge of `provincial_riding:33` and `:35`
+moved 13 m², and the diff check held the first refresh run (issue #52).
+Addresses were unaffected. The refresh runs on `ubuntu-24.04-arm` for this
+reason; build anything you commit on aarch64 too, or the next refresh holds.
+
 **Primary sources only** (`docs/SPEC_civic_map.md` §4). News and Wikipedia are
 context, never data.
 
