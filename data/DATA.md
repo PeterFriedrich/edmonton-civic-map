@@ -63,6 +63,16 @@ files with themselves takes about 7 s. `site/public/data/staleness.json` is
 hand-kept, not built: the 45 and 180 day thresholds and four recheck dates,
 each from the statute or publisher that sets it.
 
+**Weekly refresh, 2026-10-16:** `.github/workflows/refresh.yml` runs the
+download, the three builders and the diff check every Monday (`docs/SPEC_data_schema.md` §8).
+The download also GETs each source's `landing_url`; all 10 distinct ones
+answered 200 on 2026-10-16. **robots.txt, checked once by hand 2026-10-16**
+with Python's `robotparser` and the project User-Agent: every fetch, landing
+and Socrata metadata URL is allowed. `data.edmonton.ca`, `elections.ca`,
+`open.canada.ca`, `ecsd.net`, `assembly.ab.ca` and `ourcommons.ca` serve one;
+`elections.ab.ca` and `epsb.ca` answer 404 (no restrictions). Recheck when a
+source is added.
+
 **Primary sources only** (`docs/SPEC_civic_map.md` §4). News and Wikipedia are
 context, never data.
 

@@ -67,6 +67,7 @@ the brief wins.
 - **2026-10-15** — **The site is built with Vite, and its content-hashed file names are the cache busting** (owner approved the proposal in session). … Rejected: keeping `site/data/` and copying it in CI (a local `vite preview` would show no data); stamping every data URL (2,800 street files would need a hash manifest).
 - **2026-10-16** — **Office holders are built into `officeholders.json`, one row per district in the boundary files: 71 seats** (owner approved the plan in session). … Rejected: publishing either name without review; Edmonton-only ridings.
 - **2026-10-16** — **The diff check is `src/diff_check.py`, offline: it compares a scratch rebuild with `site/public/data` and exits 0 pass, 1 review, 2 stop** (owner approved the plan in session).
+- **2026-10-16** — **The weekly refresh is `.github/workflows/refresh.yml`** (owner approved the proposal in session), as §8 set out: download, rebuild into scratch, `src/diff_check.py`. … Rejected: conditional GETs (sha256 already marks an unchanged file); an unattended agent opening the review PR (the owner's later call).
 
 ## Open work
 
@@ -98,8 +99,6 @@ the brief wins.
 - **Survey what Tier 2 can say by automation.** For each issue in brief §3 (potholes, snow clearing, zoning and infill, transit, policing, schools, water and stormwater, property tax and assessment), find whether a primary source states the responsible body and the way to engage …
 
 **Build**
-- **Check every `landing_url` resolves** in `src/download.py` (§5 "stop" row; the diff check is offline and skips it). Belongs with the refresh workflow.
-- **Weekly refresh workflow on GitHub Actions** per `docs/SPEC_data_schema.md` §8: auto-publish when nothing changed, hold and file an issue otherwise. Changes CI, so propose the workflow before writing it.
 - **Replace the template `README.md`** with one for this project.
 - **Neighbourhood search** (`docs/SPEC_lenses.md` §3): type a neighbourhood, see its districts; a divided one shows each and asks for an address. Needs the 407 names from `65fr-66s6` published, which is a new published file: propose first.
 - **About and methodology page** (brief §7): sources, verification dates, known limits, and the council note (council decides as a body; the mayor has one vote; much of what residents meet is delivered by administration, the province or EPCOR). Written content: draft for the …
