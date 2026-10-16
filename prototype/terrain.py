@@ -16,13 +16,15 @@ import sys
 from collections import Counter
 
 import numpy as np
-import rasterio
+# A one-off build in its own venv (prototype/README.md); its output, terrain.pmtiles,
+# is committed. The project venv doesn't carry GDAL, so these stay unpinned.
+import rasterio  # noqa: requirements
 import shapely
-from PIL import Image
-from pmtiles.tile import Compression, TileType, zxy_to_tileid
-from pmtiles.writer import Writer
-from rasterio.warp import Resampling, reproject, transform_bounds
-from rasterio.windows import from_bounds
+from PIL import Image  # noqa: requirements
+from pmtiles.tile import Compression, TileType, zxy_to_tileid  # noqa: requirements
+from pmtiles.writer import Writer  # noqa: requirements
+from rasterio.warp import Resampling, reproject, transform_bounds  # noqa: requirements
+from rasterio.windows import from_bounds  # noqa: requirements
 
 SRC = "/vsicurl/https://canelevation-dem.s3.ca-central-1.amazonaws.com/mrdem-30/mrdem-30-dtm.tif"
 NODATA = -32767.0
