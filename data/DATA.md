@@ -23,12 +23,30 @@ are from that inspection. A source moves from "candidate" to "in use" when a
 downloader exists for it.
 
 **In use (downloader exists), 2026-10-15:** `python -m src.download` fetches
-six sources into `data/raw/<id>/` (git-ignored), each with a `fetch.json`
+the map and address sources into `data/raw/<id>/` (git-ignored), each with a `fetch.json`
 (`docs/SPEC_data_schema.md` §2): `coe_parcels` (`ut27-nrpn`, `PARCEL` rows),
 `coe_wards`, `coe_public_school_wards`, `coe_catholic_school_wards`,
 `ab_ridings`, `fed_ridings`. All six passed on the first live run
-(298,453 / 12 / 9 / 7 / 87 / 343 rows; about 30 s, 43 MB). The office-holder
-sources are still candidates.
+(298,453 / 12 / 9 / 7 / 87 / 343 rows; about 30 s, 43 MB).
+
+**Office holders in use, 2026-10-16:** seven more sources, each with a fixed
+row count: `coe_council_contacts` (13), `coe_election_results_2025` (140),
+`epsb_trustees` (9), `ecsd_trustees` (7), `ab_mlas` (87), `ab_mla_list` (87
+current members) and `ca_mps` (37). The pages and CSVs are counted by the
+build's own parsers, so a changed layout fails the download. A vacancy changes
+a count too, and stops the download until a person looks. Then
+`python -m src.build_officeholders` writes `site/public/data/officeholders.json`:
+71 seats (mayor, 12 councillors, 9 + 7 trustees, 29 MLAs, 13 MPs), one per
+district in the boundary files. All 71 `contact_url` pages were fetched on
+2026-10-16 and each showed the holder's surname.
+
+**Name variants** (`data/name_variants.csv`): name pairs a person has approved
+as the same holder, per seat. The build stops on any other cross-check
+mismatch. Approved by the owner, 2026-10-16:
+- `council_ward:pihesiwin`: "Mike Elliott" (ward layer) and "Michael Elliott" (contacts).
+- `catholic_school_ward:76`: "Lisa Turchansky" (board page) and "CASTELL TURCHANSKY, Lisa" (2025 results).
+  The earlier note that the rosters "match the 2025 official results in all 16
+  seats" compared surnames by eye; the build compares full names.
 
 **Boundary build, 2026-10-15:** `python -m src.build_boundaries` turns the five
 layers into `site/public/data/boundaries/<layer>.geojson` and `site/public/data/layers.json`.
@@ -60,6 +78,7 @@ Use Python with `certifi`'s bundle. Do not disable verification.
 | Catholic trustees | Edmonton Catholic Schools | `ecsd.net/ecsd-trustees` | web page | n/a (facts) | read 2026-10-10 |
 | Provincial ridings | Elections Alberta | `2019Boundaries_ED-Shapefiles.zip` | shapefile, EPSG:3401 | **none stated — open item** | enacted 2017-12-15, in force 2019-03-19 |
 | MLAs | Legislative Assembly of Alberta | `assembly.ab.ca/txt/mla_home/contacts.csv` | CSV | n/a (facts) | read 2026-10-10 |
+| MLA pages (cross-check, contact links) | Legislative Assembly of Alberta | `assembly.ab.ca/members/members-of-the-legislative-assembly` | web page | n/a (facts) | read 2026-10-16 |
 | Federal ridings | Elections Canada | `FederalElectoralDistricts_SHP.zip` | shapefile, EPSG:3347 | Open Government Licence – Canada | 2023 Representation Order; file modified 2026-09-15 |
 | MPs | House of Commons | `ourcommons.ca/Members/en/search/csv?province=AB` | CSV | n/a (facts) | read 2026-10-10 |
 | Addresses | City of Edmonton open data | `ut27-nrpn` | Socrata table, lat/lon | OGL – Edmonton | rows refreshed 2026-10-05 |
@@ -128,7 +147,7 @@ Use Python with `certifi`'s bundle. Do not disable verification.
 ### MLAs — Legislative Assembly of Alberta
 - **Publisher / URL:** https://www.assembly.ab.ca/members/members-of-the-legislative-assembly → `https://www.assembly.ab.ca/txt/mla_home/contacts.csv`
 - **Retrieved:** 2026-10-10
-- **Rows / columns:** 91 lines. **Line 1 is a "Date file created" banner, not the header.** Columns then run: division number, division name, title, first, middle, last, caucus, office fields.
+- **Rows / columns:** 91 lines. **It opens with a banner: "Date file created", the quoted date, a blank line; the header is line 4** (corrected 2026-10-16). Address columns repeat their names for the two offices. Columns then run: division number, division name, title, first, middle, last, caucus, office fields.
 - **Quirks:** division number matches `EDNumber20` in the boundary file (27–46 are the Edmonton divisions), which is the join key. All 20 Edmonton seats are filled.
 
 ### Federal ridings — Elections Canada
@@ -140,11 +159,16 @@ Use Python with `certifi`'s bundle. Do not disable verification.
 - **Coverage of Edmonton, measured:** 9 "Edmonton" districts. All 298,238 parcel addresses fall in exactly one district; **5 fall in Sherwood Park—Fort Saskatchewan and 1 in Leduc—Wetaskiwin**. St. Albert—Sturgeon River and Parkland overlap the City's area by under 0.3 km² each with no addresses.
 - **Quirks:** 10 MB zip for the whole country; clip to the Edmonton area before simplifying.
 
+### MLA list — Legislative Assembly of Alberta (`ab_mla_list`)
+- **URL:** https://www.assembly.ab.ca/members/members-of-the-legislative-assembly (HTML)
+- **Read:** 2026-10-16. One table row per member: a link `member-information?mid=<id>`, "Last, Honorific First", caucus, division. Former members are listed with "Former Member" in place of a division.
+- **Use:** each MLA's `contact_url` (the member page, `&legl=31`), and the MLA cross-check: the surname in `contacts.csv` must appear in the listed name for the same division. Same publisher as `contacts.csv`, so it catches a stale or mis-joined file, not a publisher error.
+
 ### MPs — House of Commons
 - **Publisher / URL:** https://www.ourcommons.ca/Members/en/search?province=AB → CSV at `/Members/en/search/csv?province=AB`, XML at `/Members/en/search/xml?province=AB`
 - **Retrieved:** 2026-10-10
 - **Rows / columns:** 37 Alberta members; `Person ID`, `Honorific Title`, `First Name`, `Last Name`, `Constituency`, `Province / Territory`, `Political Affiliation`, `Start Date`, `End Date`
-- **Quirks:** joins to the boundary file on constituency **name**, not code. `Start Date` contains a narrow no-break space (U+202F) before "a.m.". All 9 Edmonton seats are filled.
+- **Quirks:** joins to the boundary file on constituency **name**, not code. `Start Date` contains a narrow no-break space (U+202F) before "a.m.". All 9 Edmonton seats are filled. `contact_url` is `https://www.ourcommons.ca/Members/en/<Person ID>` (200 on 2026-10-16). No second source: `cross_check` is null.
 
 ### Addresses — `ut27-nrpn`
 - **Publisher / URL:** City of Edmonton, https://data.edmonton.ca/d/ut27-nrpn

@@ -141,10 +141,10 @@ Source and cross-check per body:
 
 | Body | Seats | Source of record | Cross-check |
 |---|---|---|---|
-| Edmonton City Council | 13 | ward layer `b4er-5rp2` (councillors); contacts `e9qt-cc3j` (mayor) | contacts `e9qt-cc3j` |
+| Edmonton City Council | 13 | ward layer `b4er-5rp2` (councillors); contacts `e9qt-cc3j` (mayor) | contacts `e9qt-cc3j` (councillors); 2025 official results (mayor, until a mid-term change) |
 | Edmonton Public Schools | 9 | board trustee page | 2025 official results, until the first mid-term change |
 | Edmonton Catholic Schools | 7 | board trustee page | 2025 official results, until the first mid-term change |
-| Legislative Assembly of Alberta | those in the clipped layer | Assembly `contacts.csv` | none found yet |
+| Legislative Assembly of Alberta | those in the clipped layer | Assembly `contacts.csv` | the Assembly's members page (same publisher; surname per division) |
 | House of Commons | those in the clipped layer | House of Commons CSV export | none found yet |
 
 Election results are a cross-check only while nobody has left office. After a

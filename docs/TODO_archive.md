@@ -8,6 +8,8 @@ Items are verbatim as they were closed, newest-moved first in the order they app
 
 ---
 
+- [x] DONE 2026-10-16: 7 sources in `src/download.py`, `src/build_officeholders.py` writes 71 seats, owner approved two name variants (`data/DATA.md`). **Downloaders for the office-holder sources** (`e9qt-cc3j`, `fv5x-8efu`, `eg3i-f4bj`, Assembly `contacts.csv`, House of Commons CSV, the two trustee pages), added to `src/download.py`, each checking its row count and writing `fetch.json`. The trustee scrapers must fail on a layout change, never return an empty roster. The six map and address sources are done (2026-10-15, `data/DATA.md` "In use").
+
 - [x] **Vite build and what it changes in CI** — DONE 2026-10-15. Proposal approved in session; built as proposed: Vite with hashed file names, data in `site/public/data/`, `site/vendor/` replaced by npm, `scripts/check_dist.mjs` on every PR, Playwright check at deploy, Python tests before deploy (`docs/DECISIONS.md`).
 
 - [x] **Build `src/build_address_index.py`** per `docs/SPEC_data_schema.md` §9: the street files and `manifest.txt` under `site/data/addresses/`, the §9.4 diff-check rows and the §9.5 tests. Needs the address downloader and the boundary build first (items below). Done when the index is committed and all four §9.5 tests pass. DONE 2026-10-15: `site/data/addresses/`, 2,800 street files; pip.js agrees with the build on all 298,453 parcel rows at full resolution and on all 288,534 records against the published boundaries.

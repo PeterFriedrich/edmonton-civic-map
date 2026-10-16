@@ -46,7 +46,6 @@ symptom and re-measure the stated cause before acting on it.
 
 ### Build
 
-- [ ] **Downloaders for the office-holder sources** (`e9qt-cc3j`, `fv5x-8efu`, `eg3i-f4bj`, Assembly `contacts.csv`, House of Commons CSV, the two trustee pages), added to `src/download.py`, each checking its row count and writing `fetch.json`. The trustee scrapers must fail on a layout change, never return an empty roster. The six map and address sources are done (2026-10-15, `data/DATA.md` "In use").
 - [ ] **Diff check and staleness guard** per `docs/SPEC_data_schema.md` §5–§6, including the address-index rows in §9.4 (not built with the index; it compares against `site/public/data/addresses/manifest.txt`).
 - [ ] **Weekly refresh workflow on GitHub Actions** per `docs/SPEC_data_schema.md` §8: auto-publish when nothing changed, hold and file an issue otherwise. Changes CI, so propose the workflow before writing it.
 - [ ] **Replace the template `README.md`** with one for this project.
@@ -54,6 +53,8 @@ symptom and re-measure the stated cause before acting on it.
 ## Done
 
 Closed items moved out of `## Open work` live in **`docs/TODO_archive.md`** — one line each below, reasoning there.
+
+- [x] **Downloaders for the office-holder sources** — DONE 2026-10-16 · `docs/TODO_archive.md`
 
 - [x] **Vite build and what it changes in CI** — DONE 2026-10-15 · `docs/TODO_archive.md`
 
