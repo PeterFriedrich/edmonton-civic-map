@@ -55,7 +55,7 @@ for (const p of walk(PUBLIC)) {
   else if (sha(p) !== sha(out)) errors.push(`published file changed in ${DIST}: ${rel}`);
   n++;
 }
-for (const need of ["licenses/maplibre-gl.txt", "licenses/pmtiles.txt", "data/layers.json", "data/buildings.pmtiles", "data/terrain.pmtiles", "data/addresses/streets.json"]) {
+for (const need of ["licenses/maplibre-gl.txt", "licenses/pmtiles.txt", "data/layers.json", "data/staleness.json", "data/buildings.pmtiles", "data/terrain.pmtiles", "data/addresses/streets.json"]) {
   if (!existsSync(join(DIST, need))) errors.push(`missing: ${need}`);
 }
 

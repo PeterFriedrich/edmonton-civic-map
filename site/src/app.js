@@ -42,15 +42,16 @@ const OFFICIAL_LOOKUP = {
   provincial_riding: ["Elections Alberta, Where to Vote", "https://www.elections.ab.ca/where-to-vote-tool/"],
   federal_riding: ["Elections Canada, Find your electoral district", "https://www.elections.ca/Scripts/vis/FindED?L=e"],
 };
-const STALE_DAYS = 45; // office holders (docs/SPEC_data_schema.md §6, §7 point 3)
 
-const state = { layers: null, seats: null, names: {}, boundaries: {}, streets: null, files: new Map(), map: null, last: null };
+const state = { layers: null, seats: null, stale: null, names: {}, boundaries: {}, streets: null, files: new Map(), map: null, last: null };
 
 const ready = Promise.all([
   getJSON("data/layers.json"),
   getJSON("data/officeholders.json"),
-]).then(([layers, seats]) => {
+  getJSON("data/staleness.json"), // thresholds: docs/SPEC_data_schema.md §6, §7 point 3
+]).then(([layers, seats, stale]) => {
   state.layers = layers;
+  state.stale = stale;
   state.seats = new Map(seats.map((s) => [s.seat_id, s]));
   $("built").textContent = seats.map((s) => s.last_verified).sort().at(-1);
 });
@@ -79,11 +80,11 @@ const el = (tag, attrs = {}, ...kids) => {
 const link = (href, text) => el("a", { href, rel: "noopener" }, text);
 const daysSince = (iso) => Math.floor((Date.now() - Date.parse(iso + "T00:00:00Z")) / 864e5);
 
-function card(seat, notes = []) {
+function card(seat, notes = [], warns = []) {
   const name = seat.district_id ? state.names[seat.district_id] : "City-wide";
   const level = `${BODIES[seat.body]} · ${seat.district_id?.startsWith("council_ward:") ? "Ward " + name : name}`;
   const showAff = $("affiliation").checked && seat.affiliation;
-  const stale = daysSince(seat.last_verified) > STALE_DAYS;
+  const stale = daysSince(seat.last_verified) > state.stale.officeholders_days;
   return el("article", { class: "card" },
     el("p", { class: "level" }, level),
     el("h3", {}, seat.vacant ? "Seat vacant" : seat.name),
@@ -94,6 +95,7 @@ function card(seat, notes = []) {
       ` · last checked ${seat.last_verified}`),
     stale ? el("p", { class: "note warn" }, `Not re-checked against its source for ${daysSince(seat.last_verified)} days. Check the official page.`) : null,
     ...notes.map((n) => el("p", { class: "note" }, ...n)),
+    ...warns.map((n) => el("p", { class: "note warn" }, ...n)),
   );
 }
 
@@ -104,7 +106,9 @@ function render(title, perLayer, point, what = "This address") {
   for (const { layer, ids, near, kind } of perLayer) {
     const noun = NOUN[layer.id];
     const [lookupName, lookupUrl] = OFFICIAL_LOOKUP[layer.id];
-    const notes = [];
+    const notes = [], warns = [];
+    const age = daysSince(layer.last_verified);
+    if (age > state.stale.boundaries_days) warns.push([`The ${noun} boundaries were last checked against their source ${age} days ago. Confirm with the official lookup: `, link(lookupUrl, lookupName), "."]);
     if (kind === "split") notes.push([`This address has parcels in more than one ${noun}. Each is shown.`]);
     if (kind === "overlap") notes.push([`This point falls where two ${noun}s overlap in the published boundaries. Both are shown.`]);
     if (near) notes.push([`${what} is within ${layer.near_boundary_m} m of a ${noun} boundary. Confirm with the official lookup: `, link(lookupUrl, lookupName), "."]);
@@ -113,7 +117,7 @@ function render(title, perLayer, point, what = "This address") {
     }
     for (const id of ids) {
       const seat = state.seats.get(id);
-      out.append(seat ? card(seat, notes) : el("p", { class: "notice" }, `No office holder is listed for ${id}.`));
+      out.append(seat ? card(seat, notes, warns) : el("p", { class: "notice" }, `No office holder is listed for ${id}.`));
     }
     if (layer.id === "council_ward") out.append(card(state.seats.get("edmonton_council:mayor")));
   }
