@@ -378,7 +378,7 @@ addresses moved, per district.
 
 1. **Every stored district matches full resolution, by a second method.** The
    build uses shapely (GEOS). The check re-derives every parcel row with
-   `prototype/pip.js` (ray casting, run under node) against the
+   `site/src/pip.js`, the site's own lookup (ray casting, run under node through `prototype/pip.js`) against the
    full-resolution source layers, and requires every row to match.
    It needs the downloaded sources, so it runs in the build and the refresh,
    not in the unit tests.

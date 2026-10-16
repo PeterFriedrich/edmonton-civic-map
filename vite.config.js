@@ -8,5 +8,11 @@ export default defineConfig({
   root: "site",
   base: "./",
   // MapLibre alone is about 1 MB minified; one bundle is expected for now.
-  build: { outDir: "../dist", emptyOutDir: true, chunkSizeWarningLimit: 1200 },
+  build: {
+    outDir: "../dist",
+    emptyOutDir: true,
+    chunkSizeWarningLimit: 1200,
+    // The lookup page, and the building-tiles test page kept for phone measurements.
+    rolldownOptions: { input: { main: "site/index.html", buildings: "site/buildings-test.html" } },
+  },
 });

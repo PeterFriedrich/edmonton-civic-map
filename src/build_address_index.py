@@ -105,7 +105,7 @@ def build_records(rows, lon, lat, x, y, dist, near):
 
 
 def _node_locate(fc, lonlat):
-    """Feature indices hit per point, by prototype/pip.js."""
+    """Feature indices hit per point, by site/src/pip.js (through prototype/pip.js)."""
     with tempfile.TemporaryDirectory() as td:
         p = Path(td) / "layer.geojson"
         p.write_text(json.dumps(fc), encoding="utf-8")
@@ -115,7 +115,10 @@ def _node_locate(fc, lonlat):
                                  text=True, check=True).stdout
         except FileNotFoundError as e:
             raise bb.BuildError("node not found: the pip.js cross-check cannot run") from e
-    lines = out.split("\n")[:len(lonlat)]
+    lines = out.split("\n")[:-1]
+    # A node that loads nothing exits 0 with no output; that must not read as a disagreement.
+    if len(lines) != len(lonlat):
+        raise bb.BuildError(f"pip.js answered {len(lines)} of {len(lonlat)} points")
     return [ln.split("|") if ln else [] for ln in lines]
 
 
