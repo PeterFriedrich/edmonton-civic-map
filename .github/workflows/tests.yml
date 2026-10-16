@@ -55,6 +55,11 @@ jobs:
       - name: Check decisions log
         run: python scripts/check_decisions_log.py
 
+      # Every third-party import is pinned in requirements.txt, so rebuilding
+      # the venv cannot silently drop a package installed by hand.
+      - name: Check requirements cover imports
+        run: python scripts/check_requirements.py
+
       # The site build: a PR that breaks the Vite build or ships an unhashed
       # file goes red here, before merge. The browser check runs at deploy
       # (pages.yml), where it gates what goes live.
