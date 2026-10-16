@@ -3,8 +3,10 @@
 Brief §10 task 3 (`docs/SPEC_civic_map.md`). Not the app and not the pipeline:
 a proof that the lookup can run in the browser with no address leaving it.
 
-- `pip.js` — `locate(lon, lat, featureCollection)` and
-  `distanceToBoundary(...)`. Pure functions: no network, no storage, no logging.
+- `pip.js` — a command-line wrapper for node. The functions,
+  `locate(lon, lat, featureCollection)` and `distanceToBoundary(...)`, moved to
+  `site/src/pip.js` on 2026-10-16, where the site's map clicks use them. Pure
+  functions: no network, no storage, no logging.
 - `check_pip.py` — runs `pip.js` under node against every City parcel address
   and compares it with shapely, at full resolution and at each simplification
   tolerance.

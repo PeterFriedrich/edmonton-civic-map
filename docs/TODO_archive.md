@@ -8,6 +8,8 @@ Items are verbatim as they were closed, newest-moved first in the order they app
 
 ---
 
+- [x] DONE 2026-10-16: `site/index.html` is the lookup (address type-ahead, district list, map click, cards with source and date, near-edge and split notes, affiliation off by default); the tile test page moved to `buildings-test.html`; `pip.js` moved to `site/src/` so the build cross-checks the code the browser runs. **The first lookup page.**
+
 - [x] DONE 2026-10-16: 7 sources in `src/download.py`, `src/build_officeholders.py` writes 71 seats, owner approved two name variants (`data/DATA.md`). **Downloaders for the office-holder sources** (`e9qt-cc3j`, `fv5x-8efu`, `eg3i-f4bj`, Assembly `contacts.csv`, House of Commons CSV, the two trustee pages), added to `src/download.py`, each checking its row count and writing `fetch.json`. The trustee scrapers must fail on a layout change, never return an empty roster. The six map and address sources are done (2026-10-15, `data/DATA.md` "In use").
 
 - [x] **Vite build and what it changes in CI** — DONE 2026-10-15. Proposal approved in session; built as proposed: Vite with hashed file names, data in `site/public/data/`, `site/vendor/` replaced by npm, `scripts/check_dist.mjs` on every PR, Playwright check at deploy, Python tests before deploy (`docs/DECISIONS.md`).

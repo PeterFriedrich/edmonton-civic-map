@@ -68,6 +68,9 @@ jobs:
         env:
           PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
 
+      - name: Site unit tests
+        run: npm run test:js
+
       - name: Build the site
         run: npm run build
 

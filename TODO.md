@@ -49,10 +49,16 @@ symptom and re-measure the stated cause before acting on it.
 - [ ] **Diff check and staleness guard** per `docs/SPEC_data_schema.md` §5–§6, including the address-index rows in §9.4 (not built with the index; it compares against `site/public/data/addresses/manifest.txt`).
 - [ ] **Weekly refresh workflow on GitHub Actions** per `docs/SPEC_data_schema.md` §8: auto-publish when nothing changed, hold and file an issue otherwise. Changes CI, so propose the workflow before writing it.
 - [ ] **Replace the template `README.md`** with one for this project.
+- [ ] **Neighbourhood search** (`docs/SPEC_lenses.md` §3): type a neighbourhood, see its districts; a divided one shows each and asks for an address. Needs the 407 names from `65fr-66s6` published, which is a new published file: propose first.
+- [ ] **About and methodology page** (brief §7): sources, verification dates, known limits, and the council note (council decides as a body; the mayor has one vote; much of what residents meet is delivered by administration, the province or EPCOR). Written content: draft for the owner's approval.
+- [ ] **Boundary staleness in the page**: the cards warn after 45 days for office holders; boundaries (180 days, `layers.json` `last_verified`) have no warning yet.
+- [ ] **Shareable view link** without the address unless the reader chooses (`docs/SPEC_lenses.md` §5).
 
 ## Done
 
 Closed items moved out of `## Open work` live in **`docs/TODO_archive.md`** — one line each below, reasoning there.
+
+- [x] **The first lookup page.** — DONE 2026-10-16 · `docs/TODO_archive.md`
 
 - [x] **Downloaders for the office-holder sources** — DONE 2026-10-16 · `docs/TODO_archive.md`
 

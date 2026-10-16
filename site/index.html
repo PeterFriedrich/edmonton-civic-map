@@ -3,61 +3,56 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Building Tiles Test</title>
-<style>
-  :root { --bg: #f4f3ef; --fg: #1d1d1b; --muted: #5d5c57; --panel: rgba(255,255,255,.92); --line: #d4d2cb; --accent: #2f5d8a; }
-  @media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) { --bg: #16181b; --fg: #e8e6e1; --muted: #a3a19b; --panel: rgba(30,32,36,.92); --line: #3a3d42; --accent: #8db4dc; }
-  }
-  :root[data-theme="dark"] { --bg: #16181b; --fg: #e8e6e1; --muted: #a3a19b; --panel: rgba(30,32,36,.92); --line: #3a3d42; --accent: #8db4dc; }
-  html, body { margin: 0; height: 100%; background: var(--bg); color: var(--fg);
-    font: 14px/1.4 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
-  #map { position: absolute; inset: 0; }
-  #panel { position: absolute; top: 12px; left: 12px; right: 12px; max-width: 360px; padding: 12px 14px;
-    background: var(--panel); border: 1px solid var(--line); border-radius: 8px; }
-  h1 { font-size: 15px; margin: 0 0 4px; }
-  p { margin: 0 0 8px; color: var(--muted); }
-  .row { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
-  button { font: inherit; padding: 6px 10px; border-radius: 6px; border: 1px solid var(--line);
-    background: transparent; color: var(--fg); cursor: pointer; }
-  button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--bg); }
-  button:disabled { opacity: .5; cursor: default; }
-  dl { display: grid; grid-template-columns: auto 1fr; gap: 2px 10px; margin: 8px 0 0; font-variant-numeric: tabular-nums; }
-  dt { color: var(--muted); }
-  dd { margin: 0; }
-  #toggle { position: absolute; top: 8px; right: 8px; padding: 2px 8px; }
-  #panel.min > :not(h1):not(#toggle) { display: none; }
-</style>
+<title>Edmonton Civic Map</title>
+<meta name="description" content="Who represents an Edmonton address: City Council, both school boards, the Legislative Assembly and the House of Commons, from primary sources.">
+<link rel="stylesheet" href="./src/app.css">
 </head>
 <body>
-<div id="map"></div>
-<div id="panel">
-  <h1>Building tiles: test page</h1>
-  <button id="toggle" aria-expanded="true">Hide</button>
-  <p>A load and frame-rate test for the Edmonton Civic Map, not the map itself. 384,228 buildings from one 28.0 MB tile file (smaller ones appear as you zoom in), and the ground from a 2.69 MB elevation file; nothing else is loaded.</p>
-  <div class="row" role="group" aria-label="View">
-    <button id="flat" aria-pressed="true">Flat</button>
-    <button id="tilted" aria-pressed="false">Tilted</button>
+<div class="layout">
+  <main class="panel">
+    <header>
+      <h1>Edmonton Civic Map</h1>
+      <p class="lede">Who represents an Edmonton address, at every level: City Council, the public and Catholic school boards, the Legislative Assembly of Alberta and the House of Commons.</p>
+    </header>
+
+    <form id="search" role="search" autocomplete="off">
+      <label for="q">Address</label>
+      <div class="combo">
+        <input id="q" type="text" inputmode="search" placeholder="e.g. 10220 104 Avenue NW"
+               role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="suggestions"
+               aria-describedby="q-hint" spellcheck="false" autocapitalize="off">
+        <ul id="suggestions" role="listbox" aria-label="Matching addresses" hidden></ul>
+      </div>
+      <p id="q-hint" class="hint">Type a house number and street. Your search runs in this page: to answer, it loads one file for the chosen street from this site, and the house number is never sent.</p>
+    </form>
+
+    <div class="browse">
+      <label for="pick">Or choose a district</label>
+      <select id="pick"><option value="">Choose…</option></select>
+    </div>
+
+    <div class="options">
+      <label><input type="checkbox" id="affiliation"> Show party or caucus (MLAs and MPs)</label>
+    </div>
+
+    <section id="results" aria-live="polite" aria-label="Results"></section>
+
+    <footer class="about">
+      <p>Every name comes from the body's own published list and is checked against a second primary source where one exists. Each card links its source and the date it was last checked. Boundaries: City of Edmonton open data, Elections Alberta and Elections Canada.</p>
+      <p>Office-holder data last built <span id="built">…</span>.</p>
+    </footer>
+  </main>
+
+  <div class="map-wrap">
+    <div class="map-tools" role="group" aria-label="Boundary lines on the map">
+      <span class="map-tools-label">Lines:</span>
+      <div id="layer-buttons" class="seg"></div>
+      <button id="tilt" type="button" aria-pressed="false">3D</button>
+    </div>
+    <div id="map" role="region" aria-label="Map. Optional: every result is also listed in text."></div>
+    <p id="map-status" class="map-status">Loading the map…</p>
   </div>
-  <div class="row" role="group" aria-label="Buildings">
-    <button id="solid" aria-pressed="true">Solid</button>
-    <button id="ghost" aria-pressed="false">Translucent</button>
-  </div>
-  <div class="row" role="group" aria-label="Ground">
-    <button id="t-off" aria-pressed="true">No terrain</button>
-    <button id="t-shade" aria-pressed="false">Shading</button>
-    <button id="t-3d" aria-pressed="false">3D ground</button>
-  </div>
-  <div class="row"><button id="bench">Measure frame rate (10 s fly-over)</button></div>
-  <dl>
-    <dt>First full draw</dt><dd id="loaded">…</dd>
-    <dt>Tile bytes fetched</dt><dd id="bytes">…</dd>
-    <dt>Frame rate</dt><dd id="fps">not measured</dd>
-    <dt>Range request</dt><dd id="range">…</dd>
-    <dt>Zoom</dt><dd id="zoom">…</dd>
-  </dl>
-  <p style="margin-top:8px">Buildings: City of Edmonton, Rooflines (as of 2019), data.edmonton.ca, Open Government Licence – City of Edmonton. Heights are from 2019; newer buildings are missing. Ground: Natural Resources Canada, MRDEM-30 (30 m), Open Government Licence – Canada.</p>
 </div>
-<script type="module" src="./src/buildings-test.js"></script>
+<script type="module" src="./src/app.js"></script>
 </body>
 </html>
