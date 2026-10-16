@@ -1,9 +1,10 @@
-"""Download the map and address sources into data/raw/<source_id>/.
+"""Download the map, address and office-holder sources into data/raw/<source_id>/.
 
 Each source lands in its own folder with a fetch.json holding the
 docs/SPEC_data_schema.md §2 fields. A source whose row count disagrees with
 the server's count or with the fixed expected count fails, and its folder is
-left as it was: files are written to a .partial folder and swapped in only
+left as it was. Web pages and CSVs are counted by the parser the build uses
+(src/build_officeholders.py), so a page whose layout changed fails here: files are written to a .partial folder and swapped in only
 when every check passes.
 
     python -m src.download                  # every source
@@ -80,6 +81,46 @@ SOURCES = {
         "fetch_url": "https://www.elections.ca/res/cir/mapsCorner/edb/FederalElectoralDistricts_SHP.zip",
         "licence": "Open Government Licence – Canada",
         "expected_row_count": 343,
+    },
+    "coe_council_contacts": {
+        "kind": "socrata", "dataset": "e9qt-cc3j", "format": "csv",
+        "title": "City of Edmonton mayor and councillor contacts",
+        "licence": OGL_EDMONTON, "expected_row_count": 13,
+    },
+    "coe_election_results_2025": {
+        "kind": "socrata", "dataset": "fv5x-8efu", "format": "csv",
+        "title": "City of Edmonton 2025 municipal election official results",
+        "select": "contest,wardname,candidatename,votes,acclaimed",
+        "licence": OGL_EDMONTON, "expected_row_count": 140,
+    },
+    # Fixed counts below are the seats. A vacancy changes one, which stops the
+    # download for a person to look at (docs/SPEC_data_schema.md §5).
+    "epsb_trustees": {
+        "kind": "page", "publisher": "Edmonton Public Schools", "title": "Board of Trustees",
+        "fetch_url": "https://www.epsb.ca/ourdistrict/board/trustees/", "file": "trustees.html",
+        "parser": "parse_epsb", "licence": None, "expected_row_count": 9,
+    },
+    "ecsd_trustees": {
+        "kind": "page", "publisher": "Edmonton Catholic Schools", "title": "Board of Trustees",
+        "fetch_url": "https://www.ecsd.net/ecsd-trustees", "file": "trustees.html",
+        "parser": "parse_ecsd", "licence": None, "expected_row_count": 7,
+    },
+    "ab_mlas": {
+        "kind": "page", "publisher": "Legislative Assembly of Alberta", "title": "MLA contact list",
+        "landing_url": "https://www.assembly.ab.ca/members/members-of-the-legislative-assembly",
+        "fetch_url": "https://www.assembly.ab.ca/txt/mla_home/contacts.csv", "file": "contacts.csv",
+        "parser": "parse_mla_csv", "licence": None, "expected_row_count": 87,
+    },
+    "ab_mla_list": {
+        "kind": "page", "publisher": "Legislative Assembly of Alberta", "title": "Members of the Legislative Assembly",
+        "fetch_url": "https://www.assembly.ab.ca/members/members-of-the-legislative-assembly", "file": "members.html",
+        "parser": "parse_assembly_list", "licence": None, "expected_row_count": 87,
+    },
+    "ca_mps": {
+        "kind": "page", "publisher": "House of Commons", "title": "Members of Parliament, Alberta",
+        "landing_url": "https://www.ourcommons.ca/Members/en/search?province=AB",
+        "fetch_url": "https://www.ourcommons.ca/Members/en/search/csv?province=AB", "file": "members.csv",
+        "parser": "parse_mp_csv", "licence": None, "expected_row_count": 37,
     },
 }
 
@@ -208,6 +249,32 @@ def fetch_zip(sid, src, dest):
     }
 
 
+def fetch_page(sid, src, dest):
+    from src import build_officeholders as bo
+    body, headers = _get(src["fetch_url"])
+    out = dest / src["file"]
+    out.write_bytes(body)
+    parse = getattr(bo, src["parser"])
+    try:
+        n = len(parse(body if src["file"].endswith(".csv") else body.decode("utf-8")))
+    except (bo.BuildError, UnicodeDecodeError, KeyError) as e:
+        raise DownloadError(f"{sid}: could not parse: {e}") from e
+    if n == 0:
+        raise DownloadError(f"{sid}: zero rows: the page layout may have changed")
+    _check_expected(sid, src, n)
+    modified = {k.lower(): v for k, v in headers.items()}.get("last-modified")
+    return {
+        "publisher": src["publisher"],
+        "landing_url": src.get("landing_url", src["fetch_url"]),
+        "fetch_url": src["fetch_url"],
+        "publisher_updated_at": (dt.datetime.strptime(modified, "%a, %d %b %Y %H:%M:%S %Z").strftime("%Y-%m-%d")
+                                 if modified else None),
+        "file": out.name,
+        "sha256": hashlib.sha256(body).hexdigest(),
+        "row_count": n,
+    }
+
+
 def download(sid, out_root):
     src = SOURCES[sid]
     final = out_root / sid
@@ -216,7 +283,7 @@ def download(sid, out_root):
     partial.mkdir(parents=True)
     retrieved_at = _now()
     try:
-        rec = (fetch_socrata if src["kind"] == "socrata" else fetch_zip)(sid, src, partial)
+        rec = {"socrata": fetch_socrata, "zip": fetch_zip, "page": fetch_page}[src["kind"]](sid, src, partial)
         rec = {"id": sid, "title": src["title"], **rec, "licence": src["licence"],
                "attribution": None,  # TODO.md "Exact attribution text"
                "retrieved_at": retrieved_at, "expected_row_count": src["expected_row_count"]}

@@ -1,0 +1,3 @@
+seat_id,name,cross_check_name,cross_check_source,approved,note
+council_ward:pihesiwin,Mike Elliott,Michael Elliott,coe_council_contacts,2026-10-16,ward layer short form; contacts table full given name
+catholic_school_ward:76,Lisa Turchansky,Lisa Castell Turchansky,coe_election_results_2025,2026-10-16,ballot name carries a second surname; board page does not

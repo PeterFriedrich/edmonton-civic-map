@@ -65,6 +65,7 @@ the brief wins.
 - **2026-10-15** — **Districts are worked out per address at build time and stored in the per-street index**, at full resolution; point-in-polygon in the browser is for map clicks only. … Rejected: choosing one parcel row for a split address; holding every weekly refresh for new addresses; one near-edge flag for all five layers.
 - **2026-10-15** — **Boundaries ship as GeoJSON, not PMTiles**: an exception to the stack row of 2026-10-13. … Rejected: shipping each layer twice (GeoJSON and PMTiles); dropping edge ridings that hold no addresses; GEOS coverage clean-up (moved small ridings by up to 9.7 km).
 - **2026-10-15** — **The site is built with Vite, and its content-hashed file names are the cache busting** (owner approved the proposal in session). … Rejected: keeping `site/data/` and copying it in CI (a local `vite preview` would show no data); stamping every data URL (2,800 street files would need a hash manifest).
+- **2026-10-16** — **Office holders are built into `officeholders.json`, one row per district in the boundary files: 71 seats** (owner approved the plan in session). … Rejected: publishing either name without review; Edmonton-only ridings.
 
 ## Open work
 
@@ -96,7 +97,6 @@ the brief wins.
 - **Survey what Tier 2 can say by automation.** For each issue in brief §3 (potholes, snow clearing, zoning and infill, transit, policing, schools, water and stormwater, property tax and assessment), find whether a primary source states the responsible body and the way to engage …
 
 **Build**
-- **Downloaders for the office-holder sources** (`e9qt-cc3j`, `fv5x-8efu`, `eg3i-f4bj`, Assembly `contacts.csv`, House of Commons CSV, the two trustee pages), added to `src/download.py`, each checking its row count and writing `fetch.json`. The trustee scrapers must fail on a …
 - **Diff check and staleness guard** per `docs/SPEC_data_schema.md` §5–§6, including the address-index rows in §9.4 (not built with the index; it compares against `site/public/data/addresses/manifest.txt`).
 - **Weekly refresh workflow on GitHub Actions** per `docs/SPEC_data_schema.md` §8: auto-publish when nothing changed, hold and file an issue otherwise. Changes CI, so propose the workflow before writing it.
 - **Replace the template `README.md`** with one for this project.
