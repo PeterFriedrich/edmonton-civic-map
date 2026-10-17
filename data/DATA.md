@@ -150,6 +150,24 @@ Use Python with `certifi`'s bundle. Do not disable verification.
 - **Rows / columns:** 278 neighbourhoods; `neighbourhood_number`, `neighbourhood`, `total_population`, `ward`
 - **Figures (2021 Census, summed by ward):** Anirniq 90,035 · Dene 89,520 · Ipiihkoohkanipiaohtsi 84,370 · Karhiio 94,525 · Métis 85,340 · Nakota Isga 81,175 · O-day'min 68,110 · papastew 71,675 · pihêsiwin 81,800 · sipiwiyiniwak 95,020 · Sspomitapi 83,610 · tastawiyiniwak 85,415. Total 1,010,595; mean 84,216. Range −19.1% (O-day'min) to +12.8% (sipiwiyiniwak) from the mean.
 - **Quirks:** these are neighbourhood counts added up, and Statistics Canada rounds each to a multiple of 5, so ward totals are approximate and the city total differs slightly from the published census figure. Requires the acknowledgement "Adapted from Statistics Canada, 2021 Census of Population" and a statement that this does not constitute an endorsement by Statistics Canada.
+- **Boundaries it was published on:** the neighbourhoods **as of census day**, `5bk4-5txu` "2021 Federal Census: Neighbourhoods as of Official Census Day" (403 polygons; its `neighbourh` column holds the number as a float string, `"2010.0"`), not the current `65fr-66s6` (407). All 278 census rows join to a census-day polygon by number, and every row's `ward` is among the council wards of that neighbourhood's addresses today.
+- **Joined to the current 407 (measured 2026-10-17):** 274 census rows join by number. **Four populated neighbourhoods were renumbered since census day** and join by geometry only, each overlapping one current polygon almost entirely:
+
+  | Census row | 2021 population | Current neighbourhood | Share of the census-day polygon |
+  |---|---|---|---|
+  | 1150 Oliver | 18,695 | 1151 Wîhkwêntôwin | 99.9% |
+  | 2691 Horse Hill Neighbourhood 1A | 630 | 2692 Quarry Ridge | 100.0% (current is 11 ha larger) |
+  | 5462 Chappelle | 10,910 | 5471 Chappelle | 99.0% (0.7% now in Desrochers Area) |
+  | 5464 Heritage Valley Town Centre | 1,220 | 5472 Heritage Valley Town Centre | 99.6% |
+
+  So 407 − 274 = 133 current neighbourhoods do not join by number; 4 are these renumbered ones, and **129 have no 2021 row at all**. None is a populated 2021 neighbourhood left out, as far as names and addresses show:
+  - **53 industrial or business** by name ("… Industrial", "Eastgate Business Park", "Lewis Farms Business Employment" and the like);
+  - **40 river valley, "… Area", or Anthony Henday road corridors** ("River Valley …", "Anthony Henday …", "Blatchford Area", "Clover Bar Area", "CPR Irvine");
+  - **36 others**: neighbourhoods still being built in 2021 (Alces, Aster, Marquis, River's Edge, Crystallina Nera East, Mattson, Meltwater, Gorman, Pintail Landing), new since census day (Crossroads, Lewis Farms, Kendal), and institutional, commercial, park or ravine land (University of Alberta, South Edmonton Common, Edmonton Northlands, Mill Woods Park, the Whitemud and Mill Creek ravines). Several now hold hundreds of addresses (Alces 1,491, Aster 1,163, Marquis 1,128), so **2021 population says nothing about them today**.
+  The publisher does not say why a census-day neighbourhood has no row (lowest published count: Kinglet Gardens, 305); not asked.
+- **Boundaries moved since census day:** 34 neighbourhoods present on both maps differ by more than 0.1 ha. Among those with a census row, the largest are Riverview Area (75 ha), Keswick (55 ha), Desrochers Area (16 ha), The Orchards At Ellerslie (10 ha), Windermere and Evergreen (9 ha each). A 2021 count belongs to the census-day polygon; shown against today's polygon it is approximate where the edge moved.
+- **Ward split:** of the census neighbourhoods, only Glenridding Ravine (860 people, row's ward pihêsiwin) has addresses in two council wards today. A ward total from this table puts all 860 in pihêsiwin.
+- **City total not checked against Statistics Canada:** the rows sum to 1,010,595. statcan.gc.ca answered a script with a "Security Check" page on 2026-10-17, so the published census profile was not read; compare by hand before quoting a city total.
 - **Open:** this is the most recent ward-level population on the portal. Five years old; growth since 2021 has been uneven across wards. No newer primary source found yet (the City's last municipal census was 2019, on pre-2021 wards).
 
 ### School wards — `d7pj-rist` (public), `pwzf-sjj2` (Catholic)
