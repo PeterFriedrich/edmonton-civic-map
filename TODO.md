@@ -16,6 +16,8 @@ symptom and re-measure the stated cause before acting on it.
 - [ ] **Confirm the Project picker has the synced set ticked.** The 2026-10-12 reconciliation chat reported only `docs/BRIEF.md`, `docs/DECISIONS.md` and `docs/SPEC_civic_map.md`; the set in `docs/CLAUDE_WEB.md` also has `docs/SPEC_lenses.md`, `docs/SPEC_data_schema.md` and `data/DATA.md`. (The stack research has since run and did read the lens spec.)
 - [ ] **Report data defects to the City.** The owner will send one report later, collecting what `docs/DATA_ISSUES.md` holds by then (2026-10-10). Done when each row there has a status other than NOT SENT.
 
+- [ ] **Community league boundaries: ask the City or not.** The only source is an unlicensed layer on the City's GIS server (`data/DATA.md`, "Community leagues — City GIS service"). Done when the owner has decided whether to ask the City to publish it on the open data portal, or to leave leagues out.
+
 ### Sources still to verify
 
 - [ ] **Statistics Canada attribution wording**, before ward populations are published: quote the Statistics Canada Open Licence's required statement in `data/DATA.md` and on the About page.
@@ -31,7 +33,7 @@ symptom and re-measure the stated cause before acting on it.
 
 ### Lenses
 
-- [ ] **Communities-of-interest lens** (`docs/SPEC_civic_map.md`, amendments). Before building: find a primary source for community league boundaries (not on the City portal); settle the threshold that separates a divided neighbourhood from a digitising sliver; decide what "shared services" means in data terms, if anything. Neighbourhoods are measured already (`data/DATA.md`, "Neighbourhoods").
+- [ ] **Communities-of-interest lens** (`docs/SPEC_civic_map.md`, amendments). Before building: decide on community league boundaries: the City's GIS layer has 163 with no stated licence and covers 94% of addresses (`data/DATA.md`, "Community leagues — City GIS service"), so either ask the City to publish it under OGL or build the lens on neighbourhoods only; settle the threshold that separates a divided neighbourhood from a digitising sliver; decide what "shared services" means in data terms, if anything. Neighbourhoods are measured already (`data/DATA.md`, "Neighbourhoods").
 
 - [ ] **Physical-and-natural-boundaries lens** (`docs/SPEC_civic_map.md`, amendments). Before building: download and check the road network's arterial classes; find primary sources for the river valley edge and rail lines (neither is a ready layer on the City portal). Candidates: `data/DATA.md`, "Buildings and physical barriers".
 
