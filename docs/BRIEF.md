@@ -84,9 +84,8 @@ the brief wins.
 
 **Sources still to verify**
 - **Statistics Canada attribution wording**, before ward populations are published: quote the Statistics Canada Open Licence's required statement in `data/DATA.md` and on the About page.
-- **Post-2025-election ward boundary report (Policy C469A).** Not found; the City's ward-boundary-review page returned 404 on 2026-10-10. Done when the report's status and any proposed adjustments are recorded in `data/DATA.md`.
-- **A ward population newer than the 2021 Census**, from a primary source. Done when found, or when recorded as not existing.
-- **School-ward boundaries used in the 2025 election** — confirm against each board's ward bylaw that they match the City layers.
+- **Post-2025-election ward boundary report (Policy C469B; due Q4 2026).** Recheck after 2026-12-31; Council documents on eScribe answer 403 to scripts, so read by hand. Done when its status, any proposed adjustments, and its ward populations are recorded in `data/DATA.md` "Ward …
+- **School-ward boundaries used in the 2025 election.** The boards' own layers disagree with the City's at three addresses (`data/DATA.md` "School wards"; `docs/DATA_ISSUES.md` 2026-10-17). The bylaws are not online (EPSB Bylaw 2020-2; no Catholic number found). Done when the …
 - **Check the provincial boundary process now, and again after 2026-11-02**, when the Select Special Committee on Electoral Boundaries must report. The 2026-10-13 stack report says the commission's final report gives Edmonton 21 electoral divisions, where the map in force has 20; …
 
 **Map detail phase**
@@ -107,6 +106,7 @@ the brief wins.
 
 ## Known upstream data defects
 
+- 2026-10-17 · City of Edmonton `d7pj-rist` and `pwzf-sjj2` against the boards' own layers on `azimuth.epsb.ca` (`EPSB_Wards_2025`, `FC_ECSD_Wards_2025`): The two publishers' ward polygons disagree. Public: up to 1.69 km² per ward, 361 m at most. Catholic: wards 72/73 differ by up to 368 m. The Catholic board's layer description still says the 2021 term. — status: NOT SENT (to both boards and Edmonton Elections)
 - 2026-10-17 · City of Edmonton open data: `65fr-66s6` (neighbourhoods): `civic_ward_name` for Anthony Henday South East (`neighbourhood_number` 6665) reads Sspomitapi, but the neighbourhood's addresses are all in Karhiio on the City's own ward layer `b4er-5rp2`. — status: NOT SENT
 - 2026-10-15 · City of Edmonton open data: `b4er-5rp2` (council wards), `d7pj-rist` (public school wards), `pwzf-sjj2` (Catholic school wards); Elections Alberta 2017 divisions: Neighbouring districts do not share exact edges: the layers overlap slightly and leave small gaps. Elections Canada's federal layer is clean. — status: NOT SENT
 - 2026-10-10 · City of Edmonton open data: `d7pj-rist` (public school wards), `pwzf-sjj2` (Catholic school wards): The `trustee` column still names the 2021–2025 trustees, although the datasets describe themselves as "the associated board trustee in office" and were refreshed 2026-10-05. — status: NOT SENT
