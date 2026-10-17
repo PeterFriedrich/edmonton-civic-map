@@ -2,6 +2,7 @@
 // The cards never wait for the map; the map is a separate chunk loaded after.
 import { matchNeighbourhoods, matchStreets, parse, titleStreet } from "./address.js";
 import { distanceToBoundary, locate } from "./pip.js";
+import { decode, encode } from "./share.js";
 
 const $ = (id) => document.getElementById(id);
 // Published data keeps fixed URLs across deploys, so it is revalidated, not
@@ -44,7 +45,8 @@ const OFFICIAL_LOOKUP = {
   federal_riding: ["Elections Canada, Find your electoral district", "https://www.elections.ca/Scripts/vis/FindED?L=e"],
 };
 
-const state = { layers: null, seats: null, stale: null, names: {}, boundaries: {}, streets: null, hoods: null, files: new Map(), map: null, last: null };
+const state = { layers: null, seats: null, stale: null, names: {}, boundaries: {}, streets: null, hoods: null, files: new Map(), map: null, last: null,
+  sel: null, view: { lines: "council_ward", tilt: false } };
 
 const ready = Promise.all([
   getJSON("data/layers.json"),
@@ -70,7 +72,7 @@ function fail(err) {
   console.error(err);
   $("results").innerHTML = `<p class="notice">The data did not load. Try reloading the page.</p>`;
 }
-Promise.all([ready, boundariesReady]).then(fillPicker).catch(fail);
+Promise.all([ready, boundariesReady]).then(() => { fillPicker(); return openLink(); }).catch(fail);
 
 // --- cards --------------------------------------------------------------------
 
@@ -106,6 +108,7 @@ function card(seat, notes = [], warns = []) {
 function render(title, perLayer, point, what = "This address", hood = null) {
   const out = $("results");
   out.replaceChildren(el("h2", { tabindex: "-1" }, title));
+  if (state.sel) out.append(shareControl(state.sel));
   if (hood) out.append(el("p", { class: "meta" }, "Neighbourhood boundary: ", link(hood.source_url, SOURCES[hood.source_id] || hood.source_id), ` · last checked ${hood.last_verified}`));
   for (const { layer, ids, near, kind } of perLayer) {
     const noun = NOUN[layer.id];
@@ -128,6 +131,7 @@ function render(title, perLayer, point, what = "This address", hood = null) {
   }
   const ids = perLayer.flatMap((p) => p.ids);
   state.last = { title, perLayer, point, what, hood };
+  updateLink();
   state.map?.show(point, ids, !hood);
   out.querySelector("h2").focus({ preventScroll: true });
 }
@@ -204,6 +208,7 @@ function lookupAddress(label, recs) {
       const near = recs.some((r) => r[7] & (1 << i));
       return { layer, ids, near, kind: ids.length > 1 ? "split" : null };
     });
+    state.sel = { kind: "address", label, ids: perLayer.flatMap((p) => p.ids) };
     render(label, perLayer, [recs[0][1], recs[0][0]]);
   }).catch(fail);
 }
@@ -216,6 +221,7 @@ function lookupNeighbourhood(hood) {
       const ids = hood.districts[layer.id];
       return { layer, ids, near: false, kind: ids.length > 1 ? "divided" : null };
     });
+    state.sel = { kind: "neighbourhood", id: hood.id };
     render(`Neighbourhood: ${hood.name}`, perLayer, [hood.point[1], hood.point[0]], "This neighbourhood", hood);
   }).catch(fail);
 }
@@ -259,11 +265,23 @@ function fillPicker() {
     pick.append(group);
   }
   pick.addEventListener("change", () => {
-    const id = pick.value;
-    if (!id) return;
-    const layer = state.layers.find((l) => id.startsWith(l.id + ":"));
-    render(`${layer.label}: ${state.names[id]}`, [{ layer, ids: [id], near: false, kind: null }], null);
+    if (pick.value) lookupDistricts([pick.value]);
   });
+}
+
+// A picked district, or the districts a shared link names.
+function lookupDistricts(ids) {
+  const known = ids.filter((id) => state.names[id] && state.seats.has(id));
+  if (!known.length) return notice("This link names no district in the current boundaries. They may have changed since it was made.");
+  const perLayer = state.layers
+    .map((layer) => ({ layer, ids: known.filter((id) => id.startsWith(layer.id + ":")), near: false, kind: null }))
+    .filter((p) => p.ids.length);
+  const title = known.length === 1 ? `${perLayer[0].layer.label}: ${state.names[known[0]]}` : "Shared link: these districts";
+  state.sel = { kind: "districts", ids: known };
+  render(title, perLayer, null);
+  if (known.length < ids.length) {
+    $("results").querySelector("h2").after(el("p", { class: "notice" }, `${ids.length - known.length} of the districts in this link are not in the current boundaries and are not shown.`));
+  }
 }
 
 // --- map clicks -----------------------------------------------------------------
@@ -275,7 +293,10 @@ function lookupPoint(lon, lat) {
     const near = distanceToBoundary(lon, lat, fc) <= layer.near_boundary_m;
     return { layer, ids, near, kind: ids.length > 1 ? "overlap" : null };
   });
+  state.sel = { kind: "point", lat, lon, ids: perLayer.flatMap((p) => p.ids) };
   if (!perLayer[0].ids.length) {
+    state.sel = null;
+    updateLink();
     $("results").replaceChildren(el("p", { class: "notice" }, "That point is outside the City of Edmonton. This map covers Edmonton addresses only."));
     state.map?.show([lon, lat], []);
     return;
@@ -287,6 +308,68 @@ $("affiliation").addEventListener("change", () => {
   if (state.last) render(state.last.title, state.last.perLayer, state.last.point, state.last.what, state.last.hood);
 });
 
+// --- share link ---------------------------------------------------------------------
+// The address bar always holds the link without the address; the address or map
+// point goes only into a link the reader copies after ticking the box.
+
+function notice(text) {
+  state.sel = null;
+  updateLink();
+  $("results").replaceChildren(el("p", { class: "notice" }, text));
+}
+
+function updateLink() {
+  history.replaceState(null, "", location.pathname + location.search + encode(state.sel, state.view));
+}
+
+function shareControl(sel) {
+  const locating = sel.kind === "address" || sel.kind === "point";
+  const box = locating ? el("input", { type: "checkbox", id: "share-address" }) : null;
+  const status = el("span", { class: "share-status", role: "status" });
+  const button = el("button", { type: "button" }, "Copy link");
+  button.addEventListener("click", () => {
+    const url = location.origin + location.pathname + location.search + encode(sel, state.view, Boolean(box?.checked));
+    const shown = () => {
+      const field = el("input", { type: "text", readonly: "", value: url, "aria-label": "Link to copy" });
+      status.replaceChildren(field);
+      field.select();
+    };
+    if (navigator.clipboard) navigator.clipboard.writeText(url).then(() => status.replaceChildren("Link copied."), shown);
+    else shown();
+  });
+  return el("div", { class: "share" }, button,
+    locating ? el("label", {}, box, sel.kind === "address" ? " Include the address" : " Include the map point") : null,
+    status,
+    locating ? el("p", { class: "hint" }, `Without it, the link shows the same districts but not where you looked. With it, the ${sel.kind === "address" ? "address" : "point"} is in the link: it is not sent to this site, but anyone who has the link can read it.`) : null);
+}
+
+async function openLink() {
+  const { sel, view } = decode(location.hash);
+  if (view.lines && state.layers.some((l) => l.id === view.lines)) state.view.lines = view.lines;
+  state.view.tilt = view.tilt;
+  state.map?.setView(state.view);
+  if (!sel) return;
+  if (sel.kind === "districts") return lookupDistricts(sel.ids);
+  if (sel.kind === "point") return lookupPoint(sel.lon, sel.lat);
+  if (sel.kind === "neighbourhood") {
+    await hoodsReady;
+    const hood = state.hoods.find((h) => h.id === sel.id);
+    return hood ? lookupNeighbourhood(hood) : notice("This link names a neighbourhood that is not in the current list.");
+  }
+  await streetsReady;
+  const { house, words } = parse(sel.label);
+  for (const s of house ? matchStreets(words, state.streets, 8) : []) {
+    if (`${house} ${titleStreet(s.name)}` !== sel.label) continue;
+    const recs = (await streetFile(s.file))[house];
+    if (recs) {
+      input.value = sel.label;
+      return lookupAddress(sel.label, recs);
+    }
+  }
+  notice(`The address in this link, ${sel.label}, is not in the current address list.`);
+}
+window.addEventListener("hashchange", () => openLink().catch(fail));
+
 // --- the map, after the cards ------------------------------------------------------
 
 Promise.all([ready, boundariesReady]).then(async () => {
@@ -294,7 +377,8 @@ Promise.all([ready, boundariesReady]).then(async () => {
   state.map = await createMap({
     container: $("map"), layers: state.layers, boundaries: state.boundaries,
     buttons: $("layer-buttons"), tilt: $("tilt"), status: $("map-status"),
-    onClick: lookupPoint,
+    onClick: lookupPoint, view: state.view,
+    onView: (v) => { state.view = v; updateLink(); },
   });
   if (state.last) state.map.show(state.last.point, state.last.perLayer.flatMap((p) => p.ids), !state.last.hood);
 }).catch((e) => {

@@ -174,7 +174,12 @@ Confirmed by the owner 2026-10-15:
 - The selected address or district stays selected when a lens changes.
 - Each lens has its own legend and its own source and date line.
 - The state of the view (place, lens, 2D or 3D) should be shareable as a link,
-  **without** the address in it unless the reader chooses that.
+  **without** the address in it unless the reader chooses that. Built
+  2026-10-17 as `site/src/share.js`: the link sits after `#` (never sent to
+  the server); an address or map point is shared as its districts unless the
+  reader ticks the box; no camera position, which would locate the address;
+  the address bar only ever holds the address-free form. A lens adds its own
+  key (`lens=` is reserved).
 - Keyboard and screen-reader users must be able to do the lookup and read the
   cards without the map.
 

@@ -79,3 +79,7 @@ input[type="text"]:focus, select:focus, button:focus-visible, a:focus-visible { 
 .prose li { margin-bottom: .4rem; }
 .sources { border-collapse: collapse; width: 100%; font-size: .9rem; }
 .sources th, .sources td { text-align: left; vertical-align: top; padding: .4rem .5rem .4rem 0; border-bottom: 1px solid var(--line); }
+.share { display: flex; flex-wrap: wrap; align-items: center; gap: .4rem .75rem; margin: 0 0 .75rem; font-size: .85rem; }
+.share button { font: inherit; padding: 4px 10px; border-radius: 6px; border: 1px solid var(--line); background: var(--surface); color: inherit; cursor: pointer; }
+.share .hint { flex-basis: 100%; margin: 0; }
+.share-status input { font: inherit; width: min(100%, 28rem); }

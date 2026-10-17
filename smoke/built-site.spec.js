@@ -64,6 +64,49 @@ test("a neighbourhood lookup shows its districts and names a divided level", asy
   w.check();
 });
 
+// The share link (site/src/share.js): the address bar never holds the address, a
+// copied link holds it only when the box is ticked, and every kind of link reopens.
+test("share links reopen the view and keep the address out unless included", async ({ page, context }) => {
+  await context.grantPermissions(["clipboard-read", "clipboard-write"]);
+  const w = watch(page);
+  await page.goto("./");
+  await page.getByRole("combobox", { name: "Address" }).fill("10024 124 st");
+  await page.getByRole("option", { name: "10024 124 Street NW" }).click();
+  const results = page.locator("#results");
+  await expect(results.getByRole("heading", { name: "10024 124 Street NW" })).toBeVisible();
+  await expect(page).toHaveURL(/#d=council_ward:/);
+  expect(page.url()).not.toContain("10024");
+
+  await results.getByRole("button", { name: "Copy link" }).click();
+  await expect(results.getByRole("status")).toHaveText("Link copied.");
+  const plain = await page.evaluate(() => navigator.clipboard.readText());
+  expect(plain).toMatch(/#d=council_ward:/);
+  expect(plain).not.toContain("10024");
+  await results.getByLabel("Include the address").check();
+  await results.getByRole("button", { name: "Copy link" }).click();
+  const withAddress = await page.evaluate(() => navigator.clipboard.readText());
+  expect(withAddress).toContain("#a=10024+124+Street+NW");
+
+  // Each link, opened fresh. The districts link shows both provincial divisions of the split address.
+  await page.goto(plain);
+  await page.reload();
+  await expect(results.getByRole("heading", { name: "Shared link: these districts" })).toBeVisible();
+  await expect(results.locator(".card")).toHaveCount(7);
+  await page.goto(withAddress);
+  await page.reload();
+  await expect(results.getByRole("heading", { name: "10024 124 Street NW" })).toBeVisible();
+  expect(page.url()).not.toContain("10024"); // the address bar falls back to the districts
+  await page.goto("./#n=6662&lines=federal_riding");
+  await page.reload();
+  await expect(results.getByRole("heading", { name: "Neighbourhood: Walker" })).toBeVisible();
+  await expect(page.locator("#map-status")).toBeEmpty({ timeout: 45_000 });
+  await expect(page.getByRole("button", { name: "Federal electoral district", pressed: true })).toBeVisible();
+  await page.goto("./#n=1");
+  await page.reload();
+  await expect(results).toContainText("not in the current list");
+  w.check();
+});
+
 // Staleness comes from staleness.json, not code: with negative thresholds every
 // card warns, once for its office holder and once for its boundaries.
 test("cards warn when office holders or boundaries go unchecked", async ({ page }) => {
