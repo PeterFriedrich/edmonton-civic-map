@@ -1,6 +1,7 @@
 """scripts/check_dist.mjs, the build guard that stands in for cache-busting
 stamps (docs/WEB_CACHE_BUSTING.md "Guard it"): passes a good dist, and fails a
 dist with an unhashed script or with published data missing or changed."""
+import re
 import shutil
 import subprocess
 import sys
@@ -68,3 +69,11 @@ def test_about_page_links_every_source():
     for sid, s in download.SOURCES.items():
         url = f"{download.SOCRATA}/d/{s['dataset']}" if s["kind"] == "socrata" else s.get("landing_url", s["fetch_url"])
         assert f'href="{url}"' in page, f"{sid}: {url} is not linked on site/about.html"
+
+
+@pytest.mark.parametrize("licence", ["City of Edmonton", "Alberta", "Canada"])
+def test_about_page_carries_each_prescribed_attribution_verbatim(licence):
+    """Each OGL prescribes this exact sentence when the provider gives none of its own
+    (read from each licence 2026-10-16); a reworded credit is not compliance."""
+    text = re.sub(r"<[^>]+>", "", (REPO / "site" / "about.html").read_text(encoding="utf-8"))
+    assert f"Contains information licensed under the Open Government Licence – {licence}." in text

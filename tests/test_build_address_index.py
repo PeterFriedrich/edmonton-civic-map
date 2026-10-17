@@ -57,6 +57,20 @@ def test_record_point_is_one_of_the_rows():
     assert rec[1] in [round(-113.5 + i * 1e-4, ai.DECIMALS) for i in range(3)]
 
 
+def test_two_parcel_tie_goes_to_the_first_row_whatever_the_float_noise():
+    """Two parcels are exactly as far from their midpoint, but float rounding can make the
+    second come out 4e-6 m² nearer (this pair does). The first row must win, or two machines
+    publish different points (2026-10-16)."""
+    rows = [{"street_name": "A ST", "house_number": "1"}] * 2
+    lon, lat = np.array([-113.5, -113.4]), np.array([53.5, 53.5])
+    x = np.array([35991.87375346119, 25551.182264861367])
+    y = np.array([5940070.262173496, 5935762.866264385])
+    dist = {lid: np.array(["d", "d"], object) for lid in ai.LAYERS}
+    streets, _ = ai.build_records(rows, lon, lat, x, y, dist, np.array([0, 0]))
+    (rec,) = streets["A ST"]["1"]
+    assert rec[1] == -113.5
+
+
 # --- §9.5 check 4: the committed files -----------------------------------------
 
 

@@ -18,8 +18,7 @@ symptom and re-measure the stated cause before acting on it.
 
 ### Sources still to verify
 
-- [ ] **Licence for the Elections Alberta boundary shapefile.** None is stated on the download page (`data/DATA.md`, "Provincial ridings"). Done when a written licence or permission is recorded there; until then the provincial layer cannot ship.
-- [ ] **Exact attribution text for the Open Government Licence – Edmonton**, and Statistics Canada's for the ward populations. Done when `data/DATA.md` quotes both.
+- [ ] **Statistics Canada attribution wording**, before ward populations are published: quote the Statistics Canada Open Licence's required statement in `data/DATA.md` and on the About page.
 - [ ] **Post-2025-election ward boundary report (Policy C469A).** Not found; the City's ward-boundary-review page returned 404 on 2026-10-10. Done when the report's status and any proposed adjustments are recorded in `data/DATA.md`.
 - [ ] **Join the 278 census neighbourhoods to the 407 neighbourhood polygons** (`eg3i-f4bj` to `65fr-66s6`). Done when `data/DATA.md` says which of the other 129 are industrial or unpopulated and which, if any, are missing a census row.
 - [ ] **A ward population newer than the 2021 Census**, from a primary source. Done when found, or when recorded as not existing.
@@ -53,6 +52,9 @@ symptom and re-measure the stated cause before acting on it.
 ## Done
 
 Closed items moved out of `## Open work` live in **`docs/TODO_archive.md`** — one line each below, reasoning there.
+
+- [x] **Licence for the Elections Alberta boundary shapefile.** — DONE 2026-10-16 · `docs/TODO_archive.md`
+- [x] **Exact attribution text for the Open Government Licence – Edmonton** — DONE 2026-10-16 · `docs/TODO_archive.md`
 
 - [x] **Replace the template `README.md`** — DONE 2026-10-16 · `docs/TODO_archive.md`
 

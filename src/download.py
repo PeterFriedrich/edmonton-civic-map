@@ -40,7 +40,8 @@ OGL_EDMONTON = "Open Government Licence – Edmonton"
 USER_AGENT = "edmonton-civic-map/0.1 (+https://github.com/PeterFriedrich/edmonton-civic-map)"
 PAGE = 50_000  # 50,000-row pages return in ~9 s; one 300,000-row request stalled
 PAUSE_S = 1.5  # between requests (docs/SPEC_data_schema.md §8)
-RETRIES = 2  # extra tries on a network error only, never on a wrong count
+RETRIES = 2  # extra tries on a network or gateway error only, never on a wrong count
+TRANSIENT_HTTP = {502, 503, 504}  # open.canada.ca answered 504 once on 2026-10-16
 TIMEOUT_S = 300
 
 SOURCES = {
@@ -66,12 +67,16 @@ SOURCES = {
         "title": "Edmonton Catholic School Board ward boundaries",
         "licence": OGL_EDMONTON, "expected_row_count": 7,
     },
+    # The Government of Alberta's copy of the 2017 divisions, under OGL – Alberta. Elections
+    # Alberta's own shapefile states no licence; the two agree to within 1.3 m and place every
+    # address in the same division (measured 2026-10-16, data/DATA.md "Provincial ridings").
     "ab_ridings": {
-        "kind": "zip", "publisher": "Elections Alberta",
-        "title": "Electoral division boundaries enacted 2017 (in force 2019)",
-        "landing_url": "https://www.elections.ab.ca/resources/maps/",
-        "fetch_url": "https://www.elections.ab.ca/uploads/2019Boundaries_ED-Shapefiles.zip",
-        "licence": None,  # none stated: TODO.md "Licence for the Elections Alberta boundary shapefile"
+        "kind": "arcgis", "publisher": "Government of Alberta",
+        "title": "Provincial Electoral Division - Current 2019",
+        "landing_url": "https://open.alberta.ca/opendata/gda-e201c640-1f76-429c-8c24-89ff496f956e",
+        "fetch_url": "https://geospatial.alberta.ca/titan/rest/services/boundary/goa_administrative_area_10tm_nad83_aep/MapServer/3",
+        "out_fields": "EDNUMBER,EDNAME", "file": "ped_current_2019.geojson",
+        "licence": "Open Government Licence – Alberta",
         "expected_row_count": 87,
     },
     "fed_ridings": {
@@ -143,7 +148,10 @@ def _get(url):
                     raise DownloadError(f"HTTP {r.status} from {url}")
                 return r.read(), dict(r.headers)
         except urllib.error.HTTPError as e:
-            raise DownloadError(f"HTTP {e.code} from {url}") from e
+            # A gateway error is the server's transient state, not an answer; anything else is.
+            if e.code not in TRANSIENT_HTTP or attempt == RETRIES:
+                raise DownloadError(f"HTTP {e.code} from {url}") from e
+            log.warning("HTTP %d, retrying: %s", e.code, url)
         except (urllib.error.URLError, TimeoutError, ConnectionError) as e:
             if attempt == RETRIES:
                 raise DownloadError(f"{e} from {url}, after {RETRIES + 1} tries") from e
@@ -249,6 +257,35 @@ def fetch_zip(sid, src, dest):
     }
 
 
+def fetch_arcgis(sid, src, dest):
+    layer = src["fetch_url"]
+    count = _get_json(f"{layer}/query?where=1%3D1&returnCountOnly=true&f=json").get("count")
+    q = {"where": "1=1", "outFields": src["out_fields"], "returnGeometry": "true", "outSR": "4326", "f": "geojson"}
+    body = _get(f"{layer}/query?" + urllib.parse.urlencode(q))[0]
+    fc = json.loads(body)
+    # The service caps a reply at maxRecordCount and says so only in this flag.
+    if fc.get("exceededTransferLimit") or fc.get("properties", {}).get("exceededTransferLimit"):
+        raise DownloadError(f"{sid}: the service truncated the reply")
+    n = len(fc.get("features", []))
+    if n != count:
+        raise DownloadError(f"{sid}: fetched {n} features, the service count says {count}")
+    if n == 0:
+        raise DownloadError(f"{sid}: zero rows")
+    _check_expected(sid, src, n)
+    out = dest / src["file"]
+    out.write_bytes(body)
+    return {
+        "publisher": src["publisher"],
+        "landing_url": src["landing_url"],
+        "fetch_url": layer,
+        "publisher_updated_at": None,  # the layer publishes no edit date
+        "file": out.name,
+        "sha256": hashlib.sha256(body).hexdigest(),
+        "row_count": n,
+        "server_row_count": count,
+    }
+
+
 def fetch_page(sid, src, dest):
     from src import build_officeholders as bo
     body, headers = _get(src["fetch_url"])
@@ -283,7 +320,7 @@ def download(sid, out_root):
     partial.mkdir(parents=True)
     retrieved_at = _now()
     try:
-        rec = {"socrata": fetch_socrata, "zip": fetch_zip, "page": fetch_page}[src["kind"]](sid, src, partial)
+        rec = {"socrata": fetch_socrata, "zip": fetch_zip, "arcgis": fetch_arcgis, "page": fetch_page}[src["kind"]](sid, src, partial)
         # A landing page that stops resolving is a "stop" (docs/SPEC_data_schema.md §5): the
         # page the site links as the source has moved even if the file has not.
         if rec["landing_url"] != rec["fetch_url"]:

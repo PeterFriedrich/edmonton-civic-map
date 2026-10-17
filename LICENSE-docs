@@ -1,0 +1,49 @@
+# Licence — written material
+
+The prose in this repository is licensed **Creative Commons Attribution 4.0
+International (CC BY 4.0)**.
+
+    https://creativecommons.org/licenses/by/4.0/
+
+Copyright (c) 2026 Peter Friedrich
+
+## What this covers
+
+    docs/
+    README.md
+    CONTRIBUTING.md
+    TODO.md
+    data/DATA.md
+    session-summary/
+    prototype/README.md
+
+## Scope
+
+The code is MIT and the data is not mine to license; `LICENSE` holds the full
+scope split and the carve-outs.
+
+## What you may do
+
+Share and adapt the material, for any purpose including commercially, provided
+you give appropriate credit, link to the licence, and **indicate if changes
+were made**. You may not imply I endorse you or your use.
+
+## Attribution
+
+Something of this shape is enough:
+
+> Based on *Edmonton Civic Map* by Peter Friedrich
+> (https://github.com/PeterFriedrich/edmonton-civic-map), CC BY 4.0. Changes
+> were made.
+
+If you are reusing the **data** rather than the prose, it carries its own
+attribution obligations, which run directly from its publishers, not from me.
+`LICENSE` carve-out 2 has the detail.
+
+## Not affiliated
+
+This is an independent project. It is not affiliated with, nor endorsed by,
+the City of Edmonton, the school boards, the Government of Alberta, the
+Legislative Assembly of Alberta, Elections Alberta, Elections Canada or the
+House of Commons. Attribution under this licence must not be worded in a way
+that suggests otherwise.

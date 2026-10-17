@@ -55,7 +55,7 @@ export function createMap({ container, layers, boundaries, buttons, tilt, status
   map.addControl(new maplibregl.NavigationControl({ visualizePitch: true }), "bottom-right");
   map.addControl(new maplibregl.AttributionControl({
     compact: true,
-    customAttribution: "Buildings: City of Edmonton Rooflines (2019) · Boundaries: City of Edmonton, Elections Alberta, Elections Canada",
+    customAttribution: "Buildings: City of Edmonton Rooflines (2019) · Boundaries: City of Edmonton, Government of Alberta, Elections Canada",
   }));
   map.on("click", (e) => onClick(e.lngLat.lng, e.lngLat.lat));
   map.getCanvas().style.cursor = "crosshair";

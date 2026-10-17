@@ -85,12 +85,24 @@ generated Claude web brief) comes from
 via copier; `docs/COPIER.md` says how updates are pulled. `CLAUDE.md` holds the
 rules sessions work under.
 
-## Data and licences
+## Licence
 
-City of Edmonton data is used under the City's
-[open data terms of use](https://data.edmonton.ca/stories/s/City-of-Edmonton-Open-Data-Terms-of-Use/msh8-if28).
-Contains information licensed under the
-[Open Government Licence – Canada](https://open.canada.ca/en/open-government-licence-canada).
-Elections Alberta, the Legislative Assembly, the House of Commons and the two
-school boards state no licence on the pages used; each record links back to
-them as the source of record. Per-source detail: `data/DATA.md`.
+Three different things live here, licensed differently:
+
+| What | Licence |
+|---|---|
+| Code: `src/`, `scripts/`, `tools/`, the site's HTML, CSS and JS, tests, CI | [MIT](LICENSE) |
+| Prose: `docs/`, `CONTRIBUTING.md`, `TODO.md`, `data/DATA.md`, `session-summary/`, `prototype/README.md`, this README | [CC BY 4.0](LICENSE-docs) |
+| Data: `site/public/data/`, `data/name_variants.csv` | Not mine to license: each file stays under its publisher's terms |
+
+The data comes from the City of Edmonton (Open Government Licence – City of
+Edmonton), the Government of Alberta (Open Government Licence – Alberta) and
+Elections Canada and NRCan (Open Government Licence – Canada). The names of
+MLAs, MPs and trustees are public facts about who holds an office, each linked
+to its source of record. If you reuse the data, the attribution obligation runs
+to those publishers directly. `LICENSE` has the full scope split, the site's
+About page carries the required attribution statements, and `data/DATA.md` has
+per-source provenance.
+
+This is an independent project, not affiliated with or endorsed by any of the
+bodies whose information it shows.

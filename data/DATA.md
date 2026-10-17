@@ -80,6 +80,14 @@ simplification: on 2026-10-16 the shared edge of `provincial_riding:33` and `:35
 moved 13 m², and the diff check held the first refresh run (issue #52).
 Addresses were unaffected. The refresh runs on `ubuntu-24.04-arm` for this
 reason; build anything you commit on aarch64 too, or the next refresh holds.
+Even on aarch64, an exact tie decided by float noise could differ between
+machines: the refresh of 2026-10-16 (`376288f`) published six address points
+13–73 m from this server's build, from the same parcel file (sha256
+`59cb2826…`). **The City had not moved them**, though PR #54 said so. Each
+address had two parcel rows in the same districts, which are always exactly as
+far from their midpoint, and the runner broke the tie the other way. Since
+2026-10-16 the distance is rounded to 0.01 m² and a tie goes to the first row
+(`test_two_parcel_tie_goes_to_the_first_row_whatever_the_float_noise`).
 
 **Primary sources only** (`docs/SPEC_civic_map.md` §4). News and Wikipedia are
 context, never data.
@@ -159,15 +167,14 @@ Use Python with `certifi`'s bundle. Do not disable verification.
 - **Read:** 2026-10-10. Both rosters match the 2025 official results in all 16 seats.
 - **Quirks:** HTML pages, no export. A scraper here is fragile; a page-layout change must fail loudly rather than return an empty roster.
 
-### Provincial ridings — Elections Alberta
-- **Publisher / URL:** Elections Alberta, https://www.elections.ab.ca/resources/maps/ → `https://www.elections.ab.ca/uploads/2019Boundaries_ED-Shapefiles.zip`
-- **Retrieved:** 2026-10-10 — **publisher last-updated:** HTTP Last-Modified 2024-09-11; files inside dated 2018-03-01
-- **Rows / columns:** 87; `EDNumber20`, `EDName2017`, `Km2`, `Hectares`, `Acres`, `Authority`
-- **CRS:** EPSG:3401, NAD83 / Alberta 10-TM (Resource)
-- **Vintage:** `EDS_ENACTED_BILL33_15DEC2017` — the divisions enacted in 2017, in force since 2019-03-19. These are the divisions the current 31st Legislature sits for.
-- **⚠️ Change pending.** The Electoral Boundaries Commission's final report (tabled 2026-03-26) was set aside. Government Motion 37 (passed 2026-04-21) created the Select Special Committee on Electoral Boundaries, which must report to the Assembly by **2026-11-02**. Nothing was enacted as of 2026-10-09. A new map would apply from the next general election, so MLAs keep representing the 2017 divisions until then; the tool will need to show current ridings and, once enacted, label the future ones as future. Source: https://www.assembly.ab.ca/assembly-business/committees/CEB
-- **Coverage of Edmonton, measured:** 20 "Edmonton-" divisions. All 298,238 City parcel addresses fall in exactly one division; **1 address falls in Morinville-St. Albert**. Eight other neighbouring divisions overlap the City's area by slivers under 0.4 km² each, with no addresses in them.
-- **Quirks:** the server answers 403 to Python's default User-Agent; send one naming the project (2026-10-15). No licence or terms of use are stated on the download page. The open.alberta.ca "electoral division" dataset describes the 2010 boundaries; do not use it.
+### Provincial ridings — Government of Alberta (`ab_ridings`, since 2026-10-16)
+- **Publisher / URL:** Government of Alberta (Environment and Parks), "Provincial Electoral Division - Current 2019", https://open.alberta.ca/opendata/gda-e201c640-1f76-429c-8c24-89ff496f956e → ArcGIS layer `https://geospatial.alberta.ca/titan/rest/services/boundary/goa_administrative_area_10tm_nad83_aep/MapServer/3`, queried as GeoJSON in EPSG:4326.
+- **Licence:** Open Government Licence – Alberta (version 2, https://open.alberta.ca/licence). Prescribed statement, read from the licence 2026-10-16: "Contains information licensed under the Open Government Licence – Alberta."
+- **Rows / columns:** 87; `EDNUMBER`, `EDNAME` used (also `EDPROV` and `MLA_TITLE`/`MLA_FNAME`/`MLA_LNAME`, not used: the Assembly's own lists are the source for members). The layer publishes no edit date. Layers 4 and 5 of the same service are the historical 2010 and 2003 divisions; do not use them.
+- **Vintage:** the description says the divisions "were enacted in December 2017 and came into effect for the 2019 provincial general election": the same map as Elections Alberta's `EDS_ENACTED_BILL33_15DEC2017`.
+- **Why this copy (2026-10-16):** Elections Alberta's shapefile (`https://www.elections.ab.ca/uploads/2019Boundaries_ED-Shapefiles.zip`, from https://www.elections.ab.ca/resources/maps/) states no licence or terms, and the project published it from 2026-10-15 without one (DECISIONS row 2026-10-16). Measured against it: the same 87 division numbers and names; over the 29 published divisions, the boundaries never differ by more than 1.264 m (Hausdorff distance); the area between the two outlines sums to 2.58 km² over those 29, as thin slivers along long edges (riding 62 the largest, 0.48 km²); **all 288,534 published address records fall in the same division under either copy.** Elections Alberta stays linked as the body that administers the divisions.
+- **⚠️ Change pending.** The Electoral Boundaries Commission's final report (tabled 2026-03-26) was set aside. Government Motion 37 (passed 2026-04-21) created the Select Special Committee on Electoral Boundaries, which must report to the Assembly by **2026-11-02**. Nothing was enacted as of 2026-10-09. A new map would apply from the next general election, so MLAs keep representing the 2017 divisions until then; the tool will need to show current ridings and, once enacted, label the future ones as future. Check that this layer's successor appears on open.alberta.ca when one is enacted. Source: https://www.assembly.ab.ca/assembly-business/committees/CEB
+- **Coverage of Edmonton, measured (on the Elections Alberta copy, 2026-10-10):** 20 "Edmonton-" divisions. All 298,238 City parcel addresses fall in exactly one division; **1 address falls in Morinville-St. Albert**. Eight other neighbouring divisions overlap the City's area by slivers under 0.4 km² each, with no addresses in them.
 
 ### MLAs — Legislative Assembly of Alberta
 - **Publisher / URL:** https://www.assembly.ab.ca/members/members-of-the-legislative-assembly → `https://www.assembly.ab.ca/txt/mla_home/contacts.csv`
