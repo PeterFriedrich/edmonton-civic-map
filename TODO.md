@@ -16,7 +16,7 @@ symptom and re-measure the stated cause before acting on it.
 - [ ] **Confirm the Project picker has the synced set ticked.** The 2026-10-12 reconciliation chat reported only `docs/BRIEF.md`, `docs/DECISIONS.md` and `docs/SPEC_civic_map.md`; the set in `docs/CLAUDE_WEB.md` also has `docs/SPEC_lenses.md`, `docs/SPEC_data_schema.md` and `data/DATA.md`. (The stack research has since run and did read the lens spec.)
 - [ ] **Report data defects to the City.** The owner will send one report later, collecting what `docs/DATA_ISSUES.md` holds by then (2026-10-10). Done when each row there has a status other than NOT SENT.
 
-- [ ] **Community league boundaries: ask the City or not.** The only source is an unlicensed layer on the City's GIS server (`data/DATA.md`, "Community leagues — City GIS service"). Done when the owner has decided whether to ask the City to publish it on the open data portal, or to leave leagues out.
+- [ ] **Ask the City to publish its community league boundaries as open data** (owner decided 2026-10-17 to ask). The layer exists: `GDB.V_COMMUNITY_LEAGUES` on `gis.edmonton.ca/arcgisintegration/.../DPIM/DPIM_FS/FeatureServer/12`, 163 leagues with bylaw boundary text, no licence stated; the City's printed league map (2024-04-02) is no-reproduction (`data/DATA.md`, "Community leagues — City GIS service"). Ask via the open data portal's dataset request or Mapdesk@Edmonton.ca: publish under OGL – City of Edmonton, without the staff-logon and mailing-address columns. Can go with the defect report below. Claude drafts the request on asking; the owner sends it. Done when the City has answered and the answer is recorded; until then the communities lens uses neighbourhoods only.
 
 ### Sources still to verify
 
