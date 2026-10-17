@@ -8,6 +8,8 @@ Items are verbatim as they were closed, newest-moved first in the order they app
 
 ---
 
+- [x] **A ward population newer than the 2021 Census**, from a primary source. Done when found, or when recorded as not existing. **Closed 2026-10-17:** none on the City portal; the Returning Officer's Q4 2026 report (item above) is the likely first source (`data/DATA.md` "Population and growth").
+
 - [x] **Join the 278 census neighbourhoods to the 407 neighbourhood polygons** (`eg3i-f4bj` to `65fr-66s6`). Done when `data/DATA.md` says which of the other 129 are industrial or unpopulated and which, if any, are missing a census row. **Closed 2026-10-17:** `data/DATA.md` "Ward population": census rows sit on the census-day map `5bk4-5txu`; 4 populated neighbourhoods were renumbered since (Oliver → Wîhkwêntôwin and three more) and join by geometry; the other 129 are 53 industrial, 40 river valley/Henday/area, 36 unbuilt-in-2021 or institutional. None missing.
 
 - [x] **Shareable view link** without the address unless the reader chooses  **Closed 2026-10-17:** `site/src/share.js`, a "Copy link" control on the results (`docs/SPEC_lenses.md` §5).

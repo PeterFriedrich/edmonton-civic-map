@@ -19,9 +19,8 @@ symptom and re-measure the stated cause before acting on it.
 ### Sources still to verify
 
 - [ ] **Statistics Canada attribution wording**, before ward populations are published: quote the Statistics Canada Open Licence's required statement in `data/DATA.md` and on the About page.
-- [ ] **Post-2025-election ward boundary report (Policy C469A).** Not found; the City's ward-boundary-review page returned 404 on 2026-10-10. Done when the report's status and any proposed adjustments are recorded in `data/DATA.md`.
-- [ ] **A ward population newer than the 2021 Census**, from a primary source. Done when found, or when recorded as not existing.
-- [ ] **School-ward boundaries used in the 2025 election** — confirm against each board's ward bylaw that they match the City layers.
+- [ ] **Post-2025-election ward boundary report (Policy C469B; due Q4 2026).** Recheck after 2026-12-31; Council documents on eScribe answer 403 to scripts, so read by hand. Done when its status, any proposed adjustments, and its ward populations are recorded in `data/DATA.md` "Ward boundary review", including whether Yellowhead Corridor West moves.
+- [ ] **School-ward boundaries used in the 2025 election.** The boards' own layers disagree with the City's at three addresses (`data/DATA.md` "School wards"; `docs/DATA_ISSUES.md` 2026-10-17). The bylaws are not online (EPSB Bylaw 2020-2; no Catholic number found). Done when the owner has asked the boards or Edmonton Elections which polygons the 2025 vote used, and the answer is recorded.
 - [ ] **Check the provincial boundary process now, and again after 2026-11-02**, when the Select Special Committee on Electoral Boundaries must report. The 2026-10-13 stack report says the commission's final report gives Edmonton 21 electoral divisions, where the map in force has 20; not verified against `assembly.ab.ca`. Done when `data/DATA.md` records what was tabled, whether anything is enacted, and which map applies to the next provincial election.
 
 ### Map detail phase
@@ -48,6 +47,8 @@ symptom and re-measure the stated cause before acting on it.
 ## Done
 
 Closed items moved out of `## Open work` live in **`docs/TODO_archive.md`** — one line each below, reasoning there.
+
+- [x] **A ward population newer than the 2021 Census** — CLOSED 2026-10-17 · `docs/TODO_archive.md`
 
 - [x] **Join the 278 census neighbourhoods to the 407 neighbourhood polygons** — CLOSED 2026-10-17 · `docs/TODO_archive.md`
 
