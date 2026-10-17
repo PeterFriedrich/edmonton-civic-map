@@ -353,5 +353,25 @@ simplification, whichever stack is chosen.
   - Note the misspelt column `neighbourhood_numberr`.
   - Units permitted are not units built or occupied, and not people. Converting them to population needs a persons-per-unit assumption that must be stated and sourced.
 
+### Tier 2 sources — who is responsible, and how to engage (survey 2026-10-17)
+Each brief §3 issue placed on the ladder in `docs/SPEC_civic_map.md` (amendment 2026-10-10). All pages read 2026-10-17 with the project User-Agent; nothing written as an entry yet.
+
+| Issue | Rung | Source of record | States |
+|---|---|---|---|
+| Potholes | 1 | `edmonton.ca/transportation/report_requests/report-a-pothole` | City Roadway Maintenance; report by 311, app or online; target inspect/repair times; damage claims page |
+| Snow clearing | 1 | `edmonton.ca/transportation/on_your_streets/snow-ice` | City Snow and Ice Control; Council policy and service levels linked; report by 311; residential sidewalks under Bylaw 14600 |
+| Zoning and infill | 1 | `edmonton.ca/city_government/urban_planning_and_design/public-engagement-in-development-process` | Council decides rezonings at the MGA-required public hearing, where anyone may speak; a City planner decides permits (MGA s.642(1)); appeals to SDAB; postcard notice and earlier input routes |
+| Transit | 1 | `edmonton.ca/ets/fares-passes`, `edmonton.ca/ets/general-feedback` | ETS is a City service; "The price of Arc products are set by City Council in conjunction with ETS"; responses via 311. Regional routes are other municipalities' |
+| Property tax and assessment | 1 | `edmonton.ca/residential_neighbourhoods/property_tax_assessment/tax-breakdown`, `.../property-assessment` | Municipal share (~70%) set by the City; education share (~30%) set by the Government of Alberta, collected by the City; assessment questions to 311, formal complaints to the Assessment Review Board. Corroborated by `alberta.ca/education-property-tax`, which adds that separate (Catholic) boards opted out of the ASFF |
+| Policing | 2 | `edmonton.ca/city_government/city_organization/edmonton-police-commission`; `edmontonpolicecommission.com/contact/make-a-complaint/`; `albertaprc.ca` | The Commission oversees EPS (Bylaw 14040). **Since 2025-12-01 the Commission no longer accepts complaints; they go to the Police Review Commission** (Police Act change). Non-emergency line on the City 311 page |
+| Schools | 2 | `ecsd.net/board-of-trustees`; `epsb.ca/ourdistrict/board/`; `alberta.ca/education-property-tax` | Boards govern under the Education Act, which delegates the province's authority; each has a contact-the-board page; funding through the provincial education tax |
+| Water and stormwater | 2 | `edmonton.ca/city_government/utilities`; EPCOR `.../how-water-and-wastewater-rates-are-set.html`, `.../contact-edmonton.html` | EPCOR runs sewer and stormwater (City page); City Council is EPCOR's rate regulator (EPCOR page); the province regulates the systems (City page) |
+
+- **Open:** the Anthony Henday. 311 routes it to a "Gov. AB. Anthony Henday General Info" category, but no provincial page stating who maintains it was found; until one is, the potholes and snow entries say nothing about it.
+- **Fetch and diff:** edmonton.ca (Drupal) pages carry `<meta name="last-modified">` and the marker "Main page content begins here"; the text after it, up to the site-wide banner, is the part to diff. `edmonton.ca/sitemap.xml` (2 pages, ~2,060 URLs) is an index. `edmontonpolicecommission.com` is WordPress: `wp-json/wp/v2/pages?slug=<slug>&_fields=modified,link` gives a page's change time. EPCOR's sitemap is `epcor.com/ca.sitemap.xml` (not read). The Acts download as PDFs: `kings-printer.alberta.ca/documents/Acts/P17.pdf` (Police), `E00P3.pdf` (Education), `m26.pdf` (MGA).
+- **⚠️ EPCOR's number differs by publisher.** The City's 311 page lists EPCOR as 780-412-4000; EPCOR's own contact page gives 780-412-4500 (emergencies: power, water, drainage) and 310-4300 (customer service). Take each body's contact from its own page.
+- **⚠️ The Commission's complaint page links albertaprc.ca through an Outlook safelink that embeds a staff email address.** Link to `albertaprc.ca` directly; never copy that href.
+- **Not a source of record: `q7ua-agfg` 311 Requests.** It is routing data (service area, category, "Full Service"/"Referral"), not a statement of responsibility, and its licence reads "See Terms of Use". Useful only to see which issues residents bring: e.g. "Non Municipal Services" holds EPCOR Water, Land Titles and Henday categories.
+
 ### Not a source: Represent (Open North)
 `represent.opennorth.ca` answers "who represents this point" for all three levels, but it is a third-party aggregator and sending it a location is the third-party geocoding the brief rules out without the owner's say-so. Listed so it is not rediscovered as a shortcut.
