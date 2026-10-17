@@ -22,7 +22,7 @@ function bbox(fc) {
   return [[w, s], [e, n]];
 }
 
-export function createMap({ container, layers, boundaries, buttons, tilt, status, onClick }) {
+export function createMap({ container, layers, boundaries, buttons, tilt, status, onClick, view, onView }) {
   const cityBounds = bbox(boundaries.council_ward);
   const sources = {
     buildings: { type: "vector", url: "pmtiles://" + new URL("data/buildings.pmtiles", location.href).href },
@@ -60,9 +60,11 @@ export function createMap({ container, layers, boundaries, buttons, tilt, status
   map.on("click", (e) => onClick(e.lngLat.lng, e.lngLat.lat));
   map.getCanvas().style.cursor = "crosshair";
 
-  let shown = "council_ward";
+  let shown = view.lines;
+  const tilted = () => tilt.getAttribute("aria-pressed") === "true";
   function showLayer(id) {
     shown = id;
+    onView({ lines: shown, tilt: tilted() });
     for (const l of layers) {
       const v = l.id === id ? "visible" : "none";
       map.setLayoutProperty(`${l.id}-line`, "visibility", v);
@@ -79,18 +81,24 @@ export function createMap({ container, layers, boundaries, buttons, tilt, status
     b.onclick = () => showLayer(l.id);
     buttons.append(b);
   }
-  tilt.onclick = () => {
-    const on = tilt.getAttribute("aria-pressed") !== "true";
+  function setTilt(on) {
     tilt.setAttribute("aria-pressed", String(on));
     map.easeTo({ pitch: on ? 55 : 0, bearing: on ? -15 : 0 });
-  };
+    onView({ lines: shown, tilt: on });
+  }
+  tilt.onclick = () => setTilt(!tilted());
 
   return new Promise((resolve) => map.once("load", () => {
     status.textContent = "";
     // The compact attribution opens on load and would cover a phone-sized map; the (i) button reopens it.
     container.querySelector(".maplibregl-ctrl-attrib")?.classList.remove("maplibregl-compact-show");
     showLayer(shown);
+    if (view.tilt) setTilt(true);
     resolve({
+      setView(v) {
+        if (v.lines !== shown) showLayer(v.lines);
+        if (v.tilt !== tilted()) setTilt(v.tilt);
+      },
       // point: [lon, lat] or null; ids: the selected district ids in every layer;
       // marker: false for a neighbourhood, whose point is only somewhere inside it.
       show(point, ids, marker = true) {
@@ -105,7 +113,10 @@ export function createMap({ container, layers, boundaries, buttons, tilt, status
         map.getSource("point").setData({ type: "FeatureCollection",
           features: point && marker ? [{ type: "Feature", properties: {}, geometry: { type: "Point", coordinates: point } }] : [] });
         if (point) map.easeTo({ center: point, zoom: Math.max(map.getZoom(), 13) });
-        else if (only) map.fitBounds(bbox({ features: boundaries[only].features.filter((f) => f.properties.district_id === ids[0]) }), { padding: 40 });
+        else {
+          const picked = boundaries[shown].features.filter((f) => ids.includes(f.properties.district_id));
+          if (picked.length) map.fitBounds(bbox({ features: picked }), { padding: 40 });
+        }
       },
     });
   }));

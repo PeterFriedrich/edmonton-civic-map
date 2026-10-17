@@ -8,6 +8,9 @@ Items are verbatim as they were closed, newest-moved first in the order they app
 
 ---
 
+- [x] **Shareable view link** without the address unless the reader chooses  **Closed 2026-10-17:** `site/src/share.js`, a "Copy link" control on the results (`docs/SPEC_lenses.md` §5).
+
+
 - [x] **Neighbourhood search** (`docs/SPEC_lenses.md` §3): type a neighbourhood, see its districts; a divided one shows each and asks for an address. Needs the 407 names from `65fr-66s6` published, which is a new published file: propose first. **Closed 2026-10-17:** `site/public/data/neighbourhoods.json` from `src/build_neighbourhoods.py`, in the refresh and the diff check; matched in the address box (`docs/SPEC_data_schema.md` §10).
 
 - [x] DONE 2026-10-16: resolved by switching to the Government of Alberta's copy of the same divisions, under OGL – Alberta (`data/DATA.md`, "Provincial ridings"); no permission request needed. **Licence for the Elections Alberta boundary shapefile.** None is stated on the download page (`data/DATA.md`, "Provincial ridings"). Done when a written licence or permission is recorded there; until then the provincial layer cannot ship.
