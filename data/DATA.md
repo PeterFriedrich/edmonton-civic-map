@@ -220,7 +220,7 @@ Use Python with `certifi`'s bundle. Do not disable verification.
 - **Retrieved:** 2026-10-10 — **publisher last-updated:** 2026-10-05
 - **Rows / columns:** 407 (residential and industrial); `neighbourhood_number`, `name`, `descriptive_name`, `description`, `civic_ward_name`, `district`, `effective_start_date`, `effective_end_date`, geometry
 - **CRS:** CRS84
-- **Use:** the communities-of-interest lens (`docs/SPEC_civic_map.md`, amendments).
+- **Use:** neighbourhood search (`site/public/data/neighbourhoods.json`, `docs/SPEC_data_schema.md` §10), downloaded as `coe_neighbourhoods`; the communities-of-interest lens (`docs/SPEC_civic_map.md`, amendments). Names are the `descriptive_name` column, as published ("The Orchards At Ellerslie").
 - **Measured 2026-10-10, by address:** every parcel address falls in exactly one neighbourhood. Neighbourhoods with at least 10 addresses on each side of a boundary line:
 
   | Layer | Divided neighbourhoods (of 407) | Any address on a second side |
@@ -232,7 +232,7 @@ Use Python with `certifi`'s bundle. Do not disable verification.
   | Federal ridings | 8 | 30 |
 
   Largest: The Orchards at Ellerslie (2,468 addresses in Edmonton-Ellerslie, 1,320 in Edmonton-South) and Walker (1,855 in Edmonton Gateway, 1,574 in Edmonton Southeast). The 10-address floor is a first guess to keep digitising slivers out; the right threshold is not settled.
-- **Quirks:** `neighbourhood_name` and `neighbourhood_number` in the address layer `ut27-nrpn` are **empty on every row**, so neighbourhood has to come from a point-in-polygon against this layer. The catalogue search surfaces the centroid table `3b6m-fezs` first; this is the polygon one. `Neighbourhood Boundaries : 2019` (`xu6q-xcmj`) is an old snapshot.
+- **Quirks:** `neighbourhood_name` and `neighbourhood_number` in the address layer `ut27-nrpn` are **empty on every row**, so neighbourhood has to come from a point-in-polygon against this layer. The catalogue search surfaces the centroid table `3b6m-fezs` first; this is the polygon one. `Neighbourhood Boundaries : 2019` (`xu6q-xcmj`) is an old snapshot. `civic_ward_name` is not used: for Anthony Henday South East it reads Sspomitapi, but the neighbourhood's addresses are all in Karhiio (measured 2026-10-17, the only disagreement of 407). Not yet reported to the City.
 - **Not found:** community league **boundaries**. The portal has league halls as points (`kaps-rk7z`) only. The Edmonton Federation of Community Leagues is the likely primary source; not yet checked.
 
 ### Buildings and physical barriers (candidates, catalogue metadata only)

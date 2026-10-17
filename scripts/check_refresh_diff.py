@@ -6,6 +6,7 @@ against HEAD, independently of src/diff_check.py:
 
   - officeholders.json: only `last_verified` may differ;
   - layers.json: only `last_verified`, `source_sha256` and `addresses_checked`;
+  - neighbourhoods.json: only `last_verified`;
   - addresses/: street files, streets.json and manifest.txt may change (new
     addresses pass, docs/SPEC_data_schema.md §9.6 point 2);
   - any other change, anywhere in the repo, fails.
@@ -27,6 +28,7 @@ DATA = "site/public/data"
 MAY_CHANGE = {
     f"{DATA}/officeholders.json": ("seat_id", {"last_verified"}),
     f"{DATA}/layers.json": ("id", {"last_verified", "source_sha256", "addresses_checked"}),
+    f"{DATA}/neighbourhoods.json": ("id", {"last_verified"}),
 }
 
 

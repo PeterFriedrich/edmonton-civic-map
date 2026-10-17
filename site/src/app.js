@@ -1,6 +1,6 @@
 // The lookup page: address or district in, one card per office holder out.
 // The cards never wait for the map; the map is a separate chunk loaded after.
-import { matchStreets, parse, titleStreet } from "./address.js";
+import { matchNeighbourhoods, matchStreets, parse, titleStreet } from "./address.js";
 import { distanceToBoundary, locate } from "./pip.js";
 
 const $ = (id) => document.getElementById(id);
@@ -27,6 +27,7 @@ const SOURCES = {
   ab_mlas: "Legislative Assembly of Alberta, MLA contact list",
   ab_mla_list: "Legislative Assembly of Alberta, members page",
   ca_mps: "House of Commons, list of members",
+  coe_neighbourhoods: "City of Edmonton open data, neighbourhoods",
 };
 // How each layer's district reads in a sentence.
 const NOUN = {
@@ -43,7 +44,7 @@ const OFFICIAL_LOOKUP = {
   federal_riding: ["Elections Canada, Find your electoral district", "https://www.elections.ca/Scripts/vis/FindED?L=e"],
 };
 
-const state = { layers: null, seats: null, stale: null, names: {}, boundaries: {}, streets: null, files: new Map(), map: null, last: null };
+const state = { layers: null, seats: null, stale: null, names: {}, boundaries: {}, streets: null, hoods: null, files: new Map(), map: null, last: null };
 
 const ready = Promise.all([
   getJSON("data/layers.json"),
@@ -62,6 +63,8 @@ const boundariesReady = ready.then(() => Promise.all(state.layers.map(async (l) 
   for (const f of fc.features) state.names[f.properties.district_id] = f.properties.name;
 })));
 const streetsReady = getJSON("data/addresses/streets.json").then((s) => (state.streets = s));
+// A few kB, so a neighbourhood can be found before the street list arrives.
+const hoodsReady = getJSON("data/neighbourhoods.json").then((h) => (state.hoods = h));
 
 function fail(err) {
   console.error(err);
@@ -100,9 +103,10 @@ function card(seat, notes = [], warns = []) {
 }
 
 // One entry per layer: { layer, ids: [district_id...], near: bool, kind: "split"|"overlap"|"gap"|null }
-function render(title, perLayer, point, what = "This address") {
+function render(title, perLayer, point, what = "This address", hood = null) {
   const out = $("results");
   out.replaceChildren(el("h2", { tabindex: "-1" }, title));
+  if (hood) out.append(el("p", { class: "meta" }, "Neighbourhood boundary: ", link(hood.source_url, SOURCES[hood.source_id] || hood.source_id), ` · last checked ${hood.last_verified}`));
   for (const { layer, ids, near, kind } of perLayer) {
     const noun = NOUN[layer.id];
     const [lookupName, lookupUrl] = OFFICIAL_LOOKUP[layer.id];
@@ -111,6 +115,7 @@ function render(title, perLayer, point, what = "This address") {
     if (age > state.stale.boundaries_days) warns.push([`The ${noun} boundaries were last checked against their source ${age} days ago. Confirm with the official lookup: `, link(lookupUrl, lookupName), "."]);
     if (kind === "split") notes.push([`This address has parcels in more than one ${noun}. Each is shown.`]);
     if (kind === "overlap") notes.push([`This point falls where two ${noun}s overlap in the published boundaries. Both are shown.`]);
+    if (kind === "divided") notes.push([`${hood.name} is divided between ${ids.length} ${noun}s. Each is shown; search an address in ${hood.name} to see which one applies.`]);
     if (near) notes.push([`${what} is within ${layer.near_boundary_m} m of a ${noun} boundary. Confirm with the official lookup: `, link(lookupUrl, lookupName), "."]);
     if (!ids.length) {
       out.append(el("p", { class: "notice" }, `No ${noun} found at this point; it may sit in a small gap between published boundaries. Check `, link(lookupUrl, lookupName), "."));
@@ -122,8 +127,8 @@ function render(title, perLayer, point, what = "This address") {
     if (layer.id === "council_ward") out.append(card(state.seats.get("edmonton_council:mayor")));
   }
   const ids = perLayer.flatMap((p) => p.ids);
-  state.last = { title, perLayer, point, what };
-  state.map?.show(point, ids);
+  state.last = { title, perLayer, point, what, hood };
+  state.map?.show(point, ids, !hood);
   out.querySelector("h2").focus({ preventScroll: true });
 }
 
@@ -151,13 +156,20 @@ async function suggest() {
   const my = ++seq;
   const text = input.value.trim();
   if (text.length < 2) return showOptions([]);
-  await streetsReady;
   const { house, words } = parse(text);
+  await hoodsReady;
+  const hoods = house ? [] : matchNeighbourhoods(text, state.hoods)
+    .map((h) => ({ label: `${h.name} (neighbourhood)`, hood: h }));
+  if (!state.streets) {
+    if (hoods.length) showOptions(hoods);
+    await streetsReady;
+    if (my !== seq) return;
+  }
   const streets = matchStreets(words, state.streets, house ? 4 : 8);
-  if (!streets.length) return showOptions([], "No Edmonton street matches that.");
+  if (!streets.length && !hoods.length) return showOptions([], "No Edmonton street or neighbourhood matches that.");
   if (!house) {
-    return showOptions(streets.map((s) => ({ label: titleStreet(s.name), street: s })),
-      "Add the house number to look up an address.");
+    return showOptions([...hoods, ...streets.map((s) => ({ label: titleStreet(s.name), street: s }))],
+      streets.length ? "Add the house number to look up an address." : null);
   }
   const found = [];
   for (const s of streets) {
@@ -170,6 +182,11 @@ async function suggest() {
 
 function choose(o) {
   showOptions([]);
+  if (o.hood) {
+    input.value = o.hood.name;
+    lookupNeighbourhood(o.hood);
+    return;
+  }
   if (!o.house) {
     input.value = titleStreet(o.street.name) + " ";
     input.setSelectionRange(0, 0);
@@ -188,6 +205,18 @@ function lookupAddress(label, recs) {
       return { layer, ids, near, kind: ids.length > 1 ? "split" : null };
     });
     render(label, perLayer, [recs[0][1], recs[0][0]]);
+  }).catch(fail);
+}
+
+// Each layer lists the districts of the neighbourhood's addresses; more than one
+// means a boundary divides it there (src/build_neighbourhoods.py).
+function lookupNeighbourhood(hood) {
+  Promise.all([ready, boundariesReady]).then(() => {
+    const perLayer = state.layers.map((layer) => {
+      const ids = hood.districts[layer.id];
+      return { layer, ids, near: false, kind: ids.length > 1 ? "divided" : null };
+    });
+    render(`Neighbourhood: ${hood.name}`, perLayer, [hood.point[1], hood.point[0]], "This neighbourhood", hood);
   }).catch(fail);
 }
 
@@ -255,7 +284,7 @@ function lookupPoint(lon, lat) {
 }
 
 $("affiliation").addEventListener("change", () => {
-  if (state.last) render(state.last.title, state.last.perLayer, state.last.point, state.last.what);
+  if (state.last) render(state.last.title, state.last.perLayer, state.last.point, state.last.what, state.last.hood);
 });
 
 // --- the map, after the cards ------------------------------------------------------
@@ -267,7 +296,7 @@ Promise.all([ready, boundariesReady]).then(async () => {
     buttons: $("layer-buttons"), tilt: $("tilt"), status: $("map-status"),
     onClick: lookupPoint,
   });
-  if (state.last) state.map.show(state.last.point, state.last.perLayer.flatMap((p) => p.ids));
+  if (state.last) state.map.show(state.last.point, state.last.perLayer.flatMap((p) => p.ids), !state.last.hood);
 }).catch((e) => {
   console.error(e);
   $("map-status").textContent = "The map could not load. The lookup still works.";

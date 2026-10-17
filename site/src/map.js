@@ -91,8 +91,9 @@ export function createMap({ container, layers, boundaries, buttons, tilt, status
     container.querySelector(".maplibregl-ctrl-attrib")?.classList.remove("maplibregl-compact-show");
     showLayer(shown);
     resolve({
-      // point: [lon, lat] or null; ids: the selected district ids in every layer.
-      show(point, ids) {
+      // point: [lon, lat] or null; ids: the selected district ids in every layer;
+      // marker: false for a neighbourhood, whose point is only somewhere inside it.
+      show(point, ids, marker = true) {
         for (const l of layers) {
           const mine = ids.filter((id) => id.startsWith(l.id + ":"));
           const f = ["in", ["get", "district_id"], ["literal", mine]];
@@ -102,7 +103,7 @@ export function createMap({ container, layers, boundaries, buttons, tilt, status
         const only = ids.length === 1 && ids[0].split(":")[0];
         if (only && only !== shown) showLayer(only);
         map.getSource("point").setData({ type: "FeatureCollection",
-          features: point ? [{ type: "Feature", properties: {}, geometry: { type: "Point", coordinates: point } }] : [] });
+          features: point && marker ? [{ type: "Feature", properties: {}, geometry: { type: "Point", coordinates: point } }] : [] });
         if (point) map.easeTo({ center: point, zoom: Math.max(map.getZoom(), 13) });
         else if (only) map.fitBounds(bbox({ features: boundaries[only].features.filter((f) => f.properties.district_id === ids[0]) }), { padding: 40 });
       },

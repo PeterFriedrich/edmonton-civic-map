@@ -46,12 +46,13 @@ symptom and re-measure the stated cause before acting on it.
 ### Build
 
 - [ ] **Measure weekly address churn, around 2026-11-27** (after 4–6 refresh runs): read the "N added, M removed" counts in the `Weekly refresh` commit messages and check the 1% stop line (`data/diff_rules.json` `parcel_rows_max_change`) against real weeks. Unmeasured so far: the address dataset keeps no history.
-- [ ] **Neighbourhood search** (`docs/SPEC_lenses.md` §3): type a neighbourhood, see its districts; a divided one shows each and asks for an address. Needs the 407 names from `65fr-66s6` published, which is a new published file: propose first.
 - [ ] **Shareable view link** without the address unless the reader chooses (`docs/SPEC_lenses.md` §5).
 
 ## Done
 
 Closed items moved out of `## Open work` live in **`docs/TODO_archive.md`** — one line each below, reasoning there.
+
+- [x] **Neighbourhood search** — CLOSED 2026-10-17 · `docs/TODO_archive.md`
 
 - [x] **Licence for the Elections Alberta boundary shapefile.** — DONE 2026-10-16 · `docs/TODO_archive.md`
 - [x] **Exact attribution text for the Open Government Licence – Edmonton** — DONE 2026-10-16 · `docs/TODO_archive.md`

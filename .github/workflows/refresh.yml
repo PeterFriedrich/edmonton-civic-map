@@ -62,6 +62,7 @@ jobs:
           python -m src.build_boundaries --out "$SCRATCH"
           python -m src.build_address_index --out "$SCRATCH"
           python -m src.build_officeholders --out "$SCRATCH"
+          python -m src.build_neighbourhoods --out "$SCRATCH"
 
       - name: Diff check against the published data
         run: python -m src.diff_check --new "$SCRATCH" --report "$REPORT"

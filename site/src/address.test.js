@@ -2,7 +2,7 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { test } from "node:test";
-import { matchStreets, parse, titleStreet } from "./address.js";
+import { matchNeighbourhoods, matchStreets, parse, titleStreet } from "./address.js";
 
 const streets = JSON.parse(readFileSync(new URL("../public/data/addresses/streets.json", import.meta.url), "utf8"));
 const top = (text) => matchStreets(parse(text).words, streets)[0]?.name;
@@ -33,4 +33,16 @@ test("a street number never matches a longer number", () => {
 test("street names display in title case with numbers and quadrants kept", () => {
   assert.equal(titleStreet("ST ALBERT TRAIL NW"), "St Albert Trail NW");
   assert.equal(titleStreet("100A STREET NW"), "100A Street NW");
+});
+
+const hoods = JSON.parse(readFileSync(new URL("../public/data/neighbourhoods.json", import.meta.url), "utf8"));
+const hood = (text) => matchNeighbourhoods(text, hoods).map((h) => h.name);
+
+test("neighbourhood names match by word prefix, ignoring case, accents and punctuation", () => {
+  assert.equal(hood("walker")[0], "Walker");
+  assert.equal(hood("wihkwentowin")[0], "Wîhkwêntôwin");
+  assert.equal(hood("rivers edge")[0], "River's Edge");
+  assert.equal(hood("kenyon")[0], "Hollick-Kenyon");
+  assert.equal(hood("orchards")[0], "The Orchards At Ellerslie");
+  assert.deepEqual(hood("104 ave"), []);
 });

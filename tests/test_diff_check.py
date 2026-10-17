@@ -45,6 +45,11 @@ BASE = {
         },
     },
     "parcel_rows": 1000,
+    "neighbourhoods": [
+        {"id": "neighbourhood:1", "name": "Alpha", "point": [53.505, -113.49],
+         "districts": {"council_ward": ["council_ward:a", "council_ward:b"], "public_school_ward": ["public_school_ward:X"]},
+         "source_url": "https://x/n", "last_verified": "2026-10-16"},
+    ],
 }
 
 
@@ -61,6 +66,7 @@ def write(root, d):
     for f, recs in d["streets"].items():
         (root / "addresses" / f).write_text(json.dumps(recs))
     (root / "addresses" / "manifest.txt").write_text(f"## Counts\nparcel rows in: {d['parcel_rows']}\n")
+    (root / "neighbourhoods.json").write_text(json.dumps(d["neighbourhoods"]))
     return root
 
 
@@ -77,6 +83,7 @@ def test_unchanged_but_dates_passes(tmp_path):
             s["last_verified"] = "2026-10-23"
         for l in d["layers"]:
             l["last_verified"], l["source_sha256"] = "2026-10-23", "cc"
+        d["neighbourhoods"][0]["last_verified"] = "2026-10-23"
     assert run(tmp_path, f) == ("pass", {})
 
 
@@ -164,6 +171,23 @@ def test_address_point_moved_passes_with_distance(tmp_path):
 def test_parcel_rows_over_one_percent_stops(tmp_path):
     result, hits = run(tmp_path, lambda d: d.__setitem__("parcel_rows", 1011))
     assert result == "stop" and list(hits) == ["parcel_rows_moved"]
+
+
+def test_neighbourhood_districts_change_reviews(tmp_path):
+    result, hits = run(tmp_path, lambda d: d["neighbourhoods"][0]["districts"].__setitem__("council_ward", ["council_ward:a"]))
+    assert result == "review" and hits == {"neighbourhood_districts": [
+        "neighbourhood:1 (Alpha): council_ward ['council_ward:a', 'council_ward:b'] -> ['council_ward:a']"]}
+
+
+@pytest.mark.parametrize("change,rule", [
+    (lambda d: d["neighbourhoods"][0].__setitem__("name", "Alpha Park"), "neighbourhood_name"),
+    (lambda d: d["neighbourhoods"][0].__setitem__("point", [53.506, -113.49]), "neighbourhood_other_field"),
+    (lambda d: d["neighbourhoods"].append(dict(d["neighbourhoods"][0], id="neighbourhood:2", name="Beta")),
+     "neighbourhood_added_or_removed"),
+])
+def test_other_neighbourhood_changes_review(tmp_path, change, rule):
+    result, hits = run(tmp_path, change)
+    assert result == "review" and list(hits) == [rule]
 
 
 def test_committed_data_against_itself_passes():

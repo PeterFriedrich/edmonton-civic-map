@@ -14,6 +14,8 @@ D = "site/public/data"
 SEATS = [{"seat_id": "council_ward:a", "name": "Person A", "last_verified": "2026-10-16"}]
 LAYERS = [{"id": "council_ward", "feature_count": 12, "last_verified": "2026-10-16",
            "source_sha256": "aa", "addresses_checked": 1000}]
+NBHDS = [{"id": "neighbourhood:1", "name": "Alpha", "districts": {"council_ward": ["council_ward:a"]},
+          "last_verified": "2026-10-16"}]
 
 
 def _write(root, rel, data):
@@ -28,6 +30,7 @@ def repo(tmp_path):
     git("init", "-q")
     _write(tmp_path, f"{D}/officeholders.json", SEATS)
     _write(tmp_path, f"{D}/layers.json", LAYERS)
+    _write(tmp_path, f"{D}/neighbourhoods.json", NBHDS)
     _write(tmp_path, f"{D}/boundaries/council_ward.geojson", "{}")
     _write(tmp_path, f"{D}/addresses/manifest.txt", "parcel rows in: 1000\n")
     _write(tmp_path, f"{D}/addresses/main-street-nw.json", "{}")
@@ -44,6 +47,7 @@ def test_dates_and_addresses_pass(repo):
     _write(repo, f"{D}/officeholders.json", [dict(SEATS[0], last_verified="2026-10-23")])
     _write(repo, f"{D}/layers.json", [dict(LAYERS[0], last_verified="2026-10-23", source_sha256="bb",
                                            addresses_checked=1003)])
+    _write(repo, f"{D}/neighbourhoods.json", [dict(NBHDS[0], last_verified="2026-10-23")])
     _write(repo, f"{D}/addresses/manifest.txt", "parcel rows in: 1003\n")
     _write(repo, f"{D}/addresses/main-street-nw.json", '{"1": []}')
     _write(repo, f"{D}/addresses/new-street-nw.json", '{"2": []}')
@@ -58,6 +62,11 @@ def test_a_name_change_fails(repo):
 def test_a_layer_field_change_fails(repo):
     _write(repo, f"{D}/layers.json", [dict(LAYERS[0], feature_count=13)])
     assert crd.problems(repo) == [f"{D}/layers.json: council_ward: feature_count changed"]
+
+
+def test_a_neighbourhood_district_change_fails(repo):
+    _write(repo, f"{D}/neighbourhoods.json", [dict(NBHDS[0], districts={"council_ward": ["council_ward:a", "council_ward:b"]})])
+    assert crd.problems(repo) == [f"{D}/neighbourhoods.json: neighbourhood:1: districts changed"]
 
 
 def test_a_seat_added_fails(repo):

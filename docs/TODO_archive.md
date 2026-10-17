@@ -8,6 +8,8 @@ Items are verbatim as they were closed, newest-moved first in the order they app
 
 ---
 
+- [x] **Neighbourhood search** (`docs/SPEC_lenses.md` §3): type a neighbourhood, see its districts; a divided one shows each and asks for an address. Needs the 407 names from `65fr-66s6` published, which is a new published file: propose first. **Closed 2026-10-17:** `site/public/data/neighbourhoods.json` from `src/build_neighbourhoods.py`, in the refresh and the diff check; matched in the address box (`docs/SPEC_data_schema.md` §10).
+
 - [x] DONE 2026-10-16: resolved by switching to the Government of Alberta's copy of the same divisions, under OGL – Alberta (`data/DATA.md`, "Provincial ridings"); no permission request needed. **Licence for the Elections Alberta boundary shapefile.** None is stated on the download page (`data/DATA.md`, "Provincial ridings"). Done when a written licence or permission is recorded there; until then the provincial layer cannot ship.
 
 - [x] DONE 2026-10-16 (City part): "Contains information licensed under the Open Government Licence – City of Edmonton.", read from the licence via `data.edmonton.ca/stories/s/msh8-if28.json` (method from edmonton-tax-viz); on the About page and pinned by a test. Statistics Canada's wording waits until ward populations are published. **Exact attribution text for the Open Government Licence – Edmonton**, and Statistics Canada's for the ward populations. Done when `data/DATA.md` quotes both.
