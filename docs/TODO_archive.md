@@ -8,6 +8,9 @@ Items are verbatim as they were closed, newest-moved first in the order they app
 
 ---
 
+- [x] **Survey what Tier 2 can say by automation.** For each issue in brief §3 (potholes, snow clearing, zoning and infill, transit, policing, schools, water and stormwater, property tax and assessment), find whether a primary source states the responsible body and the way to engage in a form a script can fetch and diff: the City's 311 service catalogue and `q7ua-agfg`, City and EPCOR service pages, the governing bylaw or Act. Done when each issue is placed on a rung of the ladder in `docs/SPEC_civic_map.md` with its source, and reported to the owner before any entry is written. DONE 2026-10-17: `data/DATA.md` "Tier 2 sources". Rung 1: potholes, snow clearing, zoning and infill, transit, property tax and assessment. Rung 2: policing, schools, water and stormwater. Reported to the owner.
+
+
 - [x] **A ward population newer than the 2021 Census**, from a primary source. Done when found, or when recorded as not existing. **Closed 2026-10-17:** none on the City portal; the Returning Officer's Q4 2026 report (item above) is the likely first source (`data/DATA.md` "Population and growth").
 
 - [x] **Join the 278 census neighbourhoods to the 407 neighbourhood polygons** (`eg3i-f4bj` to `65fr-66s6`). Done when `data/DATA.md` says which of the other 129 are industrial or unpopulated and which, if any, are missing a census row. **Closed 2026-10-17:** `data/DATA.md` "Ward population": census rows sit on the census-day map `5bk4-5txu`; 4 populated neighbourhoods were renumbered since (Oliver → Wîhkwêntôwin and three more) and join by geometry; the other 129 are 53 industrial, 40 river valley/Henday/area, 36 unbuilt-in-2021 or institutional. None missing.
