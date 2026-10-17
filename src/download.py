@@ -67,6 +67,11 @@ SOURCES = {
         "title": "Edmonton Catholic School Board ward boundaries",
         "licence": OGL_EDMONTON, "expected_row_count": 7,
     },
+    "coe_neighbourhoods": {
+        "kind": "socrata", "dataset": "65fr-66s6", "format": "geojson",
+        "title": "City of Edmonton - Neighbourhoods",
+        "licence": OGL_EDMONTON, "expected_row_count": 407,
+    },
     # The Government of Alberta's copy of the 2017 divisions, under OGL – Alberta. Elections
     # Alberta's own shapefile states no licence; the two agree to within 1.3 m and place every
     # address in the same division (measured 2026-10-16, data/DATA.md "Provincial ridings").

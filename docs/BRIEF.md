@@ -72,6 +72,7 @@ the brief wins.
 - **2026-10-16** — **The about page is `site/about.html`, text approved by the owner in session**, with corrections routed to GitHub issues (owner's choice; no email published).
 - **2026-10-16** — **Provincial boundaries come from the Government of Alberta's "Provincial Electoral Division - Current 2019" layer under OGL – Alberta, not Elections Alberta's shapefile** (owner approved … Rejected: asking Elections Alberta for permission (an explicitly licensed copy exists); taking the layer down meanwhile.
 - **2026-10-16** — **The repo is licensed in three parts, as edmonton-tax-viz is: MIT for code, CC BY 4.0 for prose (`LICENSE-docs`), and the data carved out to its publishers** (owner approved in session). … Rejected: one MIT file over everything (it would claim rights over City, Alberta and federal data); a generated `DATA_LICENCES.md` (no `sources.json` exists to generate it from, and the About page is …
+- **2026-10-17** — **Neighbourhood search publishes `site/public/data/neighbourhoods.json`, built from the address index** (owner approved the proposal in session). … Rejected: a 10-address floor (leaves real addresses with a wrong answer); per-district address counts (rewrite the file weekly); neighbourhood outlines (size, and the map draws none).
 
 ## Open work
 
@@ -103,11 +104,11 @@ the brief wins.
 
 **Build**
 - **Measure weekly address churn, around 2026-11-27** (after 4–6 refresh runs): read the "N added, M removed" counts in the `Weekly refresh` commit messages and check the 1% stop line (`data/diff_rules.json` `parcel_rows_max_change`) against real weeks. Unmeasured so far: the …
-- **Neighbourhood search** (`docs/SPEC_lenses.md` §3): type a neighbourhood, see its districts; a divided one shows each and asks for an address. Needs the 407 names from `65fr-66s6` published, which is a new published file: propose first.
 - **Shareable view link** without the address unless the reader chooses (`docs/SPEC_lenses.md` §5).
 
 ## Known upstream data defects
 
+- 2026-10-17 · City of Edmonton open data: `65fr-66s6` (neighbourhoods): `civic_ward_name` for Anthony Henday South East (`neighbourhood_number` 6665) reads Sspomitapi, but the neighbourhood's addresses are all in Karhiio on the City's own ward layer `b4er-5rp2`. — status: NOT SENT
 - 2026-10-15 · City of Edmonton open data: `b4er-5rp2` (council wards), `d7pj-rist` (public school wards), `pwzf-sjj2` (Catholic school wards); Elections Alberta 2017 divisions: Neighbouring districts do not share exact edges: the layers overlap slightly and leave small gaps. Elections Canada's federal layer is clean. — status: NOT SENT
 - 2026-10-10 · City of Edmonton open data: `d7pj-rist` (public school wards), `pwzf-sjj2` (Catholic school wards): The `trustee` column still names the 2021–2025 trustees, although the datasets describe themselves as "the associated board trustee in office" and were refreshed 2026-10-05. — status: NOT SENT
 

@@ -15,7 +15,7 @@ produces a directory to compare.
     python -m src.diff_check --new <scratch> [--old site/public/data] [--report <dir>]
 
 The scratch build is made with each builder's --out pointing at it, in order:
-build_boundaries, build_address_index, build_officeholders.
+build_boundaries, build_address_index, build_officeholders, build_neighbourhoods.
 """
 import argparse
 import json
@@ -186,12 +186,35 @@ def diff_addresses(old_dir, new_dir, layer_ids, moved_layers, max_change):
     return out
 
 
+def diff_neighbourhoods(old, new):
+    old, new = {r["id"]: r for r in old}, {r["id"]: r for r in new}
+    out = {"neighbourhood_added_or_removed": [], "neighbourhood_name": [],
+           "neighbourhood_districts": [], "neighbourhood_other_field": []}
+    for k in sorted(old.keys() - new.keys()):
+        out["neighbourhood_added_or_removed"].append(f"{k}: removed (was {old[k]['name']})")
+    for k in sorted(new.keys() - old.keys()):
+        out["neighbourhood_added_or_removed"].append(f"{k}: added ({new[k]['name']})")
+    for k in sorted(old.keys() & new.keys()):
+        a, b = old[k], new[k]
+        if a["name"] != b["name"]:
+            out["neighbourhood_name"].append(f"{k}: name {a['name']!r} -> {b['name']!r}")
+        for lid in sorted(a["districts"].keys() | b["districts"].keys()):
+            da, db = a["districts"].get(lid, []), b["districts"].get(lid, [])
+            if da != db:
+                out["neighbourhood_districts"].append(f"{k} ({b['name']}): {lid} {da} -> {db}")
+        for f in sorted((a.keys() | b.keys()) - {"name", "districts", "last_verified"}):
+            if a.get(f) != b.get(f):
+                out["neighbourhood_other_field"].append(f"{k}: {f} {json.dumps(a.get(f))} -> {json.dumps(b.get(f))}")
+    return out
+
+
 def compare(old_dir, new_dir, rules):
     findings = diff_seats(_json(old_dir / "officeholders.json"), _json(new_dir / "officeholders.json"))
     layers, moved = diff_layers(old_dir, new_dir, rules["geometry_threshold_m2"])
     findings |= layers
     layer_ids = [l["id"] for l in _json(new_dir / "layers.json")]
     findings |= diff_addresses(old_dir, new_dir, layer_ids, moved, rules["parcel_rows_max_change"])
+    findings |= diff_neighbourhoods(_json(old_dir / "neighbourhoods.json"), _json(new_dir / "neighbourhoods.json"))
     missing = findings.keys() - rules["severity"].keys()
     if missing:
         raise ValueError(f"no severity configured for {sorted(missing)}")

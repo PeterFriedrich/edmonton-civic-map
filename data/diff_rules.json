@@ -15,6 +15,10 @@
     "address_district_with_boundary_move": "pass",
     "split_addresses": "review",
     "addresses_added_or_removed": "pass",
-    "address_point_moved": "pass"
+    "address_point_moved": "pass",
+    "neighbourhood_added_or_removed": "review",
+    "neighbourhood_name": "review",
+    "neighbourhood_districts": "review",
+    "neighbourhood_other_field": "review"
   }
 }

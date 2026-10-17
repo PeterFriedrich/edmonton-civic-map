@@ -50,6 +50,20 @@ test("an address lookup shows every level, then the map draws", async ({ page })
   w.check();
 });
 
+// A neighbourhood is found before an address is typed. Walker is divided between
+// two federal districts (data/DATA.md, "Neighbourhoods"): both show, with a note.
+test("a neighbourhood lookup shows its districts and names a divided level", async ({ page }) => {
+  const w = watch(page);
+  await page.goto("./");
+  await page.getByRole("combobox", { name: "Address" }).fill("walker");
+  await page.getByRole("option", { name: "Walker (neighbourhood)" }).click();
+  const results = page.locator("#results");
+  await expect(results.getByRole("heading", { name: "Neighbourhood: Walker" })).toBeVisible();
+  await expect(results).toContainText("Walker is divided between 2 federal electoral districts");
+  await expect(results.locator(".card")).toHaveCount(7); // 5 levels, the mayor, and the second district
+  w.check();
+});
+
 // Staleness comes from staleness.json, not code: with negative thresholds every
 // card warns, once for its office holder and once for its boundaries.
 test("cards warn when office holders or boundaries go unchecked", async ({ page }) => {

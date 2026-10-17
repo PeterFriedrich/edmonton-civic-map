@@ -432,3 +432,39 @@ The owner took all four recommendations, "for now":
    at least one layer. The alternative is one flag for all five.
 4. **The new module is `src/build_address_index.py`**, run after the
    boundary build and before the diff check.
+
+## 10. `neighbourhoods.json`: neighbourhood search (decided 2026-10-17)
+
+Built by `src/build_neighbourhoods.py` after the address index, from
+`coe_neighbourhoods` (`65fr-66s6`, 407 rows). One record per neighbourhood,
+sorted by name:
+
+```json
+{"id": "neighbourhood:6662", "name": "Walker", "point": [53.4171, -113.43043],
+ "districts": {"council_ward": ["council_ward:karhiio"], "public_school_ward": ["public_school_ward:I"],
+               "catholic_school_ward": ["catholic_school_ward:77"], "provincial_riding": ["provincial_riding:31"],
+               "federal_riding": ["federal_riding:48016", "federal_riding:48021"]},
+ "source_id": "coe_neighbourhoods", "source_url": "https://data.edmonton.ca/d/65fr-66s6",
+ "last_verified": "2026-10-17"}
+```
+
+- **A neighbourhood's districts are those of the published address records
+  inside it**, so a neighbourhood answer never disagrees with an address
+  lookup. Tested in longitude/latitude, as published, without reprojection.
+  An address record in no neighbourhood or in two, a neighbourhood with no
+  address, or a duplicate name stops the build.
+- **Divided is decided per layer, by any address.** More than one district in
+  a layer: that card shows each and asks for an address; the other layers
+  answer directly. No floor: a floor of 10 would leave real addresses with a
+  wrong answer. (The communities-of-interest lens still needs its own
+  threshold.) Measured 2026-10-17: 3 council, 2 public, 4 Catholic, 44
+  provincial, 30 federal.
+- `point` is GEOS's representative point (always inside), rounded to 5
+  decimals. It moves the map; no marker is drawn, since it is not an address.
+- No outlines (the map draws none) and no address counts (they change weekly
+  and would rewrite the file each refresh). 11 kB gzipped.
+- **Diff check:** a neighbourhood added or removed, renamed, its districts
+  changed, or any other field changed (`point`, `source_url`) is **review**.
+  `scripts/check_refresh_diff.py` lets a passing refresh change only
+  `last_verified`.
+

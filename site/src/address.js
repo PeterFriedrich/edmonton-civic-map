@@ -83,3 +83,27 @@ export function matchStreets(words, streets, limit = 8) {
 export function titleStreet(name) {
   return name.split(" ").map((w) => (QUADRANTS.has(w) || /^\d/.test(w) ? w : w[0] + w.slice(1).toLowerCase())).join(" ");
 }
+
+// "Hollick-Kenyon", "River's Edge": a hyphen splits words and an apostrophe joins them.
+const nameWords = (text) => normalise(text.replace(/-/g, " ").replace(/['’]/g, ""));
+
+// Neighbourhoods (site/public/data/neighbourhoods.json) whose name has a distinct
+// word starting with each typed word, case and accents ignored, best first.
+export function matchNeighbourhoods(text, hoods, limit = 3) {
+  const query = nameWords(text);
+  if (!query.length) return [];
+  const scored = [];
+  for (const h of hoods) {
+    const parts = (h._words ??= nameWords(h.name));
+    const used = new Set();
+    let score = 0;
+    for (const q of query) {
+      const at = parts.findIndex((w, i) => !used.has(i) && w.startsWith(q));
+      if (at < 0) { score = -1; break; }
+      used.add(at); score += parts[at] === q ? 2 : 1;
+    }
+    if (score >= 0) scored.push({ hood: h, score: score - parts.length / 100 });
+  }
+  scored.sort((a, b) => b.score - a.score || a.hood.name.localeCompare(b.hood.name));
+  return scored.slice(0, limit).map((s) => s.hood);
+}
