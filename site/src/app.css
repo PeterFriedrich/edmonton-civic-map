@@ -23,6 +23,8 @@ a { color: var(--accent); }
 h1 { font-size: 1.35rem; margin: 0 0 .25rem; }
 .lede, .hint, .about { color: var(--muted); }
 .lede { margin: 0 0 1rem; }
+.alpha-banner { margin: 0; padding: .4rem 16px; text-align: center; font-size: .85rem; font-weight: 600;
+  background: var(--warn-bg); color: var(--warn-fg); border-bottom: 1px solid var(--line); }
 .hint { font-size: .82rem; margin: .35rem 0 0; }
 
 .layout { display: flex; flex-direction: column; }
@@ -30,7 +32,8 @@ h1 { font-size: 1.35rem; margin: 0 0 .25rem; }
 .map-wrap { position: relative; height: 62vh; min-height: 320px; border-top: 1px solid var(--line); }
 #map { position: absolute; inset: 0; background: var(--map-bg); }
 @media (min-width: 900px) {
-  .layout { flex-direction: row; height: 100vh; }
+  body.app { display: flex; flex-direction: column; height: 100vh; }
+  .layout { flex-direction: row; flex: 1; min-height: 0; }
   .panel { width: 440px; max-width: none; margin: 0; overflow-y: auto; border-right: 1px solid var(--line); flex: none; }
   .map-wrap { flex: 1; height: auto; border-top: 0; }
 }
