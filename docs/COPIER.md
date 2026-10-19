@@ -40,6 +40,8 @@ PRs merge within minutes of each other. If the job is renamed, update the requir
 too, or every PR waits on a check that never reports. GitHub's free plan has no branch
 protection for private repos, so skip this step there.
 
+Then answer `docs/CHANGE_PIPELINE.md` §"This project's fit" for the new project.
+
 Use this instead of GitHub's "Use this template": that copies the template
 repo's own backlog, decisions and handoffs, and records nothing to update from.
 
@@ -83,7 +85,12 @@ evaluated, not applied blindly:**
    revert the hunks you decline (`git checkout -p`). A declined change is not
    re-offered: the next update starts from the new `_commit`, so it stays
    declined. Record a substantive decline in `docs/DECISIONS.md`.
-4. Run the tests, commit, open a PR listing what was taken and what declined.
+4. If the update adds or changes rows in `docs/CHANGE_PIPELINE.md` §"This
+   project's fit", answer those rows for this project before committing:
+   `adopted`, `later: <trigger>`, `no: <reason>` or `n/a`. Keep earlier
+   answers.
+5. Run the tests, commit, open a PR listing what was taken, what declined,
+   and the new fit answers.
 
 ## Connect a project made before copier
 

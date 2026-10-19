@@ -37,7 +37,10 @@ shallow pass over everything.
 
 ### Step 1 — Ground before scoping (non-negotiable)
 
-1. Read `docs/AUDIT_LEDGER.md` — all tables.
+1. Read `docs/AUDIT_LEDGER.md` — all tables — and `docs/ASSUMPTIONS.md`.
+   An assumption already indexed there is **known**: don't report it as a new
+   finding. Report it only when its status should change, or when you find a
+   premise the index is missing.
 2. Cross-check the latest session summary. **TODO.md can lag executed work** —
    a backlog item that "smells like an audit" may have already run and only be
    recorded in a handoff. If the ledger and TODO disagree, the ledger +
@@ -49,7 +52,8 @@ shallow pass over everything.
 ### Step 2 — Pick ONE target
 
 - If the user named a target, use it.
-- Otherwise take the top of the ledger's "Never audited" ranked list.
+- Otherwise take the top of the ledger's "Never audited" ranked list, or an
+  UNVERIFIED assumption whose "If wrong" size outranks it.
 - Tell the user which target you picked and why before going deep.
 
 ### Step 3 — Choose the audit family
@@ -114,6 +118,9 @@ evidence-that-would-change-it. Correctness audits:
    locked or reopened.
 4. Update the ledger's "Never audited" list if your run covered (or
    surfaced) an inventory item.
+   Update `docs/ASSUMPTIONS.md` in place: a premise your run proved becomes
+   VERIFIED with the test's ID; one it found wrong gets a test, then its new
+   status; one it surfaced gets a row.
 5. Ship as a PR like any other docs change (`git pull` master before cutting
    the branch — ledger/DECISIONS/TODO tails are append-conflict magnets).
 

@@ -43,6 +43,7 @@ symptom and re-measure the stated cause before acting on it.
 
 ### Build
 
+- [ ] **First rows for `docs/ASSUMPTIONS.md`.** It arrived empty with the 2026-10-19 template update. Candidates: the City's school-ward layers standing for the wards the 2025 vote used (the boards' own layers disagree at 3 addresses, `data/DATA.md` "School wards"), and the census-day neighbourhood join (`data/DATA.md` "Ward population"). Done when each premise a published number rests on has a row.
 - [ ] **Measure weekly address churn, around 2026-11-27** (after 4–6 refresh runs): read the "N added, M removed" counts in the `Weekly refresh` commit messages and check the 1% stop line (`data/diff_rules.json` `parcel_rows_max_change`) against real weeks. Unmeasured so far: the address dataset keeps no history.
 ## Done
 

@@ -103,6 +103,7 @@ the brief wins.
 **Tier 2**
 
 **Build**
+- **First rows for `docs/ASSUMPTIONS.md`.** It arrived empty with the 2026-10-19 template update. Candidates: the City's school-ward layers standing for the wards the 2025 vote used (the boards' own layers disagree at 3 addresses, `data/DATA.md` "School wards"), and the census-day …
 - **Measure weekly address churn, around 2026-11-27** (after 4–6 refresh runs): read the "N added, M removed" counts in the `Weekly refresh` commit messages and check the 1% stop line (`data/diff_rules.json` `parcel_rows_max_change`) against real weeks. Unmeasured so far: the …
 
 ## Known upstream data defects
@@ -116,8 +117,10 @@ the brief wins.
 
 - `TODO.md` — living backlog and **the source of truth for progress**
 - `docs/DECISIONS.md` — append-only index of locked decisions: one row + pointer to the doc holding the full reasoning
+- `docs/CHANGE_PIPELINE.md` — the path a change takes, in order: before the PR, the PR, merging, after the merge, and when to stop and ask
 - `docs/TOKEN_EFFICIENCY.md` — context/token hygiene (what NOT to read raw, session-summary archiving) and disk use (scratch intermediates, `df -h /` before a big build)
 - `docs/DATA_ISSUES.md` — register of defects in data we DON'T control: evidence, what it breaks here, and **whether the publisher has been told**
+- `docs/ASSUMPTIONS.md` — index of the premises a published number rests on that no guard proves: status, rough size if wrong, pointer to the evidence
 - `docs/AUDIT_LEDGER.md` — coverage map of executed audit runs
 - `data/DATA.md` — data source details, column names, known quirks
 - `docs/REMOTE_VM.md` — **read FIRST in a Claude Code web/remote VM session**: network-policy constraints, environment setup
