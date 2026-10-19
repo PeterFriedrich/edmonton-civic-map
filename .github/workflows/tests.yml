@@ -60,24 +60,32 @@ jobs:
       - name: Check requirements cover imports
         run: python scripts/check_requirements.py
 
-      # The site build: a PR that breaks the Vite build or ships an unhashed
-      # file goes red here, before merge. The browser check runs at deploy
-      # (pages.yml), where it gates what goes live.
+      # The site build and browser check: a PR that breaks the build, ships an
+      # unhashed file or breaks the page goes red here, before merge. pages.yml
+      # runs the same checks again at deploy, where they gate what goes live.
+      # Runs on every PR (no path filter): master has no required checks, so a
+      # filter would only save ~1 min on doc PRs.
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version-file: .nvmrc
           cache: npm
 
-      - name: Install site dependencies
-        run: npm ci
-        env:
-          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
+      - name: Install site dependencies and the test browser
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
 
       - name: Site unit tests
         run: npm run test:js
 
       - name: Build the site
         run: npm run build
+
+      - name: Check the built site
+        run: npm run check:dist
+
+      - name: Browser check on the built site
+        run: npm run smoke
 
       - name: Check the built site
         run: npm run check:dist

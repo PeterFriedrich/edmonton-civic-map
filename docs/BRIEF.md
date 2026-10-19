@@ -74,6 +74,7 @@ the brief wins.
 - **2026-10-16** — **The repo is licensed in three parts, as edmonton-tax-viz is: MIT for code, CC BY 4.0 for prose (`LICENSE-docs`), and the data carved out to its publishers** (owner approved in session). … Rejected: one MIT file over everything (it would claim rights over City, Alberta and federal data); a generated `DATA_LICENCES.md` (no `sources.json` exists to generate it from, and the About page is …
 - **2026-10-17** — **Neighbourhood search publishes `site/public/data/neighbourhoods.json`, built from the address index** (owner approved the proposal in session). … Rejected: a 10-address floor (leaves real addresses with a wrong answer); per-district address counts (rewrite the file weekly); neighbourhood outlines (size, and the map draws none).
 - **2026-10-17** — **The share link is the URL fragment, and holds no address unless the reader ticks the box** (owner approved the proposal in session). … Rejected: query parameters (sent to the host); camera in the link.
+- **2026-10-19** — **The browser smoke tests (`npm run smoke`) and `check:dist` run on every PR in `tests.yml`, with no path filter** (owner approved in session). … Rejected for now: the `edmonton-tax-viz` filter-job pattern, whose value is keeping a required check green, and master has no required checks; and branch protection, which would block `refresh.yml`'s …
 
 ## Open work
 
