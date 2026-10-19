@@ -60,6 +60,11 @@ jobs:
       - name: Check requirements cover imports
         run: python scripts/check_requirements.py
 
+      # Every assumptions-index row has a known status, a size and a pointer, and a
+      # VERIFIED row names a test that exists. Completeness is each project's own test.
+      - name: Check assumptions index
+        run: python scripts/check_assumptions.py
+
       # The site build and browser check: a PR that breaks the build, ships an
       # unhashed file or breaks the page goes red here, before merge. pages.yml
       # runs the same checks again at deploy, where they gate what goes live.
