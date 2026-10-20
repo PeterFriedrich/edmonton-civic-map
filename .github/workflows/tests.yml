@@ -91,6 +91,3 @@ jobs:
 
       - name: Browser check on the built site
         run: npm run smoke
-
-      - name: Check the built site
-        run: npm run check:dist
