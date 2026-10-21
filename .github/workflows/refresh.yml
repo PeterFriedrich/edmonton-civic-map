@@ -17,7 +17,6 @@ on:
 permissions:
   contents: write  # the refresh commit
   issues: write    # the held-change issue
-  actions: write   # start pages.yml: a push made with GITHUB_TOKEN triggers no workflow
 
 concurrency:
   group: refresh
@@ -32,9 +31,24 @@ jobs:
     runs-on: ubuntu-24.04-arm
     timeout-minutes: 60
     steps:
+      # HEARTBEAT_TOKEN (repo secret: the owner's fine-grained PAT, Contents
+      # read/write) pushes the refresh commit. master requires the `test` check
+      # and GITHUB_TOKEN cannot bypass it; the PAT is an admin's, and protection
+      # leaves admins unenforced. No github.token fallback: an unset secret would
+      # pass here and fail only at the push.
+      - name: Require the push token
+        env:
+          HEARTBEAT_TOKEN: ${{ secrets.HEARTBEAT_TOKEN }}
+        run: |
+          if [ -z "$HEARTBEAT_TOKEN" ]; then
+            echo "::error::secret HEARTBEAT_TOKEN is not set; the refresh cannot push to protected master"
+            exit 1
+          fi
+
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           fetch-depth: 0  # tests/test_loaded_path.py reads git history
+          token: ${{ secrets.HEARTBEAT_TOKEN }}
 
       - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
         with:
@@ -101,13 +115,10 @@ jobs:
             -m "$(cat "$REPORT/report.md")" \
             -m "Run: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
           git push origin HEAD:master
-          echo "PUSHED=1" >> "$GITHUB_ENV"
 
-      - name: Deploy
-        if: env.PUSHED == '1'
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: gh workflow run pages.yml --ref master
+      # No deploy step: a push made with the PAT, unlike GITHUB_TOKEN, starts
+      # workflows, and pages.yml runs on pushes under site/**. Starting it here
+      # as well would deploy twice.
 
       - name: File the held change or failure
         if: failure()

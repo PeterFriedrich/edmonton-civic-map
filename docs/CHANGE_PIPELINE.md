@@ -119,7 +119,7 @@ the point: it shows the owner a gap, such as `master` with no required check.
 | The PR | A fresh branch from `origin/master` per PR | adopted: habit; `.githooks/pre-push` blocks a merged branch |
 | | `Code review:` line in the description (trial) | later: with the `/code-review` trial |
 | | Sync note for claude.ai-synced files | adopted: `CLAUDE.md`; habit |
-| | CI green, and `master` requires the `test` check | no: `tests.yml` runs pytest, the guards, the build and the browser smoke tests (since #70), but `master` has no branch protection. Requiring a check would block `refresh.yml`, which pushes straight to `master`; raised with the owner 2026-10-19 |
+| | CI green, and `master` requires the `test` check | adopted: `tests.yml` (pytest, guards, build, smoke); branch protection requires `test` since 2026-10-21, and `refresh.yml` pushes with `HEARTBEAT_TOKEN` |
 | | No timed PR check-ins | adopted: `CLAUDE.md` |
 | Merging | The owner merges | adopted: habit |
 | | Pre-push hook enabled (`git config core.hooksPath .githooks`) | adopted: set in the main clone; `CLAUDE.md` tells a fresh clone |
