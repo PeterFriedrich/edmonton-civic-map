@@ -1,19 +1,19 @@
 # site/public/data/addresses: built by src/build_address_index.py (docs/SPEC_data_schema.md §9)
 
 ## Sources
-coe_parcels  sha256 59cb2826f78b28e84b0793073bca5cc27d1bbb46ee8da0bd446c304055b751d4  retrieved 2026-10-16T20:32:41Z
-council_ward  source coe_wards  sha256 d0807b8ebbe5c8f9d04af5733ad885705a3f08bbb93e6e0f6bb0061933594123  retrieved 2026-10-16T20:33:22Z
-public_school_ward  source coe_public_school_wards  sha256 de709551ee15cf0d9b271ffb1e1a965dc94e650af842dd57aadf4bdc5a1029a9  retrieved 2026-10-16T20:33:30Z
-catholic_school_ward  source coe_catholic_school_wards  sha256 4aa3a99505f612ece153bb59a6614d5062796d465b833aab7b78ac36334b9877  retrieved 2026-10-16T20:33:38Z
-provincial_riding  source ab_ridings  sha256 d2e738fe62cb70b8bf95ebd08fb74e62756667e4166cc8d92aa18799136ab361  retrieved 2026-10-16T20:33:47Z
-federal_riding  source fed_ridings  sha256 61e7a57dfe879bfbdc5f91ff46717a8afa97462afcb1db862ad87c570c341904  retrieved 2026-10-16T03:32:46Z
+coe_parcels  sha256 da7fbdec10fe3ec0ac0b8f341c1154acf7d5bb121b65b9f912e16830d5afdc80  retrieved 2026-10-21T00:23:49Z
+council_ward  source coe_wards  sha256 621dd15a363eff5ba2ab0184a0eaa1cd5f8fd5651b33e348d648b4544e706bcf  retrieved 2026-10-21T00:24:27Z
+public_school_ward  source coe_public_school_wards  sha256 de709551ee15cf0d9b271ffb1e1a965dc94e650af842dd57aadf4bdc5a1029a9  retrieved 2026-10-21T00:24:36Z
+catholic_school_ward  source coe_catholic_school_wards  sha256 4aa3a99505f612ece153bb59a6614d5062796d465b833aab7b78ac36334b9877  retrieved 2026-10-21T00:24:52Z
+provincial_riding  source ab_ridings  sha256 d2e738fe62cb70b8bf95ebd08fb74e62756667e4166cc8d92aa18799136ab361  retrieved 2026-10-21T00:25:11Z
+federal_riding  source fed_ridings  sha256 61e7a57dfe879bfbdc5f91ff46717a8afa97462afcb1db862ad87c570c341904  retrieved 2026-10-21T00:25:28Z
 
 ## Counts
-parcel rows in: 298453
-parcel rows accounted for: 298453
-streets: 2800
-addresses (house number + street): 288526
-records: 288534
+parcel rows in: 298561
+parcel rows accounted for: 298561
+streets: 2801
+addresses (house number + street): 288579
+records: 288587
 split addresses: 8
 
 ## Split addresses (rows in more than one district set; every set is kept)
@@ -27,7 +27,7 @@ split addresses: 8
 19751 WHITEMUD DRIVE NW  rows 2  sets: council_ward:sipiwiyiniwak public_school_ward:E catholic_school_ward:74 provincial_riding:36 federal_riding:48023 | council_ward:sipiwiyiniwak public_school_ward:E catholic_school_ward:74 provincial_riding:43 federal_riding:48023
 
 ## Parcel rows within 20 m of an edge of their own district
-council_ward: 521
+council_ward: 529
 public_school_ward: 340
 catholic_school_ward: 123
 provincial_riding: 233
@@ -37,31 +37,31 @@ any layer: 1332
 ## Parcel rows per district
 council_ward:anirniq: 24945
 council_ward:dene: 24086
-council_ward:ipiihkoohkanipiaohtsi: 24979
+council_ward:ipiihkoohkanipiaohtsi: 25089
 council_ward:karhiio: 26328
 council_ward:metis: 30558
-council_ward:nakotaisga: 28899
+council_ward:nakotaisga: 28902
 council_ward:odaymin: 9803
-council_ward:papastew: 19386
+council_ward:papastew: 19383
 council_ward:pihesiwin: 27697
-council_ward:sipiwiyiniwak: 31798
+council_ward:sipiwiyiniwak: 31796
 council_ward:sspomitapi: 25375
 council_ward:tastawiyiniwak: 24599
 public_school_ward:A: 32070
 public_school_ward:B: 36500
-public_school_ward:C: 37259
-public_school_ward:D: 29800
-public_school_ward:E: 33897
+public_school_ward:C: 37262
+public_school_ward:D: 29797
+public_school_ward:E: 33895
 public_school_ward:F: 30266
 public_school_ward:G: 34630
-public_school_ward:H: 35351
+public_school_ward:H: 35461
 public_school_ward:I: 28680
-catholic_school_ward:71: 35927
+catholic_school_ward:71: 35930
 catholic_school_ward:72: 33204
 catholic_school_ward:73: 33985
-catholic_school_ward:74: 42571
-catholic_school_ward:75: 44691
-catholic_school_ward:76: 57211
+catholic_school_ward:74: 42569
+catholic_school_ward:75: 44688
+catholic_school_ward:76: 57321
 catholic_school_ward:77: 50864
 provincial_riding:27: 10306
 provincial_riding:28: 15008
@@ -78,23 +78,23 @@ provincial_riding:38: 11244
 provincial_riding:39: 12665
 provincial_riding:40: 13942
 provincial_riding:41: 10605
-provincial_riding:42: 23058
-provincial_riding:43: 29933
-provincial_riding:44: 10464
-provincial_riding:45: 22076
+provincial_riding:42: 23168
+provincial_riding:43: 29931
+provincial_riding:44: 10461
+provincial_riding:45: 22079
 provincial_riding:46: 13196
 provincial_riding:75: 1
 federal_riding:48015: 25812
 federal_riding:48016: 30773
 federal_riding:48017: 32930
 federal_riding:48018: 31822
-federal_riding:48019: 35271
-federal_riding:48020: 38377
+federal_riding:48019: 35274
+federal_riding:48020: 38487
 federal_riding:48021: 32458
-federal_riding:48022: 34357
-federal_riding:48023: 36647
+federal_riding:48022: 34354
+federal_riding:48023: 36645
 federal_riding:48028: 1
 federal_riding:48035: 5
 
 ## Street files
-sha256 over all files, sorted by name: 1469e7a6d5acbc444903e9a025cc31b69f72aad02aa9382b79e38de50cb4e244
+sha256 over all files, sorted by name: 02b46c9aa340a05877359bfdae06260a21adae7439ec40293e27447da272261c

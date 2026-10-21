@@ -269,15 +269,16 @@ that was live for four days.
 **Built 2026-10-16:** `.github/workflows/refresh.yml` (DECISIONS row of
 that date). Mondays 10:00 UTC, or by hand. A pass copies the rebuild over
 `site/public/data`, reruns pytest, the site build and the browser check, commits
-to master as `github-actions[bot]` and starts `pages.yml` (a push made with the
-workflow token starts no workflow). Anything else fails the run and files one
+to master and pushes with the owner's `HEARTBEAT_TOKEN` (since 2026-10-21;
+the push starts `pages.yml`, which a `GITHUB_TOKEN` push would not). Anything else fails the run and files one
 issue labelled `refresh`, or comments on the open one. While a change is held,
 nothing advances `last_verified`, not only the affected records. Before the commit, `scripts/check_refresh_diff.py` checks
 the tree independently of the diff check: only `last_verified` (plus
 `source_sha256` and `addresses_checked` in `layers.json`) and the address
 files may differ. A boundary file that moved by less than the 10 m² geometry
-threshold therefore still holds the run. If master
-gets branch protection, the bot's direct push needs a bypass or a PR.
+threshold therefore still holds the run. Branch protection on master requires
+the `test` check; the token's admin owner is exempt, which is what lets the
+refresh push (DECISIONS row of 2026-10-21).
 
 **A dial, not a fixed line.** Which §5 rows hold and which pass is a config
 list, so the amount of checking can be traded against effort later. A possible
