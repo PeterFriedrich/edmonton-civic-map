@@ -75,6 +75,7 @@ the brief wins.
 - **2026-10-17** — **Neighbourhood search publishes `site/public/data/neighbourhoods.json`, built from the address index** (owner approved the proposal in session). … Rejected: a 10-address floor (leaves real addresses with a wrong answer); per-district address counts (rewrite the file weekly); neighbourhood outlines (size, and the map draws none).
 - **2026-10-17** — **The share link is the URL fragment, and holds no address unless the reader ticks the box** (owner approved the proposal in session). … Rejected: query parameters (sent to the host); camera in the link.
 - **2026-10-19** — **The browser smoke tests (`npm run smoke`) and `check:dist` run on every PR in `tests.yml`, with no path filter** (owner approved in session). … Rejected for now: the `edmonton-tax-viz` filter-job pattern, whose value is keeping a required check green, and master has no required checks; and branch protection, which would block `refresh.yml`'s …
+- **2026-10-21** — **`master` requires the `test` check, and the weekly refresh pushes with the owner's `HEARTBEAT_TOKEN`** (owner approved in session). … Amends the 2026-10-19 row on smoke tests, which rejected branch protection.
 
 ## Open work
 
