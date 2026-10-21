@@ -48,6 +48,15 @@ shallow pass over everything.
 3. Ledger verdicts are **point-in-time**: a target audited before a relevant
    change is fair game to re-audit — say so explicitly ("re-run, prior row
    YYYY-MM-DD, delta since: …").
+4. **Evidence from other repos: read it yourself first, then ask.** When the
+   target spans repos (a sibling project, the template, a shared server
+   file), read their files, git logs and `gh` data directly, read-only. A file
+   or a log is evidence; a session's memory of it isn't. Then ask that repo's
+   session (`SendMessage`; `ListAgents` shows who is live) only for what the
+   files can't show: why something was forked or declined, whether a habit
+   is actually followed, what broke in practice. Mark an asked answer as "per
+   `<session>`, unverified" until a file confirms it. Ask; never ask a
+   session to edit its repo for you.
 
 ### Step 2 — Pick ONE target
 

@@ -65,11 +65,23 @@ jobs:
       - name: Check assumptions index
         run: python scripts/check_assumptions.py
 
+      # A copier update returns the fit table as one conflict block; taking either
+      # side whole drops the project's answers or the template's new rows. On a
+      # PR it also compares with the base branch, the only way to see answers
+      # wiped back to `not evaluated`. A failed fetch skips that (fails open).
+      - name: Check change-pipeline fit table
+        env:
+          BASE_REF: ${{ github.base_ref }}
+        run: |
+          base=""
+          if [ -n "$BASE_REF" ] && git fetch -q origin "$BASE_REF"; then base="--base FETCH_HEAD"; fi
+          python scripts/check_fit_table.py $base
+
       # The site build and browser check: a PR that breaks the build, ships an
       # unhashed file or breaks the page goes red here, before merge. pages.yml
       # runs the same checks again at deploy, where they gate what goes live.
-      # Runs on every PR (no path filter): master has no required checks, so a
-      # filter would only save ~1 min on doc PRs.
+      # Runs on every PR (no path filter): master requires this `test` job, so a
+      # path filter would leave doc PRs unmergeable.
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version-file: .nvmrc

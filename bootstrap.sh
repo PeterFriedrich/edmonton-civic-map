@@ -37,6 +37,7 @@ fi
 .venv/bin/python scripts/check_decisions_log.py
 .venv/bin/python scripts/check_requirements.py
 .venv/bin/python scripts/check_assumptions.py
+.venv/bin/python scripts/check_fit_table.py
 
 # Claude Code auto-memory is per project path. The feedback-type memories from
 # a sibling project (how the owner wants work done) are the most portable
