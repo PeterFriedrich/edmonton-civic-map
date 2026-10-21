@@ -114,10 +114,10 @@ the point: it shows the owner a gap, such as `master` with no required check.
 | | Unproven premises indexed in `docs/ASSUMPTIONS.md` | later: the index arrived empty on 2026-10-19 and `scripts/check_assumptions.py` runs in `tests.yml`; first rows are owed (TODO) |
 | | Verify, and show the output | adopted: habit; `bootstrap.sh` runs every guard |
 | | Break each new or changed guard on purpose | later: the next PR that adds or changes a guard; not done so far |
-| | Review the diff with `/code-review` (trial) | later: when the owner starts the trial here |
+| | Review the diff with `/code-review` (trial) | adopted (trial, owner started 2026-10-21): `/code-review` before a PR whose diff touches code, at the levels in step 1.7 |
 | | Commit each working unit | adopted: `CLAUDE.md`; habit |
 | The PR | A fresh branch from `origin/master` per PR | adopted: habit; `.githooks/pre-push` blocks a merged branch |
-| | `Code review:` line in the description (trial) | later: with the `/code-review` trial |
+| | `Code review:` line in the description (trial) | adopted (trial, from 2026-10-21): every PR description opens with it |
 | | Sync note for claude.ai-synced files | adopted: `CLAUDE.md`; habit |
 | | CI green, and `master` requires the `test` check | adopted: `tests.yml` (pytest, guards, build, smoke); branch protection requires `test` since 2026-10-21, and `refresh.yml` pushes with `HEARTBEAT_TOKEN` |
 | | No timed PR check-ins | adopted: `CLAUDE.md` |
