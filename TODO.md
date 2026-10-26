@@ -43,6 +43,7 @@ symptom and re-measure the stated cause before acting on it.
 
 ### Build
 
+- [ ] **The refresh can't fetch the MP list: ourcommons.ca answers 403 to the GitHub runner (issue #76).** Both dispatches on 2026-10-21 (runs 39643689274, 39644394951) failed in "Download every source" on `ca_mps`; the same URL returned 200 from this server the same hour, and runs on 10-16 and 10-19 got it. Read the Monday 2026-10-26 10:00 UTC run first. If it still fails, propose a fix to the owner (fetch that source elsewhere, or keep last week's copy and flag it; the second changes fail-closed `src/download.py`, so plan first). Done when a refresh run gets past the download and #76 is closed. That run also owes the first proof that the `HEARTBEAT_TOKEN` push gets past branch protection and starts `pages.yml` once; report the run ID to the `template` session.
 - [ ] **First rows for `docs/ASSUMPTIONS.md`.** It arrived empty with the 2026-10-19 template update. Candidates: the City's school-ward layers standing for the wards the 2025 vote used (the boards' own layers disagree at 3 addresses, `data/DATA.md` "School wards"), and the census-day neighbourhood join (`data/DATA.md` "Ward population"). Done when each premise a published number rests on has a row.
 - [ ] **Measure weekly address churn, around 2026-11-27** (after 4–6 refresh runs): read the "N added, M removed" counts in the `Weekly refresh` commit messages and check the 1% stop line (`data/diff_rules.json` `parcel_rows_max_change`) against real weeks. Unmeasured so far: the address dataset keeps no history.
 ## Done
