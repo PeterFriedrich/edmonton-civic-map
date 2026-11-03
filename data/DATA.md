@@ -34,11 +34,20 @@ row count: `coe_council_contacts` (13), `coe_election_results_2025` (140),
 `epsb_trustees` (9), `ecsd_trustees` (7), `ab_mlas` (87), `ab_mla_list` (87
 current members) and `ca_mps` (37). The pages and CSVs are counted by the
 build's own parsers, so a changed layout fails the download. A vacancy changes
-a count too, and stops the download until a person looks. Then
+a count too, and stops the download until a person looks. A vacancy the
+publisher confirms goes in the source's `vacancies` list in `src/download.py`
+(`seat_id`, date confirmed, the page that says so). It lowers the expected
+count by one, is recorded in `fetch.json`, and the build fails unless the seats
+it publishes as vacant are exactly the listed ones on the map. A filled seat
+fails again until its entry comes out.
+Open since 2026-11-03: EPSB Ward F (trustee resigned effective 2026-10-27, per
+the Ward F page; the trustees page reads "Ward F - Vacant") and Lac Ste.
+Anne-Parkland, division 67 (the Assembly's members page lists its member as
+"Former Member"). Both publish as `vacant: true`. Then
 `python -m src.build_officeholders` writes `site/public/data/officeholders.json`:
 71 seats (mayor, 12 councillors, 9 + 7 trustees, 29 MLAs, 13 MPs), one per
 district in the boundary files. All 71 `contact_url` pages were fetched on
-2026-10-16 and each showed the holder's surname.
+2026-10-16 and each showed the holder's surname; a vacant seat has none.
 
 **Name variants** (`data/name_variants.csv`): name pairs a person has approved
 as the same holder, per seat. The build stops on any other cross-check
