@@ -11,6 +11,7 @@ that file is one a person has approved (data/DATA.md, "Name variants").
 """
 import argparse
 import csv
+import datetime as dt
 import html
 import io
 import json
@@ -125,6 +126,23 @@ def _csv_rows(body):
     return list(csv.DictReader(io.StringIO(body.decode("utf-8"))))
 
 
+def _published_mp_rows(published, names):
+    """The published MP rows for this map's federal ridings; BuildError when
+    there are none or they are past staleness.json's officeholders_days."""
+    path = published / "officeholders.json"
+    if not path.exists():
+        raise BuildError(f"ca_mps was refused and there is no published {path} to keep")
+    limit = json.loads((published / "staleness.json").read_text(encoding="utf-8"))["officeholders_days"]
+    kept = [r for r in json.loads(path.read_text(encoding="utf-8")) if r["body"] == "house_of_commons"]
+    if {r["district_id"] for r in kept} != {d for d in names if d.startswith("federal_riding:")}:
+        raise BuildError("ca_mps was refused and the published MP rows do not match this map's federal ridings")
+    oldest = min(dt.date.fromisoformat(r["last_verified"]) for r in kept)
+    age = (dt.datetime.now(dt.timezone.utc).date() - oldest).days
+    if age > limit:
+        raise BuildError(f"ca_mps was refused and the published MP rows are {age} days old (limit {limit})")
+    return kept
+
+
 def vacancy_problems(rows, metas):
     """A page source's vacancies were confirmed by a person (src/download.py); a
     vacant seat that is not listed, or a listed seat that has a holder, is a problem.
@@ -158,7 +176,7 @@ def same_person(seat_id, a, b, variants):
     return a == b or (seat_id, a, b) in variants
 
 
-def build(raw, layers, variants):
+def build(raw, layers, variants, published=REPO / "site" / "public" / "data"):
     districts = {l["id"]: l for l in layers}
     names = {}  # district_id -> boundary name
     for l in layers:
@@ -173,7 +191,9 @@ def build(raw, layers, variants):
     ecsd_meta, ecsd_body = _load(raw, "ecsd_trustees")
     mla_meta, mla_body = _load(raw, "ab_mlas")
     alist_meta, alist_body = _load(raw, "ab_mla_list")
-    mp_meta, mp_body = _load(raw, "ca_mps")
+    mp_meta = mp_body = None
+    if (raw / "ca_mps" / "fetch.json").exists() or not (raw / "ca_mps.blocked").exists():
+        mp_meta, mp_body = _load(raw, "ca_mps")
 
     winners = results_winners(_csv_rows(results_body))
     contacts = _csv_rows(contacts_body)
@@ -268,11 +288,18 @@ def build(raw, layers, variants):
             {"source_id": alist_meta["id"], "agrees": agrees}, r["Caucus"] or None, mla_meta["id"])
 
     # MPs: the House of Commons list joined on constituency name; no second source.
+    # When ourcommons.ca refused the download (src/download.py), the published
+    # rows are kept as they stand, until they pass the site's staleness limit.
+    if mp_meta is None:
+        kept = _published_mp_rows(published, names)
+        rows += kept
+        log.warning("ca_mps refused the download: kept %d published MP rows, last verified %s",
+                    len(kept), min(r["last_verified"] for r in kept))
     mps = {}
-    for r in parse_mp_csv(mp_body):
+    for r in parse_mp_csv(mp_body) if mp_body is not None else []:
         if not r["End Date"]:
             mps.setdefault(norm(r["Constituency"]), []).append(r)
-    for did in [d for d in names if d.startswith("federal_riding:")]:
+    for did in [d for d in names if d.startswith("federal_riding:") and mp_meta]:
         found = mps.get(norm(names[did]), [])
         if len(found) > 1:
             problems.append(f"{did}: {len(found)} sitting members listed")
@@ -290,7 +317,7 @@ def build(raw, layers, variants):
         problems.append(f"districts without a seat: {missing}")
     if dupes:
         problems.append(f"districts with more than one seat: {dupes}")
-    problems += vacancy_problems(rows, (epsb_meta, ecsd_meta, mla_meta, mp_meta))
+    problems += vacancy_problems(rows, [m for m in (epsb_meta, ecsd_meta, mla_meta, mp_meta) if m])
     for r in rows:
         if r["vacant"]:
             log.warning("%s: no holder found, published as vacant", r["seat_id"])

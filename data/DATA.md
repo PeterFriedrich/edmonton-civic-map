@@ -236,7 +236,7 @@ Use Python with `certifi`'s bundle. Do not disable verification.
 - **Publisher / URL:** https://www.ourcommons.ca/Members/en/search?province=AB → CSV at `/Members/en/search/csv?province=AB`, XML at `/Members/en/search/xml?province=AB`
 - **Retrieved:** 2026-10-10
 - **Rows / columns:** 37 Alberta members; `Person ID`, `Honorific Title`, `First Name`, `Last Name`, `Constituency`, `Province / Territory`, `Political Affiliation`, `Start Date`, `End Date`
-- **Quirks:** joins to the boundary file on constituency **name**, not code. `Start Date` contains a narrow no-break space (U+202F) before "a.m.". All 9 Edmonton seats are filled. `contact_url` is `https://www.ourcommons.ca/Members/en/<Person ID>` (200 on 2026-10-16). No second source: `cross_check` is null.
+- **Quirks:** joins to the boundary file on constituency **name**, not code. `Start Date` contains a narrow no-break space (U+202F) before "a.m.". All 9 Edmonton seats are filled. ourcommons.ca answers some GitHub runner addresses with HTTP 403 (3 of 5 refresh runs from 2026-10-16; 200 from this server each time). On a 403, `src/download.py` tries twice more, a minute apart, then writes `data/raw/ca_mps.blocked`, and the build keeps the published MP rows with their old `last_verified`; once those are past `staleness.json`'s `officeholders_days` the build stops. Any other failure still stops the run. `contact_url` is `https://www.ourcommons.ca/Members/en/<Person ID>` (200 on 2026-10-16). No second source: `cross_check` is null.
 
 ### Addresses — `ut27-nrpn`
 - **Publisher / URL:** City of Edmonton, https://data.edmonton.ca/d/ut27-nrpn

@@ -78,6 +78,7 @@ the brief wins.
 - **2026-10-21** — **`master` requires the `test` check, and the weekly refresh pushes with the owner's `HEARTBEAT_TOKEN`** (owner approved in session). … Amends the 2026-10-19 row on smoke tests, which rejected branch protection.
 - **2026-10-21** — **The `/code-review` trial runs here** (owner started it in session): before a PR whose diff touches code, `medium` for `src/`, a data contract or a published number, `low` for tooling, guards and …
 - **2026-11-03** — **A confirmed vacancy lowers an office-holder source's expected count through a `vacancies` entry, never by editing the seat count** (owner approved in session). … Rejected: counting "Vacant" lines in the parsers, because the Assembly lists no empty seats, only a "Former Member".
+- **2026-11-03** — **A 403 from ourcommons.ca keeps the published MP rows instead of stopping the refresh** (owner chose this in session, over retry only or running the refresh on this server).
 
 ## Open work
 

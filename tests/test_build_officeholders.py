@@ -1,6 +1,7 @@
 """src/build_officeholders.py: the parsers against markup copied from the live
 pages (2026-10-16), each failing to an empty result when the layout changes, and
 the committed officeholders.json against the committed boundary files."""
+import datetime as dt
 import json
 import sys
 from pathlib import Path
@@ -133,3 +134,34 @@ def test_committed_vacant_seats_are_the_listed_vacancies():
     rows = json.loads((REPO / "site" / "public" / "data" / "officeholders.json").read_text())
     listed = {v["seat_id"] for src in download.SOURCES.values() for v in src.get("vacancies", [])}
     assert {r["seat_id"] for r in rows if r["vacant"]} == listed & {r["seat_id"] for r in rows}
+
+
+def _published(tmp_path, rows, limit=45):
+    (tmp_path / "officeholders.json").write_text(json.dumps(rows))
+    (tmp_path / "staleness.json").write_text(json.dumps({"officeholders_days": limit}))
+    return tmp_path
+
+
+def _mp(did, verified):
+    return {"seat_id": did, "body": "house_of_commons", "district_id": did, "last_verified": verified}
+
+
+def test_a_refused_commons_download_keeps_the_published_mp_rows(tmp_path):
+    today = dt.date.today().isoformat()
+    pub = _published(tmp_path, [_mp("federal_riding:1", today), {"body": "edmonton_council", "district_id": None}])
+    assert bo._published_mp_rows(pub, {"federal_riding:1": "A", "provincial_riding:2": "B"}) == [_mp("federal_riding:1", today)]
+
+
+@pytest.mark.parametrize("verified, names, match", [
+    ("2000-01-01", {"federal_riding:1": "A"}, "days old"),
+    (None, {"federal_riding:1": "A", "federal_riding:2": "B"}, "do not match"),
+])
+def test_kept_mp_rows_stop_the_build_when_stale_or_mismatched(tmp_path, verified, names, match):
+    pub = _published(tmp_path, [_mp("federal_riding:1", verified or dt.date.today().isoformat())])
+    with pytest.raises(bo.BuildError, match=match):
+        bo._published_mp_rows(pub, names)
+
+
+def test_kept_mp_rows_need_a_published_file(tmp_path):
+    with pytest.raises(bo.BuildError, match="no published"):
+        bo._published_mp_rows(tmp_path, {"federal_riding:1": "A"})

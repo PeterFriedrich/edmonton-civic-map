@@ -43,6 +43,11 @@ PAUSE_S = 1.5  # between requests (docs/SPEC_data_schema.md §8)
 RETRIES = 2  # extra tries on a network or gateway error only, never on a wrong count
 TRANSIENT_HTTP = {502, 503, 504}  # open.canada.ca answered 504 once on 2026-10-16
 TIMEOUT_S = 300
+# ourcommons.ca answers some GitHub runner addresses with 403 (3 of 5 runs from
+# 2026-10-16) and this server with 200. A source marked keep_published_on_403
+# tries again after a pause, then leaves a <sid>.blocked marker instead of failing.
+BLOCKED_TRIES = 3
+BLOCKED_PAUSE_S = 60
 
 # The Assembly's two sources count the same 87 seats, so they share one list.
 AB_MLA_VACANCIES = [
@@ -143,12 +148,17 @@ SOURCES = {
         "landing_url": "https://www.ourcommons.ca/Members/en/search?province=AB",
         "fetch_url": "https://www.ourcommons.ca/Members/en/search/csv?province=AB", "file": "members.csv",
         "parser": "parse_mp_csv", "licence": None, "expected_row_count": 37,
+        "keep_published_on_403": True,
     },
 }
 
 
 class DownloadError(Exception):
     pass
+
+
+class BlockedError(DownloadError):
+    """HTTP 403: the publisher refused this client, not a changed source."""
 
 
 _ssl = ssl.create_default_context(cafile=certifi.where())
@@ -166,6 +176,8 @@ def _get(url):
                 return r.read(), dict(r.headers)
         except urllib.error.HTTPError as e:
             # A gateway error is the server's transient state, not an answer; anything else is.
+            if e.code == 403:
+                raise BlockedError(f"HTTP 403 from {url}") from e
             if e.code not in TRANSIENT_HTTP or attempt == RETRIES:
                 raise DownloadError(f"HTTP {e.code} from {url}") from e
             log.warning("HTTP %d, retrying: %s", e.code, url)
@@ -334,6 +346,27 @@ def fetch_page(sid, src, dest):
     }
 
 
+def download_or_mark_blocked(sid, out_root):
+    """download(), except that a keep_published_on_403 source still refused after
+    BLOCKED_TRIES writes out_root/<sid>.blocked and returns None. The build then
+    keeps the published rows, with their old last_verified."""
+    marker = out_root / f"{sid}.blocked"
+    for attempt in range(BLOCKED_TRIES):
+        try:
+            rec = download(sid, out_root)
+            marker.unlink(missing_ok=True)
+            return rec
+        except BlockedError as e:
+            if not SOURCES[sid].get("keep_published_on_403"):
+                raise
+            if attempt == BLOCKED_TRIES - 1:
+                marker.write_text(f"{_now()} {e}\n", encoding="utf-8")
+                log.warning("%s: still refused after %d tries, keeping the published rows: %s", sid, BLOCKED_TRIES, e)
+                return None
+            log.warning("%s: %s, trying again in %d s", sid, e, BLOCKED_PAUSE_S)
+            time.sleep(BLOCKED_PAUSE_S)
+
+
 def download(sid, out_root):
     src = SOURCES[sid]
     final = out_root / sid
@@ -374,7 +407,7 @@ def main(argv=None):
     failed = []
     for sid in args.sources or SOURCES:
         try:
-            download(sid, args.out)
+            download_or_mark_blocked(sid, args.out)
         except DownloadError as e:
             log.error("%s: FAILED: %s", sid, e)
             failed.append(sid)
