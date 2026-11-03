@@ -212,7 +212,7 @@ def build(raw, layers, variants):
     # School boards: the boards' own pages, checked against the 2025 results.
     rows_src = epsb_meta["id"]
     epsb = parse_epsb(epsb_body.decode("utf-8"))
-    _expect("EPSB trustees page", epsb, 9)
+    _expect("EPSB trustees page", epsb, epsb_meta["expected_row_count"])
     for did in [d for d in names if d.startswith("public_school_ward:")]:
         w = did.split(":")[1]
         name, url = epsb.get(w, (None, None))
@@ -222,7 +222,7 @@ def build(raw, layers, variants):
 
     rows_src = ecsd_meta["id"]
     ecsd = parse_ecsd(ecsd_body.decode("utf-8"))
-    _expect("ECSD trustees page", ecsd, 7)
+    _expect("ECSD trustees page", ecsd, ecsd_meta["expected_row_count"])
     for did in [d for d in names if d.startswith("catholic_school_ward:")]:
         w = did.split(":")[1]
         name, url = ecsd.get(w, (None, None))

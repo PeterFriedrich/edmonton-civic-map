@@ -1,6 +1,7 @@
 """Guards on src/download.py. The network is a fake: these pin that a short or
 miscounted download fails, leaves the previous good copy in place, and that a
 good one writes the §2 fields of docs/SPEC_data_schema.md."""
+import datetime as dt
 import importlib.util
 import io
 import json
@@ -229,3 +230,30 @@ def test_main_reports_failure_with_exit_code(net, tmp_path):
     routes, _ = net
     _socrata(routes, "b4er-5rp2", 13, [13])
     assert dl.main(["coe_wards", "--out", str(tmp_path)]) == 1
+
+
+def _epsb_page(wards):
+    return "".join(f'<a href="/ourdistrict/board/trustees/ward-{w.lower()}/">Ward {w} - Trustee T{w}</a>'
+                   for w in wards).encode()
+
+
+def test_a_listed_vacancy_lowers_the_expected_count(net, tmp_path):
+    routes, _ = net
+    routes.append((lambda u: u == dl.SOURCES["epsb_trustees"]["fetch_url"], lambda u: _epsb_page("ABCDEGHI")))
+    rec = dl.download("epsb_trustees", tmp_path)
+    assert rec["row_count"] == rec["expected_row_count"] == 8
+
+
+def test_a_filled_vacancy_fails_until_its_entry_is_removed(net, tmp_path):
+    routes, _ = net
+    routes.append((lambda u: u == dl.SOURCES["epsb_trustees"]["fetch_url"], lambda u: _epsb_page("ABCDEFGHI")))
+    with pytest.raises(dl.DownloadError, match="9 rows, expected 8"):
+        dl.download("epsb_trustees", tmp_path)
+
+
+def test_every_vacancy_cites_its_source():
+    for sid, src in dl.SOURCES.items():
+        for v in src.get("vacancies", []):
+            assert set(v) == {"seat", "confirmed", "source_url"}, sid
+            assert v["source_url"].startswith("https://") and v["seat"], sid
+            dt.date.fromisoformat(v["confirmed"])
