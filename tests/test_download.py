@@ -232,28 +232,40 @@ def test_main_reports_failure_with_exit_code(net, tmp_path):
     assert dl.main(["coe_wards", "--out", str(tmp_path)]) == 1
 
 
+
 def _epsb_page(wards):
     return "".join(f'<a href="/ourdistrict/board/trustees/ward-{w.lower()}/">Ward {w} - Trustee T{w}</a>'
                    for w in wards).encode()
 
 
-def test_a_listed_vacancy_lowers_the_expected_count(net, tmp_path):
-    routes, _ = net
-    routes.append((lambda u: u == dl.SOURCES["epsb_trustees"]["fetch_url"], lambda u: _epsb_page("ABCDEGHI")))
+@pytest.fixture
+def epsb_one_vacancy(net, monkeypatch):
+    """epsb_trustees with a single listed vacancy, whatever the live list holds."""
+    v = {"seat_id": "public_school_ward:F", "name": "Ward F", "confirmed": "2026-11-03", "source_url": "https://x/"}
+    monkeypatch.setitem(dl.SOURCES, "epsb_trustees", {**dl.SOURCES["epsb_trustees"], "vacancies": [v]})
+    return net[0]
+
+
+def test_a_listed_vacancy_lowers_the_expected_count_and_is_recorded(epsb_one_vacancy, tmp_path):
+    epsb_one_vacancy.append((lambda u: "epsb.ca" in u, lambda u: _epsb_page("ABCDEGHI")))
     rec = dl.download("epsb_trustees", tmp_path)
     assert rec["row_count"] == rec["expected_row_count"] == 8
+    assert [v["seat_id"] for v in rec["vacancies"]] == ["public_school_ward:F"]
 
 
-def test_a_filled_vacancy_fails_until_its_entry_is_removed(net, tmp_path):
-    routes, _ = net
-    routes.append((lambda u: u == dl.SOURCES["epsb_trustees"]["fetch_url"], lambda u: _epsb_page("ABCDEFGHI")))
+def test_a_filled_vacancy_fails_until_its_entry_is_removed(epsb_one_vacancy, tmp_path):
+    epsb_one_vacancy.append((lambda u: "epsb.ca" in u, lambda u: _epsb_page("ABCDEFGHI")))
     with pytest.raises(dl.DownloadError, match="9 rows, expected 8"):
         dl.download("epsb_trustees", tmp_path)
 
 
-def test_every_vacancy_cites_its_source():
+def test_every_vacancy_names_one_seat_and_cites_its_source():
     for sid, src in dl.SOURCES.items():
+        seats = [v["seat_id"] for v in src.get("vacancies", [])]
+        assert len(seats) == len(set(seats)), sid
+        assert not seats or len(seats) < src["expected_row_count"], sid
         for v in src.get("vacancies", []):
-            assert set(v) == {"seat", "confirmed", "source_url"}, sid
-            assert v["source_url"].startswith("https://") and v["seat"], sid
+            assert set(v) == {"seat_id", "name", "confirmed", "source_url"}, sid
+            assert v["seat_id"].count(":") == 1 and v["name"], sid
+            assert v["source_url"].startswith("https://"), sid
             dt.date.fromisoformat(v["confirmed"])

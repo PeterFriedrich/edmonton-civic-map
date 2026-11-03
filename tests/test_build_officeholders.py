@@ -110,3 +110,26 @@ def test_committed_officeholders_cover_every_district_once():
         # Affiliation only on MLA and MP rows (docs/SPEC_data_schema.md §7 point 1)
         if r["body"] not in ("legislative_assembly_of_alberta", "house_of_commons"):
             assert r["affiliation"] is None, r["seat_id"]
+
+
+def _seat(seat_id, vacant, source_id="epsb_trustees"):
+    return {"seat_id": seat_id, "vacant": vacant, "source_id": source_id}
+
+
+@pytest.mark.parametrize("rows, listed, problem", [
+    ([_seat("public_school_ward:F", True)], ["public_school_ward:F"], None),
+    ([_seat("public_school_ward:G", True)], ["public_school_ward:F"], "public_school_ward:G: vacant but not"),
+    ([_seat("public_school_ward:F", False)], ["public_school_ward:F"], "public_school_ward:F: in epsb_trustees vacancies but has a holder"),
+    ([_seat("provincial_riding:1", False, "ab_mlas")], ["provincial_riding:67"], None),  # listed seat off the map
+])
+def test_vacant_seats_must_match_the_listed_vacancies(rows, listed, problem):
+    meta = {"id": "epsb_trustees" if rows[0]["source_id"] == "epsb_trustees" else "ab_mlas",
+            "vacancies": [{"seat_id": s} for s in listed]}
+    got = bo.vacancy_problems(rows, [meta])
+    assert (got == []) if problem is None else (len(got) == 1 and got[0].startswith(problem))
+
+
+def test_committed_vacant_seats_are_the_listed_vacancies():
+    rows = json.loads((REPO / "site" / "public" / "data" / "officeholders.json").read_text())
+    listed = {v["seat_id"] for src in download.SOURCES.values() for v in src.get("vacancies", [])}
+    assert {r["seat_id"] for r in rows if r["vacant"]} == listed & {r["seat_id"] for r in rows}

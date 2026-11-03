@@ -125,6 +125,21 @@ def _csv_rows(body):
     return list(csv.DictReader(io.StringIO(body.decode("utf-8"))))
 
 
+def vacancy_problems(rows, metas):
+    """A page source's vacancies were confirmed by a person (src/download.py); a
+    vacant seat that is not listed, or a listed seat that has a holder, is a problem.
+    A listed seat outside the map (an Alberta riding beyond Edmonton) is not."""
+    out = []
+    for meta in metas:
+        if "vacancies" not in meta:
+            continue
+        mine = {r["seat_id"]: r["vacant"] for r in rows if r["source_id"] == meta["id"]}
+        listed = {v["seat_id"] for v in meta["vacancies"]}
+        out += [f"{s}: vacant but not in {meta['id']} vacancies" for s in sorted(s for s in mine if mine[s] and s not in listed)]
+        out += [f"{s}: in {meta['id']} vacancies but has a holder" for s in sorted(s for s in listed & set(mine) if not mine[s])]
+    return out
+
+
 def _expect(what, got, want):
     if len(got) != want:
         raise BuildError(f"{what}: parsed {len(got)} rows, expected {want}")
@@ -275,6 +290,7 @@ def build(raw, layers, variants):
         problems.append(f"districts without a seat: {missing}")
     if dupes:
         problems.append(f"districts with more than one seat: {dupes}")
+    problems += vacancy_problems(rows, (epsb_meta, ecsd_meta, mla_meta, mp_meta))
     for r in rows:
         if r["vacant"]:
             log.warning("%s: no holder found, published as vacant", r["seat_id"])

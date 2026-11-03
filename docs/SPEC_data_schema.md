@@ -54,7 +54,8 @@ what the build and the UI read. One entry per fetched resource.
   provincial divisions, 343 federal districts, 13 council contacts. A mismatch
   stops the refresh. For an office-holder source it is the seats, less one per
   confirmed vacancy listed with its source (`data/DATA.md`); the recorded
-  `expected_row_count` is that lowered number.
+  `expected_row_count` is that lowered number, and a page source's `fetch.json`
+  also records the `vacancies` list.
 
 ## 3. `layers.json` and the boundary files
 

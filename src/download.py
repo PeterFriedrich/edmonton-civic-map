@@ -44,6 +44,12 @@ RETRIES = 2  # extra tries on a network or gateway error only, never on a wrong 
 TRANSIENT_HTTP = {502, 503, 504}  # open.canada.ca answered 504 once on 2026-10-16
 TIMEOUT_S = 300
 
+# The Assembly's two sources count the same 87 seats, so they share one list.
+AB_MLA_VACANCIES = [
+    {"seat_id": "provincial_riding:67", "name": "Lac Ste. Anne-Parkland", "confirmed": "2026-11-03",
+     "source_url": "https://www.assembly.ab.ca/members/members-of-the-legislative-assembly"},
+]
+
 SOURCES = {
     "coe_parcels": {
         "kind": "socrata", "dataset": "ut27-nrpn", "format": "csv",
@@ -106,12 +112,12 @@ SOURCES = {
     # Fixed counts below are the seats. A vacancy changes one, which stops the
     # download for a person to look at (docs/SPEC_data_schema.md §5). Once the
     # publisher confirms it, it goes in "vacancies", which lowers the count by
-    # one per entry; a filled seat then fails again and the entry comes out.
+    # one per entry; the build then checks that exactly those seats are vacant.
     "epsb_trustees": {
         "kind": "page", "publisher": "Edmonton Public Schools", "title": "Board of Trustees",
         "fetch_url": "https://www.epsb.ca/ourdistrict/board/trustees/", "file": "trustees.html",
         "parser": "parse_epsb", "licence": None, "expected_row_count": 9,
-        "vacancies": [{"seat": "Ward F", "confirmed": "2026-11-03",
+        "vacancies": [{"seat_id": "public_school_ward:F", "name": "Ward F", "confirmed": "2026-11-03",
                        "source_url": "https://www.epsb.ca/ourdistrict/board/trustees/ward-f/"}],
     },
     "ecsd_trustees": {
@@ -124,15 +130,13 @@ SOURCES = {
         "landing_url": "https://www.assembly.ab.ca/members/members-of-the-legislative-assembly",
         "fetch_url": "https://www.assembly.ab.ca/txt/mla_home/contacts.csv", "file": "contacts.csv",
         "parser": "parse_mla_csv", "licence": None, "expected_row_count": 87,
-        "vacancies": [{"seat": "Lac Ste. Anne-Parkland", "confirmed": "2026-11-03",
-                       "source_url": "https://www.assembly.ab.ca/members/members-of-the-legislative-assembly"}],
+        "vacancies": AB_MLA_VACANCIES,
     },
     "ab_mla_list": {
         "kind": "page", "publisher": "Legislative Assembly of Alberta", "title": "Members of the Legislative Assembly",
         "fetch_url": "https://www.assembly.ab.ca/members/members-of-the-legislative-assembly", "file": "members.html",
         "parser": "parse_assembly_list", "licence": None, "expected_row_count": 87,
-        "vacancies": [{"seat": "Lac Ste. Anne-Parkland", "confirmed": "2026-11-03",
-                       "source_url": "https://www.assembly.ab.ca/members/members-of-the-legislative-assembly"}],
+        "vacancies": AB_MLA_VACANCIES,
     },
     "ca_mps": {
         "kind": "page", "publisher": "House of Commons", "title": "Members of Parliament, Alberta",
@@ -346,6 +350,8 @@ def download(sid, out_root):
         rec = {"id": sid, "title": src["title"], **rec, "licence": src["licence"],
                "attribution": None,  # TODO.md "Exact attribution text"
                "retrieved_at": retrieved_at, "expected_row_count": _expected(src)}
+        if src["kind"] == "page":
+            rec["vacancies"] = src.get("vacancies", [])
         (partial / "fetch.json").write_text(json.dumps(rec, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     except BaseException:
         shutil.rmtree(partial, ignore_errors=True)
