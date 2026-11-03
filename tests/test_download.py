@@ -295,12 +295,13 @@ def test_a_refused_commons_download_tries_again_then_marks_it_blocked(net, tmp_p
     assert not (tmp_path / "ca_mps").exists()
 
 
-def test_a_refused_landing_page_counts_as_blocked_too(net, tmp_path, no_pause):
+def test_a_refused_landing_page_keeps_the_fresh_file(net, tmp_path, no_pause):
     routes, _ = net
     routes.append((lambda u: u == dl.SOURCES["ca_mps"]["fetch_url"], lambda u: _mp_csv(37)))
     routes.append((lambda u: u == dl.SOURCES["ca_mps"]["landing_url"], _refused))
     assert dl.main(["ca_mps", "--out", str(tmp_path)]) == 0
-    assert (tmp_path / "ca_mps.blocked").exists()
+    assert not (tmp_path / "ca_mps.blocked").exists()
+    assert json.loads((tmp_path / "ca_mps" / "fetch.json").read_text())["row_count"] == 37
 
 
 def test_a_later_success_clears_the_blocked_marker(net, tmp_path, no_pause):

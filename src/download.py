@@ -379,7 +379,13 @@ def download(sid, out_root):
         # A landing page that stops resolving is a "stop" (docs/SPEC_data_schema.md §5): the
         # page the site links as the source has moved even if the file has not.
         if rec["landing_url"] != rec["fetch_url"]:
-            _get(rec["landing_url"])
+            try:
+                _get(rec["landing_url"])
+            except BlockedError as e:
+                # A refusal is not a moved page, and the file itself passed its checks.
+                if not src.get("keep_published_on_403"):
+                    raise
+                log.warning("%s: landing page refused, keeping the file: %s", sid, e)
         rec = {"id": sid, "title": src["title"], **rec, "licence": src["licence"],
                "attribution": None,  # TODO.md "Exact attribution text"
                "retrieved_at": retrieved_at, "expected_row_count": _expected(src)}

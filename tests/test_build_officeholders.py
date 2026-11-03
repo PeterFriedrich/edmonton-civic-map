@@ -147,7 +147,7 @@ def _mp(did, verified):
 
 
 def test_a_refused_commons_download_keeps_the_published_mp_rows(tmp_path):
-    today = dt.date.today().isoformat()
+    today = dt.datetime.now(dt.timezone.utc).date().isoformat()
     pub = _published(tmp_path, [_mp("federal_riding:1", today), {"body": "edmonton_council", "district_id": None}])
     assert bo._published_mp_rows(pub, {"federal_riding:1": "A", "provincial_riding:2": "B"}) == [_mp("federal_riding:1", today)]
 
@@ -157,7 +157,7 @@ def test_a_refused_commons_download_keeps_the_published_mp_rows(tmp_path):
     (None, {"federal_riding:1": "A", "federal_riding:2": "B"}, "do not match"),
 ])
 def test_kept_mp_rows_stop_the_build_when_stale_or_mismatched(tmp_path, verified, names, match):
-    pub = _published(tmp_path, [_mp("federal_riding:1", verified or dt.date.today().isoformat())])
+    pub = _published(tmp_path, [_mp("federal_riding:1", verified or dt.datetime.now(dt.timezone.utc).date().isoformat())])
     with pytest.raises(bo.BuildError, match=match):
         bo._published_mp_rows(pub, names)
 
@@ -165,3 +165,17 @@ def test_kept_mp_rows_stop_the_build_when_stale_or_mismatched(tmp_path, verified
 def test_kept_mp_rows_need_a_published_file(tmp_path):
     with pytest.raises(bo.BuildError, match="no published"):
         bo._published_mp_rows(tmp_path, {"federal_riding:1": "A"})
+
+
+def test_the_blocked_marker_wins_over_an_older_raw_copy(tmp_path):
+    (tmp_path / "ca_mps").mkdir()
+    (tmp_path / "ca_mps" / "fetch.json").write_text(json.dumps({"file": "members.csv"}))
+    (tmp_path / "ca_mps" / "members.csv").write_text("old")
+    assert bo._load_unless_blocked(tmp_path, "ca_mps")[1] == b"old"
+    (tmp_path / "ca_mps.blocked").write_text("x")
+    assert bo._load_unless_blocked(tmp_path, "ca_mps") == (None, None)
+
+
+def test_kept_mp_rows_need_at_least_one_row(tmp_path):
+    with pytest.raises(bo.BuildError, match="no MP rows"):
+        bo._published_mp_rows(_published(tmp_path, []), {})
