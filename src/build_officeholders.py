@@ -11,6 +11,7 @@ that file is one a person has approved (data/DATA.md, "Name variants").
 """
 import argparse
 import csv
+import datetime as dt
 import html
 import io
 import json
@@ -125,6 +126,33 @@ def _csv_rows(body):
     return list(csv.DictReader(io.StringIO(body.decode("utf-8"))))
 
 
+def _load_unless_blocked(raw, sid):
+    """_load(), or (None, None) when the download left <sid>.blocked. The marker
+    wins over an older copy left in raw, which would otherwise republish as fresh."""
+    if (raw / f"{sid}.blocked").exists():
+        return None, None
+    return _load(raw, sid)
+
+
+def _published_mp_rows(published, names):
+    """The published MP rows for this map's federal ridings; BuildError when
+    there are none or they are past staleness.json's officeholders_days."""
+    path = published / "officeholders.json"
+    if not path.exists():
+        raise BuildError(f"ca_mps was refused and there is no published {path} to keep")
+    limit = json.loads((published / "staleness.json").read_text(encoding="utf-8"))["officeholders_days"]
+    kept = [r for r in json.loads(path.read_text(encoding="utf-8")) if r["body"] == "house_of_commons"]
+    if not kept:
+        raise BuildError(f"ca_mps was refused and {path} has no MP rows to keep")
+    if {r["district_id"] for r in kept} != {d for d in names if d.startswith("federal_riding:")}:
+        raise BuildError("ca_mps was refused and the published MP rows do not match this map's federal ridings")
+    oldest = min(dt.date.fromisoformat(r["last_verified"]) for r in kept)
+    age = (dt.datetime.now(dt.timezone.utc).date() - oldest).days
+    if age > limit:
+        raise BuildError(f"ca_mps was refused and the published MP rows are {age} days old (limit {limit})")
+    return kept
+
+
 def vacancy_problems(rows, metas):
     """A page source's vacancies were confirmed by a person (src/download.py); a
     vacant seat that is not listed, or a listed seat that has a holder, is a problem.
@@ -158,7 +186,7 @@ def same_person(seat_id, a, b, variants):
     return a == b or (seat_id, a, b) in variants
 
 
-def build(raw, layers, variants):
+def build(raw, layers, variants, published):
     districts = {l["id"]: l for l in layers}
     names = {}  # district_id -> boundary name
     for l in layers:
@@ -173,7 +201,7 @@ def build(raw, layers, variants):
     ecsd_meta, ecsd_body = _load(raw, "ecsd_trustees")
     mla_meta, mla_body = _load(raw, "ab_mlas")
     alist_meta, alist_body = _load(raw, "ab_mla_list")
-    mp_meta, mp_body = _load(raw, "ca_mps")
+    mp_meta, mp_body = _load_unless_blocked(raw, "ca_mps")
 
     winners = results_winners(_csv_rows(results_body))
     contacts = _csv_rows(contacts_body)
@@ -268,19 +296,29 @@ def build(raw, layers, variants):
             {"source_id": alist_meta["id"], "agrees": agrees}, r["Caucus"] or None, mla_meta["id"])
 
     # MPs: the House of Commons list joined on constituency name; no second source.
-    mps = {}
-    for r in parse_mp_csv(mp_body):
-        if not r["End Date"]:
-            mps.setdefault(norm(r["Constituency"]), []).append(r)
-    for did in [d for d in names if d.startswith("federal_riding:")]:
-        found = mps.get(norm(names[did]), [])
-        if len(found) > 1:
-            problems.append(f"{did}: {len(found)} sitting members listed")
-        r = found[0] if found else None
-        name = " ".join(p for p in (r["First Name"], r["Last Name"]) if p) if r else None
-        row(did, "house_of_commons", "Member of Parliament", did, name,
-            COMMONS_MEMBER_URL.format(r["Person ID"]) if r else None, mp_meta, None,
-            (r["Political Affiliation"] or None) if r else None, mp_meta["id"] if r else None)
+    # When ourcommons.ca refused the download (src/download.py), the published
+    # rows are kept as they stand, until they pass the site's staleness limit.
+    if mp_meta is None:
+        from src.download import SOURCES
+        kept = _published_mp_rows(published, names)
+        rows += kept
+        log.warning("ca_mps refused the download: kept %d published MP rows, last verified %s",
+                    len(kept), min(r["last_verified"] for r in kept))
+        mp_meta = {"id": "ca_mps", "vacancies": SOURCES["ca_mps"].get("vacancies", [])}
+    else:
+        mps = {}
+        for r in parse_mp_csv(mp_body):
+            if not r["End Date"]:
+                mps.setdefault(norm(r["Constituency"]), []).append(r)
+        for did in [d for d in names if d.startswith("federal_riding:")]:
+            found = mps.get(norm(names[did]), [])
+            if len(found) > 1:
+                problems.append(f"{did}: {len(found)} sitting members listed")
+            r = found[0] if found else None
+            name = " ".join(p for p in (r["First Name"], r["Last Name"]) if p) if r else None
+            row(did, "house_of_commons", "Member of Parliament", did, name,
+                COMMONS_MEMBER_URL.format(r["Person ID"]) if r else None, mp_meta, None,
+                (r["Political Affiliation"] or None) if r else None, mp_meta["id"] if r else None)
 
     # Every district has exactly one seat; nothing else does.
     seat_districts = [r["district_id"] for r in rows if r["district_id"]]
@@ -315,13 +353,15 @@ def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--raw", type=Path, default=REPO / "data" / "raw")
     ap.add_argument("--out", type=Path, default=REPO / "site" / "public" / "data")
+    ap.add_argument("--published", type=Path, default=REPO / "site" / "public" / "data",
+                    help="the published data whose MP rows are kept when ca_mps is refused")
     args = ap.parse_args(argv)
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s %(message)s")
     layers = json.loads((args.out / "layers.json").read_text(encoding="utf-8"))
     for l in layers:
         l["_path"] = args.out / l["file"]
     try:
-        rows = build(args.raw, layers, load_variants())
+        rows = build(args.raw, layers, load_variants(), args.published)
     except BuildError as e:
         log.error("FAILED: %s", e)
         return 1

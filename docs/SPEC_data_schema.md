@@ -168,7 +168,7 @@ moved:
 | a layer's `feature_count` differs from `expected_row_count` | stop |
 | a district's geometry moved (symmetric difference above a small area threshold) | review |
 | a `district_id` or `name` changed | review |
-| a source's `landing_url` or `fetch_url` stopped resolving | stop |
+| a source's `landing_url` or `fetch_url` stopped resolving | stop (except a 403 from `ca_mps`: its published rows are kept until stale, `data/DATA.md`) |
 | the `Future` rows of the City history layers are no longer empty | review |
 | a population figure changed | review |
 

@@ -269,3 +269,62 @@ def test_every_vacancy_names_one_seat_and_cites_its_source():
             assert v["seat_id"].count(":") == 1 and v["name"], sid
             assert v["source_url"].startswith("https://"), sid
             dt.date.fromisoformat(v["confirmed"])
+
+
+def _mp_csv(n):
+    return ("Name,End Date\n" + "".join(f"M{i},\n" for i in range(n))).encode()
+
+
+@pytest.fixture
+def no_pause(monkeypatch):
+    slept = []
+    monkeypatch.setattr(dl.time, "sleep", slept.append)
+    return slept
+
+
+def _refused(u):
+    raise dl.BlockedError(f"HTTP 403 from {u}")
+
+
+def test_a_refused_commons_download_tries_again_then_marks_it_blocked(net, tmp_path, no_pause):
+    routes, seen = net
+    routes.append((lambda u: "ourcommons.ca" in u, _refused))
+    assert dl.main(["ca_mps", "--out", str(tmp_path)]) == 0
+    assert (tmp_path / "ca_mps.blocked").read_text().endswith("HTTP 403 from " + dl.SOURCES["ca_mps"]["fetch_url"] + "\n")
+    assert len(seen) == dl.BLOCKED_TRIES and no_pause == [dl.BLOCKED_PAUSE_S] * (dl.BLOCKED_TRIES - 1)
+    assert not (tmp_path / "ca_mps").exists()
+
+
+def test_a_refused_landing_page_keeps_the_fresh_file(net, tmp_path, no_pause):
+    routes, _ = net
+    routes.append((lambda u: u == dl.SOURCES["ca_mps"]["fetch_url"], lambda u: _mp_csv(37)))
+    routes.append((lambda u: u == dl.SOURCES["ca_mps"]["landing_url"], _refused))
+    assert dl.main(["ca_mps", "--out", str(tmp_path)]) == 0
+    assert not (tmp_path / "ca_mps.blocked").exists()
+    assert json.loads((tmp_path / "ca_mps" / "fetch.json").read_text())["row_count"] == 37
+
+
+def test_a_later_success_clears_the_blocked_marker(net, tmp_path, no_pause):
+    routes, _ = net
+    tries = iter([_refused, lambda u: _mp_csv(37)])
+    routes.append((lambda u: u == dl.SOURCES["ca_mps"]["fetch_url"], lambda u: next(tries)(u)))
+    routes.append((lambda u: u == dl.SOURCES["ca_mps"]["landing_url"], lambda u: b"<html>"))
+    (tmp_path / "ca_mps.blocked").write_text("old")
+    assert dl.main(["ca_mps", "--out", str(tmp_path)]) == 0
+    assert not (tmp_path / "ca_mps.blocked").exists()
+    assert json.loads((tmp_path / "ca_mps" / "fetch.json").read_text())["row_count"] == 37
+
+
+def test_a_403_from_any_other_source_still_fails_the_run(net, tmp_path, no_pause):
+    routes, _ = net
+    routes.append((lambda u: "epsb.ca" in u, _refused))
+    assert dl.main(["epsb_trustees", "--out", str(tmp_path)]) == 1
+    assert not (tmp_path / "epsb_trustees.blocked").exists()
+
+
+def test_a_wrong_commons_count_still_fails_the_run(net, tmp_path, no_pause):
+    routes, _ = net
+    routes.append((lambda u: u == dl.SOURCES["ca_mps"]["fetch_url"], lambda u: _mp_csv(36)))
+    routes.append((lambda u: u == dl.SOURCES["ca_mps"]["landing_url"], lambda u: b"<html>"))
+    assert dl.main(["ca_mps", "--out", str(tmp_path)]) == 1
+    assert not (tmp_path / "ca_mps.blocked").exists()
