@@ -10,12 +10,12 @@
     "simplification_tolerance_m": 5.0,
     "near_boundary_m": 20.0,
     "feature_count": 12,
-    "addresses_checked": 298785,
+    "addresses_checked": 298856,
     "overlap_m2": 75.4,
     "gap_m2": 119.7,
     "parts_dropped_by_rounding": 0,
     "area_change_by_rounding_m2": 806.62,
-    "last_verified": "2026-11-08",
+    "last_verified": "2026-11-09",
     "file": "boundaries/council_ward.geojson"
   },
   {
@@ -29,12 +29,12 @@
     "simplification_tolerance_m": 5.0,
     "near_boundary_m": 20.0,
     "feature_count": 9,
-    "addresses_checked": 298785,
+    "addresses_checked": 298856,
     "overlap_m2": 159.5,
     "gap_m2": 957.4,
     "parts_dropped_by_rounding": 0,
     "area_change_by_rounding_m2": 606.38,
-    "last_verified": "2026-11-08",
+    "last_verified": "2026-11-09",
     "file": "boundaries/public_school_ward.geojson"
   },
   {
@@ -48,12 +48,12 @@
     "simplification_tolerance_m": 5.0,
     "near_boundary_m": 20.0,
     "feature_count": 7,
-    "addresses_checked": 298785,
+    "addresses_checked": 298856,
     "overlap_m2": 45.2,
     "gap_m2": 62.5,
     "parts_dropped_by_rounding": 0,
     "area_change_by_rounding_m2": 459.98,
-    "last_verified": "2026-11-08",
+    "last_verified": "2026-11-09",
     "file": "boundaries/catholic_school_ward.geojson"
   },
   {
@@ -67,12 +67,12 @@
     "simplification_tolerance_m": 5.0,
     "near_boundary_m": 20.0,
     "feature_count": 29,
-    "addresses_checked": 298785,
+    "addresses_checked": 298856,
     "overlap_m2": 119.7,
     "gap_m2": 194.3,
     "parts_dropped_by_rounding": 1,
     "area_change_by_rounding_m2": 1588.55,
-    "last_verified": "2026-11-08",
+    "last_verified": "2026-11-09",
     "file": "boundaries/provincial_riding.geojson"
   },
   {
@@ -86,12 +86,12 @@
     "simplification_tolerance_m": 5.0,
     "near_boundary_m": 20.0,
     "feature_count": 13,
-    "addresses_checked": 298785,
+    "addresses_checked": 298856,
     "overlap_m2": 0.0,
     "gap_m2": 97.5,
     "parts_dropped_by_rounding": 1,
     "area_change_by_rounding_m2": 1067.48,
-    "last_verified": "2026-11-08",
+    "last_verified": "2026-11-09",
     "file": "boundaries/federal_riding.geojson"
   }
 ]
