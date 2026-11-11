@@ -67,7 +67,11 @@ SUMMARIES = ROOT / "session-summary"
 # is usually the handoff itself, or a DECISIONS row that is already its own
 # record, and counting it would make the message fire after every commit — which
 # is the always-on nag this replaces.
-SUBSTANTIVE = ("src", "tests", "tools", "scripts", "web", ".github", "main.py")
+# This project: the app is `site/` and its browser tests `smoke/`; the weekly
+# refresh commits `site/public/data` itself, so that path is excluded.
+SUBSTANTIVE = ("src", "tests", "tools", "scripts", "web", ".github", "main.py",
+               "site", ":(exclude)site/public/data", "smoke", "prototype",
+               "package.json", "vite.config.js", "playwright.config.js")
 
 # Merged branches left on origin. With GitHub's delete-on-merge off they pile up
 # uncounted (edmonton-tax-viz found 225); the owner approves each prune and asked
