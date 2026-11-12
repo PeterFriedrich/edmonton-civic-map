@@ -87,22 +87,22 @@ test("share links reopen the view and keep the address out unless included", asy
   const withAddress = await page.evaluate(() => navigator.clipboard.readText());
   expect(withAddress).toContain("#a=10024+124+Street+NW");
 
-  // Each link, opened fresh. The districts link shows both provincial divisions of the split address.
-  await page.goto(plain);
-  await page.reload();
+  // Each link, opened fresh. From about:blank, not goto + reload: a hash-only goto
+  // lets the open page handle the link and rewrite the URL first, and the reload
+  // then opens whatever it rewrote (seen on CI, run 43114788613).
+  const openFresh = async (url) => { await page.goto("about:blank"); await page.goto(url); };
+  // The districts link shows both provincial divisions of the split address.
+  await openFresh(plain);
   await expect(results.getByRole("heading", { name: "Shared link: these districts" })).toBeVisible();
   await expect(results.locator(".card")).toHaveCount(7);
-  await page.goto(withAddress);
-  await page.reload();
+  await openFresh(withAddress);
   await expect(results.getByRole("heading", { name: "10024 124 Street NW" })).toBeVisible();
   expect(page.url()).not.toContain("10024"); // the address bar falls back to the districts
-  await page.goto("./#n=6662&lines=federal_riding");
-  await page.reload();
+  await openFresh("./#n=6662&lines=federal_riding");
   await expect(results.getByRole("heading", { name: "Neighbourhood: Walker" })).toBeVisible();
   await expect(page.locator("#map-status")).toBeEmpty({ timeout: 45_000 });
   await expect(page.getByRole("button", { name: "Federal electoral district", pressed: true })).toBeVisible();
-  await page.goto("./#n=1");
-  await page.reload();
+  await openFresh("./#n=1");
   await expect(results).toContainText("not in the current list");
   w.check();
 });
