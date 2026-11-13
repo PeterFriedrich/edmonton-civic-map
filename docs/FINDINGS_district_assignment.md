@@ -172,9 +172,10 @@ district says so. A click with no council ward says "outside the City of Edmonto
 7. **Read the council ward bylaw by hand** and record which outer edge it describes.
 8. **Provincial:** confirm what the Assembly did with the committee's report,
    watch for the establishing bill, record which map applies to the next election.
-9. **`data/DATA.md` corrections owed:** the bylaws are online (it says they are
-   not); 17611 34 Street NW is 63.8 m from the City's line, not 368 m; the
-   committee has reported.
+
+Corrected in the same PR, in `data/DATA.md`: the bylaws are online (it said they
+were not); 17611 34 Street NW is 63.8 m from the City's line, not 368 m; the
+committee has reported.
 
 ## What this run got wrong
 
@@ -197,6 +198,6 @@ district says so. A click with no council ward says "outside the City of Edmonto
   Road Network names, only the stretches near known disagreements were read, and
   no surveyor or board has confirmed the reading.
 - **Older parcels than the published index**, and points instead of polygons.
-- **Not finished in this session.** The ledger row, the `docs/ASSUMPTIONS.md`
-  rows, the TODO reconciliation, the `docs/DATA_ISSUES.md` row and the
-  `data/DATA.md` corrections were not written when the session ended.
+- **Shipped in two parts.** This file was pushed alone when the session ran out
+  of usage; the ledger, assumptions, TODO and data-doc changes followed in a
+  later turn of the same PR.
