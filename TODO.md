@@ -10,6 +10,10 @@ symptom and re-measure the stated cause before acting on it.
 
 ## Open work
 
+### Next session
+
+- [ ] **Run the first audit: address → district assignment** (owner asked 2026-11-13; a Fable session). Use the `project-audit` skill with the brief `docs/AUDIT_district_assignment.md`, the top of the ranked list in `docs/AUDIT_LEDGER.md`. Done when `docs/FINDINGS_district_assignment.md` exists with a "What this run got wrong" section, the ledger has its row, `docs/ASSUMPTIONS.md` has its first rows, and follow-ups are TODO items.
+
 ### Waiting on the owner
 
 - [ ] **Reopen "3D never encodes a quantity" for the density lens, or not.** Waits on the owner seeing 2D and 3D density examples from the stack report.
