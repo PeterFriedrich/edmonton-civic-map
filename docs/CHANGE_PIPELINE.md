@@ -111,7 +111,7 @@ the point: it shows the owner a gap, such as `master` with no required check.
 | Before the PR | Plan first for a new module, schema or CI change | adopted: `CLAUDE.md` §"Comments & Scope"; habit (e.g. #70 proposed before building) |
 | | Reproduce before fixing | adopted: `CLAUDE.md`; habit |
 | | A decision that protects a number is a test first | adopted: `scripts/check_decisions_log.py` in `tests.yml` |
-| | Unproven premises indexed in `docs/ASSUMPTIONS.md` | later: the index arrived empty on 2026-10-19 and `scripts/check_assumptions.py` runs in `tests.yml`; first rows are owed (TODO) |
+| | Unproven premises indexed in `docs/ASSUMPTIONS.md` | adopted: `scripts/check_assumptions.py` runs in `tests.yml`; first rows 2026-11-13 from the district-assignment audit |
 | | Verify, and show the output | adopted: habit; `bootstrap.sh` runs every guard |
 | | Break each new or changed guard on purpose | later: the next PR that adds or changes a guard; not done so far |
 | | Review the diff with `/code-review` (trial) | adopted (trial, owner started 2026-10-21): `/code-review` before a PR whose diff touches code, at the levels in step 1.7 |

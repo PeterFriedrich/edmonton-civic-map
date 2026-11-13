@@ -12,12 +12,11 @@ symptom and re-measure the stated cause before acting on it.
 
 ### Next session
 
-- [ ] **Run the first audit: address → district assignment** (owner asked 2026-11-13; a Fable session). Use the `project-audit` skill with the brief `docs/AUDIT_district_assignment.md`, the top of the ranked list in `docs/AUDIT_LEDGER.md`. Done when `docs/FINDINGS_district_assignment.md` exists with a "What this run got wrong" section, the ledger has its row, `docs/ASSUMPTIONS.md` has its first rows, and follow-ups are TODO items.
-
 ### Waiting on the owner
 
 - [ ] **Reopen "3D never encodes a quantity" for the density lens, or not.** Waits on the owner seeing 2D and 3D density examples from the stack report.
 - [ ] **Confirm the Project picker has the synced set ticked.** The 2026-10-12 reconciliation chat reported only `docs/BRIEF.md`, `docs/DECISIONS.md` and `docs/SPEC_civic_map.md`; the set in `docs/CLAUDE_WEB.md` also has `docs/SPEC_lenses.md`, `docs/SPEC_data_schema.md` and `data/DATA.md`. (The stack research has since run and did read the lens spec.)
+- [ ] **A trigger for a past `recheck_dates` entry: yes or no** (audit 2026-11-13, L4; `docs/ASSUMPTIONS.md` DA-7). Nothing compares those dates with today, and 2026-11-02 passed unnoticed. Options: a test that fails, or a refresh step that opens an issue. A CI change, so it waits for the owner.
 - [ ] **Report data defects to the City.** The owner will send one report later, collecting what `docs/DATA_ISSUES.md` holds by then (2026-10-10). Done when each row there has a status other than NOT SENT.
 
 - [ ] **Ask the City to publish its community league boundaries as open data** (owner decided 2026-10-17 to ask). The layer exists: `GDB.V_COMMUNITY_LEAGUES` on `gis.edmonton.ca/arcgisintegration/.../DPIM/DPIM_FS/FeatureServer/12`, 163 leagues with bylaw boundary text, no licence stated; the City's printed league map (2024-04-02) is no-reproduction (`data/DATA.md`, "Community leagues — City GIS service"). Ask via the open data portal's dataset request or Mapdesk@Edmonton.ca: publish under OGL – City of Edmonton, without the staff-logon and mailing-address columns. Can go with the defect report below. Claude drafts the request on asking; the owner sends it. Done when the City has answered and the answer is recorded; until then the communities lens uses neighbourhoods only.
@@ -26,8 +25,9 @@ symptom and re-measure the stated cause before acting on it.
 
 - [ ] **Statistics Canada attribution wording**, before ward populations are published: quote the Statistics Canada Open Licence's required statement in `data/DATA.md` and on the About page.
 - [ ] **Post-2025-election ward boundary report (Policy C469B; due Q4 2026).** Recheck after 2026-12-31; Council documents on eScribe answer 403 to scripts, so read by hand. Done when its status, any proposed adjustments, and its ward populations are recorded in `data/DATA.md` "Ward boundary review", including whether Yellowhead Corridor West moves.
-- [ ] **School-ward boundaries used in the 2025 election.** The boards' own layers disagree with the City's at three addresses (`data/DATA.md` "School wards"; `docs/DATA_ISSUES.md` 2026-10-17). The bylaws are not online (EPSB Bylaw 2020-2; no Catholic number found). Done when the owner has asked the boards or Edmonton Elections which polygons the 2025 vote used, and the answer is recorded.
-- [ ] **Check the provincial boundary process now, and again after 2026-11-02**, when the Select Special Committee on Electoral Boundaries must report. The 2026-10-13 stack report says the commission's final report gives Edmonton 21 electoral divisions, where the map in force has 20; not verified against `assembly.ab.ca`. Done when `data/DATA.md` records what was tabled, whether anything is enacted, and which map applies to the next provincial election.
+- [ ] **School-ward boundaries used in the 2025 election.** Both ward bylaws are online and were read on 2026-11-13 (`data/DATA.md` "School wards"). As read, the site names the other ward at 15928 Manning Drive NW and 610 Calgary Trail NW; 17611 34 Street NW, 903 Gateway Boulevard NW, 106 and 104 101 Street NW are open too (`docs/DATA_ISSUES.md` 2026-11-13; `docs/FINDINGS_district_assignment.md` L1). Claude drafts the question, quoting the bylaw text; the owner sends it to both boards and Edmonton Elections. Done when their answer on which lines the 2025 vote used at these six addresses is recorded.
+- [ ] **Read the council ward bylaw by hand** (Bylaw 15142 as amended; the City's site answered 404 and 502 to scripts on 2026-11-13). Done when `data/DATA.md` "Council wards" records how it fixes the outer edge, against `docs/DATA_ISSUES.md` 2026-10-21.
+- [ ] **Provincial boundaries: which map applies to the next election.** The committee reported on 2026-11-02 and no establishing bill was listed to 2026-11-05 (`data/DATA.md` "Provincial ridings", read 2026-11-13). Not verified: what the Assembly did with the report (a search result names a Government Motion 45), and the stack report's claim of 21 Edmonton divisions. Done when `data/DATA.md` records what was enacted and which map applies to the next provincial election.
 
 ### Map detail phase
 
@@ -47,11 +47,17 @@ symptom and re-measure the stated cause before acting on it.
 
 ### Build
 
-- [ ] **First rows for `docs/ASSUMPTIONS.md`.** It arrived empty with the 2026-10-19 template update. Candidates: the City's school-ward layers standing for the wards the 2025 vote used (the boards' own layers disagree at 3 addresses, `data/DATA.md` "School wards"), and the census-day neighbourhood join (`data/DATA.md` "Ward population"). Done when each premise a published number rests on has a row.
+- [ ] **`docs/ASSUMPTIONS.md` row for the census-day neighbourhood join** (`data/DATA.md` "Ward population"). The district rows DA-1 to DA-8 went in on 2026-11-13. Done when each premise a published number rests on has a row.
+- [ ] **Flag addresses where sources disagree, whatever their distance from a line** (audit 2026-11-13, L0). A short hand-kept list with a `source_url` per entry; the card says the two maps differ there and links both lookups. A data-contract change: propose the plan first.
+- [ ] **About page after the audit:** update the "Provincial boundaries may change" paragraph and the passed 2026-11-02 entry in `recheck_dates`; add a known limit saying the school wards are the City's drawing of the boards' bylaws.
+- [ ] **Repeatable City-versus-board school-ward comparison** through every address, and a sweep of the rest of both ward lines against the bylaw text (audit 2026-11-13, L4; run by hand twice so far). The boards' layers state no licence: compare, do not publish. A new module: propose the plan first.
+- [ ] **Parcels that lie across a district line** (audit 2026-11-13, L2). Find a City parcel-polygon source and count the parcels each layer's lines cross. Done when the count and the addresses are in `data/DATA.md`, and `docs/ASSUMPTIONS.md` DA-6 has a new status.
 - [ ] **Measure weekly address churn, around 2026-11-27** (after 4–6 refresh runs): read the "N added, M removed" counts in the `Weekly refresh` commit messages and check the 1% stop line (`data/diff_rules.json` `parcel_rows_max_change`) against real weeks. Unmeasured so far: the address dataset keeps no history.
 ## Done
 
 Closed items moved out of `## Open work` live in **`docs/TODO_archive.md`** — one line each below, reasoning there.
+
+- [x] **Run the first audit: address → district assignment** — CLOSED 2026-11-13 · `docs/TODO_archive.md`
 
 - [x] **The refresh can't fetch the MP list: ourcommons.ca answers 403 to the GitHub runner (issue #76).** — BUILT 2026-11-03 · `docs/TODO_archive.md`
 

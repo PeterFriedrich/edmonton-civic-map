@@ -44,3 +44,11 @@ by header name, and any table with a `Status` column is part of the index.
 
 | ID | Assumption | Status | If wrong (rough size) | Evidence and test |
 |----|------------|--------|-----------------------|-------------------|
+| DA-1 | The City's school-ward layers (`d7pj-rist`, `pwzf-sjj2`) draw the lines each board's ward bylaw describes. | UNVERIFIED | A handful of addresses show the other ward's trustee; six are known, and most of each line has not been read against the text | `docs/FINDINGS_district_assignment.md` L1; `docs/DATA_ISSUES.md` 2026-11-13 |
+| DA-2 | The returning officer used the City's school-ward layers for the 2025 vote. | UNVERIFIED | The same handful of addresses as DA-1 | `data/DATA.md`, "School wards" (an inference there) |
+| DA-3 | The outer edge of the council wards (`b4er-5rp2`) is the city limit. It decides "inside Edmonton" and clips the provincial and federal outlines. | UNVERIFIED | No address today; hundreds sit within the distance the edge last moved | `docs/DATA_ISSUES.md` 2026-10-21; `docs/FINDINGS_district_assignment.md` L1, L3 |
+| DA-4 | The Government of Alberta's "Current 2019" divisions are the map sitting MLAs represent until the next general election. | SUPPORTED | Every provincial card | `data/DATA.md`, "Provincial ridings"; `docs/FINDINGS_district_assignment.md` L1 |
+| DA-5 | The 2023 Representation Order layer is the map sitting MPs were elected on. | SUPPORTED | Every federal card | `docs/FINDINGS_district_assignment.md` L1 (Elections Canada's statement) |
+| DA-6 | The parcel point stands for the whole address: no parcel lies across a district line with its point on one side. | UNVERIFIED | Unknown; likely a small number of large parcels | `docs/FINDINGS_district_assignment.md` L2 |
+| DA-7 | A person acts on each `recheck_dates` entry in `site/public/data/staleness.json` when it passes. Nothing compares a date with today. | UNVERIFIED | Missed once, leaving a stale paragraph on the About page; a missed new map would touch every card at that level | `docs/FINDINGS_district_assignment.md` L4 |
+| DA-8 | The `effective_from` dates typed in `src/build_boundaries.py` for the provincial and federal layers are right and stay right. | SUPPORTED | A published date only; no district answer | `docs/FINDINGS_district_assignment.md` L4 |
