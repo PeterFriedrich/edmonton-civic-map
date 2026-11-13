@@ -82,6 +82,9 @@ the brief wins.
 
 ## Open work
 
+**Next session**
+- **Run the first audit: address → district assignment** (owner asked 2026-11-13; a Fable session). Use the `project-audit` skill with the brief `docs/AUDIT_district_assignment.md`, the top of the ranked list in `docs/AUDIT_LEDGER.md`. Done when …
+
 **Waiting on the owner**
 - **Reopen "3D never encodes a quantity" for the density lens, or not.** Waits on the owner seeing 2D and 3D density examples from the stack report.
 - **Confirm the Project picker has the synced set ticked.** The 2026-10-12 reconciliation chat reported only `docs/BRIEF.md`, `docs/DECISIONS.md` and `docs/SPEC_civic_map.md`; the set in `docs/CLAUDE_WEB.md` also has `docs/SPEC_lenses.md`, `docs/SPEC_data_schema.md` and …
