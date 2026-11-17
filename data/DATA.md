@@ -41,7 +41,7 @@ count by one, is recorded in `fetch.json`, and the build fails unless the seats
 it publishes as vacant are exactly the listed ones on the map. A filled seat
 fails again until its entry comes out.
 Open since 2026-11-03: EPSB Ward F (trustee resigned effective 2026-10-27, per
-the Ward F page) and Lac Ste.
+the Ward F page; the trustees page read "Ward F - Vacant" until 2026-11-12) and Lac Ste.
 Anne-Parkland, division 67 (the Assembly's members page lists its member as
 "Former Member"). Both publish as `vacant: true`. Since 2026-11-12 the EPSB
 trustees page no longer reads "Ward F - Vacant": it lists "Ward F - Trustee

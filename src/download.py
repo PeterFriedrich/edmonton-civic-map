@@ -124,6 +124,7 @@ SOURCES = {
         "parser": "parse_epsb", "licence": None, "expected_row_count": 9,
         # Since 2026-11-12 the page lists Ward F as covered by the Ward D and I
         # trustees; "listed_as" is that label (confirmed 2026-11-17 on the Ward F page).
+        # Only parse_epsb reads "listed_as".
         "vacancies": [{"seat_id": "public_school_ward:F", "name": "Ward F", "confirmed": "2026-11-03",
                        "listed_as": "Nickela Anderson and Trustee Jan Sawyer",
                        "source_url": "https://www.epsb.ca/ourdistrict/board/trustees/ward-f/"}],
@@ -330,10 +331,8 @@ def fetch_page(sid, src, dest):
     out.write_bytes(body)
     parse = getattr(bo, src["parser"])
     try:
-        parsed = parse(body if src["file"].endswith(".csv") else body.decode("utf-8"))
-        if isinstance(parsed, dict):
-            parsed = bo.drop_listed_vacancies(parsed, src.get("vacancies", []))
-        n = len(parsed)
+        args = (src["vacancies"],) if src["parser"] == "parse_epsb" else ()
+        n = len(parse(body if src["file"].endswith(".csv") else body.decode("utf-8"), *args))
     except (bo.BuildError, UnicodeDecodeError, KeyError) as e:
         raise DownloadError(f"{sid}: could not parse: {e}") from e
     if n == 0:
