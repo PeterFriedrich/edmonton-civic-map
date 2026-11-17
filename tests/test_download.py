@@ -259,13 +259,31 @@ def test_a_filled_vacancy_fails_until_its_entry_is_removed(epsb_one_vacancy, tmp
         dl.download("epsb_trustees", tmp_path)
 
 
+def test_a_vacancy_listed_under_its_confirmed_label_is_not_a_holder(epsb_one_vacancy, tmp_path):
+    v = {**dl.SOURCES["epsb_trustees"]["vacancies"][0], "listed_as": "TD and Trustee TI"}
+    dl.SOURCES["epsb_trustees"]["vacancies"] = [v]
+    page = _epsb_page("ABCDEGHI") + b'<a href="/ourdistrict/board/trustees/ward-f/">Ward F - Trustee TD and Trustee TI</a>'
+    epsb_one_vacancy.append((lambda u: "epsb.ca" in u, lambda u: page))
+    assert dl.download("epsb_trustees", tmp_path)["row_count"] == 8
+
+
+def test_a_vacancy_listed_under_another_name_still_fails(epsb_one_vacancy, tmp_path):
+    v = {**dl.SOURCES["epsb_trustees"]["vacancies"][0], "listed_as": "TD and Trustee TI"}
+    dl.SOURCES["epsb_trustees"]["vacancies"] = [v]
+    page = _epsb_page("ABCDEGHI") + b'<a href="/ourdistrict/board/trustees/ward-f/">Ward F - Trustee New Person</a>'
+    epsb_one_vacancy.append((lambda u: "epsb.ca" in u, lambda u: page))
+    with pytest.raises(dl.DownloadError, match="9 rows, expected 8"):
+        dl.download("epsb_trustees", tmp_path)
+
+
 def test_every_vacancy_names_one_seat_and_cites_its_source():
     for sid, src in dl.SOURCES.items():
         seats = [v["seat_id"] for v in src.get("vacancies", [])]
         assert len(seats) == len(set(seats)), sid
         assert not seats or len(seats) < src["expected_row_count"], sid
         for v in src.get("vacancies", []):
-            assert set(v) == {"seat_id", "name", "confirmed", "source_url"}, sid
+            assert set(v) - {"listed_as"} == {"seat_id", "name", "confirmed", "source_url"}, sid
+            assert v.get("listed_as", "x"), sid
             assert v["seat_id"].count(":") == 1 and v["name"], sid
             assert v["source_url"].startswith("https://"), sid
             dt.date.fromisoformat(v["confirmed"])

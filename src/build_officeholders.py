@@ -61,6 +61,19 @@ def parse_epsb(page):
     return out
 
 
+def drop_listed_vacancies(parsed, vacancies):
+    """A confirmed vacancy the page still lists under an interim label (EPSB lists
+    Ward F as covered by two other trustees) is not a holder. Only an exact match
+    with the confirmed label is dropped, so any other name still fails the count."""
+    out = dict(parsed)
+    for v in vacancies:
+        key = v["seat_id"].split(":")[1]
+        if "listed_as" in v and out.get(key, (None,))[0] == v["listed_as"]:
+            log.info("%s: listed as '%s', a confirmed vacancy", v["seat_id"], v["listed_as"])
+            del out[key]
+    return out
+
+
 def parse_ecsd(page):
     """{ward number: (name, page url)} from the ECSD trustees page: each card is
     an h3 holding the name, then a "WARD 7x" line, then a link to /ward-7x."""
@@ -254,7 +267,7 @@ def build(raw, layers, variants, published):
 
     # School boards: the boards' own pages, checked against the 2025 results.
     rows_src = epsb_meta["id"]
-    epsb = parse_epsb(epsb_body.decode("utf-8"))
+    epsb = drop_listed_vacancies(parse_epsb(epsb_body.decode("utf-8")), epsb_meta["vacancies"])
     _expect("EPSB trustees page", epsb, epsb_meta["expected_row_count"])
     for did in [d for d in names if d.startswith("public_school_ward:")]:
         w = did.split(":")[1]
