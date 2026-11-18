@@ -37,7 +37,7 @@ MLA_CSV = ('Date file created\r\n"2026-Oct-15 17:59:39 -06:00"\r\n\r\n'
 
 
 def test_parse_epsb_reads_trustee_links_and_ignores_the_menu():
-    assert bo.parse_epsb(EPSB) == {
+    assert bo.parse_epsb(EPSB, []) == {
         "A": ("Sherri O'Keefe", "https://www.epsb.ca/ourdistrict/board/trustees/ward-a/"),
         "B": ("Linda Lindsay", "https://www.epsb.ca/ourdistrict/board/trustees/ward-b/"),
     }
@@ -56,8 +56,14 @@ def test_parse_mla_csv_skips_the_banner():
     assert [(r["Constituency Number"], r["MLA Last Name"], r["Caucus"]) for r in rows] == [("46", "Pancholi", "NDP")]
 
 
+@pytest.mark.parametrize("label, kept", [("Sherri O'Keefe", ["B"]), ("Sherri O'Keefe and Trustee X", ["A", "B"])])
+def test_parse_epsb_drops_a_vacancy_only_under_its_exact_label(label, kept):
+    v = {"seat_id": "public_school_ward:A", "listed_as": label}
+    assert sorted(bo.parse_epsb(EPSB, [v])) == kept
+
+
 @pytest.mark.parametrize("parse, page", [
-    (bo.parse_epsb, EPSB.replace(" - Trustee ", ": ")),
+    (lambda page: bo.parse_epsb(page, []), EPSB.replace(" - Trustee ", ": ")),
     (bo.parse_ecsd, ECSD.replace("<h3", "<h4").replace("</h3>", "</h4>")),
     (bo.parse_assembly_list, ASSEMBLY.replace("<td>", "<td class='x'>")),
 ])

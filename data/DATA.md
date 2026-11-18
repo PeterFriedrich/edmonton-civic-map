@@ -41,9 +41,15 @@ count by one, is recorded in `fetch.json`, and the build fails unless the seats
 it publishes as vacant are exactly the listed ones on the map. A filled seat
 fails again until its entry comes out.
 Open since 2026-11-03: EPSB Ward F (trustee resigned effective 2026-10-27, per
-the Ward F page; the trustees page reads "Ward F - Vacant") and Lac Ste.
+the Ward F page; the trustees page read "Ward F - Vacant" until 2026-11-12) and Lac Ste.
 Anne-Parkland, division 67 (the Assembly's members page lists its member as
-"Former Member"). Both publish as `vacant: true`. Then
+"Former Member"). Both publish as `vacant: true`. Since 2026-11-12 the EPSB
+trustees page no longer reads "Ward F - Vacant": it lists "Ward F - Trustee
+Nickela Anderson and Trustee Jan Sawyer", the Ward D and I trustees covering it
+(the Ward F page says the same). That stopped the 2026-11-16 refresh (issue
+#88). A vacancy entry's optional `listed_as` holds such an interim label; a row
+matching it exactly is not counted as a holder, and any other name still fails
+the count. Then
 `python -m src.build_officeholders` writes `site/public/data/officeholders.json`:
 71 seats (mayor, 12 councillors, 9 + 7 trustees, 29 MLAs, 13 MPs), one per
 district in the boundary files. All 71 `contact_url` pages were fetched on

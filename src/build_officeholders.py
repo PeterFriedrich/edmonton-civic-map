@@ -50,14 +50,22 @@ def _text(fragment):
 
 # --- parsers: each returns every row it finds; callers check the count ---------
 
-def parse_epsb(page):
+def parse_epsb(page, vacancies):
     """{ward letter: (name, page url)} from the EPSB trustees page.
-    The page lists each as a link "Ward A - Trustee <name>"."""
+    The page lists each as a link "Ward A - Trustee <name>". A confirmed vacancy
+    listed under its exact "listed_as" label (src/download.py) is not a holder;
+    any other name for that ward still fails the count. Download and build both
+    parse through here with the source's vacancies, so neither counts the label."""
     out = {}
     for href, label in re.findall(r'<a[^>]+href="(/ourdistrict/board/trustees/ward-[a-i]/)"[^>]*>(.*?)</a>', page, re.S):
         m = re.fullmatch(r"Ward ([A-I]) - Trustee (.+)", _text(label))
         if m:
             out[m.group(1)] = (m.group(2), EPSB_URL + href)
+    for v in vacancies:
+        w = v["seat_id"].split(":")[1]
+        if "listed_as" in v and out.get(w, (None,))[0] == v["listed_as"]:
+            log.info("%s: listed as '%s', a confirmed vacancy", v["seat_id"], v["listed_as"])
+            del out[w]
     return out
 
 
@@ -254,7 +262,7 @@ def build(raw, layers, variants, published):
 
     # School boards: the boards' own pages, checked against the 2025 results.
     rows_src = epsb_meta["id"]
-    epsb = parse_epsb(epsb_body.decode("utf-8"))
+    epsb = parse_epsb(epsb_body.decode("utf-8"), epsb_meta["vacancies"])
     _expect("EPSB trustees page", epsb, epsb_meta["expected_row_count"])
     for did in [d for d in names if d.startswith("public_school_ward:")]:
         w = did.split(":")[1]
