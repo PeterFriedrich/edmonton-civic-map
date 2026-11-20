@@ -239,15 +239,15 @@ the point: it shows the owner a gap, such as `master` with no required check.
 | | A moved published number shown old → new, with why | adopted: published tiers are `site/public/data/*`; `python -m src.diff_check` prints old → new for a rebuild, and #89 reported its rebuild matched the published file except `last_verified` |
 | | Break each new or changed guard on purpose | later: the next PR that adds or changes a guard; not done so far |
 | | Review the diff with `/code-review` (trial) | adopted (trial, owner started 2026-10-21): `/code-review` before a PR whose diff touches code, at the levels in step 1.7 |
-| | `/security-review` on this repo's risky paths (list them) | later: the next diff that touches them; not run so far. Paths: the template defaults, plus `src/download.py` (fetches outside data) and `site/src/` code that handles the typed address or renders fetched text |
+| | `/security-review` on this repo's risky paths (list them) | later: the next diff that touches them; not run so far. Paths (owner confirmed 2026-11-20): the template defaults, plus `src/download.py` (fetches outside data) and `site/src/` code that handles the typed address or renders fetched text |
 | | A kind of finding seen twice is fixed at the source | later: no record of repeat findings is kept yet; start it with the fixes-after-merge count (step 4.5) |
 | | Commit each working unit | adopted: `CLAUDE.md`; habit |
 | The PR | A fresh branch from `origin/master` per PR | adopted: habit; `.githooks/pre-push` blocks a merged branch |
 | | `Code review:` line in the description (trial) | adopted (trial, from 2026-10-21): every PR description opens with it |
 | | Pre-existing findings go to `TODO.md` or a ledger, not this PR | later: from the next PR with `/code-review` findings; not checked as a habit so far |
 | | A bug-fix PR names its cause | adopted: habit; #83 and #89 name their cause |
-| | The description carries `Tested:` and `Undo:` | later: the next PR; used in #82–#83, missing from #84–#90 |
-| | `Risk:` tier set by this repo's path list (list them) | later: the next PR (used in #82–#83 only). Paths: high: `.github/workflows/`, `src/` (every module feeds published data), `data/diff_rules.json`, `site/public/data/`, `docs/SPEC_data_schema.md`; medium: `scripts/`, `tools/`, `site/src/`, `smoke/`, changed tests; low: docs, `TODO.md`, handoffs, added tests |
+| | The description carries `Tested:` and `Undo:` | adopted (owner confirmed 2026-11-20): from #91; used in #82–#83, missing from #84–#90 |
+| | `Risk:` tier set by this repo's path list (list them) | adopted (owner confirmed the paths 2026-11-20): from #91; used in #82–#83 before that. Paths: high: `.github/workflows/`, `src/` (every module feeds published data), `data/diff_rules.json`, `site/public/data/`, `docs/SPEC_data_schema.md`; medium: `scripts/`, `tools/`, `site/src/`, `smoke/`, changed tests; low: docs, `TODO.md`, handoffs, added tests |
 | | Sync note for claude.ai-synced files | adopted: `CLAUDE.md`; habit |
 | | CI green, and `master` requires the `test` check | adopted: `tests.yml` (pytest, guards, build, smoke); branch protection requires `test` since 2026-10-21, and `refresh.yml` pushes with `HEARTBEAT_TOKEN` |
 | | No timed PR check-ins | adopted: `CLAUDE.md` |
