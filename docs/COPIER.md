@@ -13,7 +13,7 @@ silent overwrite.
 
 What a project never receives (`copier.yml`): the template's own handoffs,
 findings docs and brief. Its ledgers (`TODO.md`, `docs/DECISIONS.md`,
-`docs/TODO_archive.md`) arrive as empty skeletons. `README.md`, `docs/SCOPE.md`
+`docs/TODO_archive.md`, `docs/AUDIT_LEDGER.md`) arrive as empty skeletons. `README.md`, `docs/SCOPE.md`
 and `data/DATA.md` are written once and never touched by an update.
 
 ## New project
@@ -39,6 +39,17 @@ still merge past a broken check, and doesn't require the branch to be up to date
 PRs merge within minutes of each other. If the job is renamed, update the required check
 too, or every PR waits on a check that never reports. GitHub's free plan has no branch
 protection for private repos, so skip this step there.
+
+⚠️ **A workflow that pushes to `master` itself** (a scheduled data refresh that commits
+its output) is blocked by a required check, because its commit has no passing `test`
+yet. Before turning protection on, have it push with a fine-grained token of an admin
+(`enforce_admins: false` lets an admin's push through), not `GITHUB_TOKEN`.
+`edmonton-tax-viz` does this with a `HEARTBEAT_TOKEN` secret (its `docs/RUNBOOK.md`).
+A token push, unlike `GITHUB_TOKEN`, does trigger workflows, so the commit must stage
+only data paths that the deploy workflow ignores, or each refresh redeploys itself.
+The other way out is to let that push be the deploy: `edmonton-civic-map` dropped the deploy
+step from `refresh.yml`, so its token push starts `pages.yml` once (refresh run 42525589251,
+2026-11-08, pushed 8476956 past the required `test` check; pages run 42526187824).
 
 Then answer `docs/CHANGE_PIPELINE.md` §"This project's fit" for the new project.
 
@@ -89,6 +100,17 @@ evaluated, not applied blindly:**
    project's fit", answer those rows for this project before committing:
    `adopted`, `later: <trigger>`, `no: <reason>` or `n/a`. Keep earlier
    answers.
+   ⚠️ **Expect the whole table to come back as one conflict block**: your
+   answered rows on one side, the template's `not evaluated` rows on the
+   other (seen in a dry run on `edmonton-civic-map`, 2026-10-19). Taking
+   either side whole loses data silently: all your answers, or the new rows.
+   Start from the template's side, copy each earlier answer back by its Step
+   name, then answer the rows still `not evaluated`. Check that no row from
+   either side went missing, then remove the markers.
+   `scripts/check_fit_table.py` (in CI) fails on a leftover marker, a missing
+   or repeated step, an empty answer, or, on a PR, an answer the base branch
+   had that is now `not evaluated`. Run it locally before committing with
+   `--base HEAD`.
 5. Run the tests, commit, open a PR listing what was taken, what declined,
    and the new fit answers.
 
@@ -120,3 +142,32 @@ extracted *from*, and its owned files are deliberately its own (e.g.
 `edmonton-audit` in place of `project-audit`). Every update would conflict.
 Changes reach it by a session reading the template's PR diff and porting what
 fits.
+
+## A repo that isn't a data project
+
+A web app, a static site or a service doesn't use copier. The data skeleton
+(`data/DATA.md`, `DATA_ISSUES`, `ASSUMPTIONS`, the audit ledger, the brief, the
+fit table) is most of what copier writes, so a project would delete it, and
+every `copier update` would bring it back as conflicts. A partial
+`.copier-answers.yml` is worse: `template_drift.py` would report every template
+file not excluded, which is nearly all of them, and the notice gets skimmed.
+
+Instead, copy the pieces that fit by hand and treat them as forks:
+
+1. Take what fits. The usual set is the `handoff` skill, `scripts/handoff_gap.py`
+   with only its two hooks in `.claude/settings.json`, and later
+   `.githooks/pre-push`, `docs/DECISIONS.md` + `scripts/check_decisions_log.py`
+   and a `tests.yml` of the project's own. Leave out `template_drift.py` (it
+   needs the answers file and says nothing without it).
+2. Edit what assumes this template's layout: `SUBSTANTIVE` in
+   `handoff_gap.py` (the paths that count as work), and `master` in
+   `handoff_gap.py`, `.githooks/pre-push` and `tests.yml` if the trunk is
+   `main`. Each fails silent when wrong, so a check that looks healthy is
+   checking nothing.
+3. Record the template commit copied from, so a later session can diff
+   against it.
+4. A fix that would help every project goes back as a message to the
+   `template` session; the owner decides whether it is upstreamed.
+
+Done this way 2026-10-30: `landing_page` (b80ec62, from `31bd28d`) and
+`regenx_app_refactor` (Nitrolytics PR #3).
