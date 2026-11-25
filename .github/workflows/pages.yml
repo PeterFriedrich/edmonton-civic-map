@@ -22,11 +22,11 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  deploy:
+  # Upload and deploy sit in separate jobs, as GitHub's starter does. In one job,
+  # deploy-pages has found "0 artifacts" a second after a finalized upload, on
+  # every run from 2026-11-23 (run 45274319932) though nothing here had changed.
+  build:
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
@@ -66,5 +66,33 @@ jobs:
         with:
           path: dist
 
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
       - id: deployment
         uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1
+
+  # A red run leaves the last good site live, which nobody sees unless told.
+  report-failure:
+    needs: [build, deploy]
+    if: failure()
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+      RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+    steps:
+      - run: |
+          body="Pages run failed on ${GITHUB_REF_NAME} at ${GITHUB_SHA::7}; the live site is unchanged. Run: $RUN_URL"
+          open=$(gh issue list --state open --search 'in:title "Pages deploy failed"' --json number --jq '.[0].number')
+          if [ -n "$open" ]; then
+            gh issue comment "$open" --body "$body"
+          else
+            gh issue create --title "Pages deploy failed $(date -u +%F)" --body "$body"
+          fi
