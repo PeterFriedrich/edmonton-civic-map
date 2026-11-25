@@ -80,6 +80,7 @@ the brief wins.
 - **2026-11-03** — **A confirmed vacancy lowers an office-holder source's expected count through a `vacancies` entry, never by editing the seat count** (owner approved in session). … Rejected: counting "Vacant" lines in the parsers, because the Assembly lists no empty seats, only a "Former Member".
 - **2026-11-17** — **A confirmed vacancy the publisher lists under an interim label carries that exact label as `listed_as`; only `parse_epsb` reads it** (owner chose this in session over publishing the interim cover … Rejected for now: a published "covered by" field (a data-contract change, needs a plan).
 - **2026-11-03** — **A 403 from ourcommons.ca keeps the published MP rows instead of stopping the refresh** (owner chose this in session, over retry only or running the refresh on this server).
+- **2026-11-25** — **`pages.yml` builds and deploys in separate jobs, and a red run opens or comments on a "Pages deploy failed" issue** (owner approved in session).
 
 ## Open work
 

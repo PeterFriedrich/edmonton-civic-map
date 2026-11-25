@@ -258,6 +258,6 @@ the point: it shows the owner a gap, such as `master` with no required check.
 | After the merge | Template changes pulled by `copier update` | adopted: `scripts/template_drift.py` at session start |
 | | Publish, with a gate before it ships | adopted: `pages.yml` runs pytest, the build, `check:dist` and the smoke tests before upload; `refresh.yml` runs the diff check, which holds a change for review |
 | | Seen before the public build | no: one public build, no preview deploy; site PRs are checked by local screenshots, and the site carries an alpha banner (#68) |
-| | Watch and roll back | adopted: `refresh.yml` opens or comments on a `refresh` issue when it holds or fails; a red `pages.yml` leaves the last good site live; undo is `git revert` and a redeploy |
+| | Watch and roll back | adopted: `refresh.yml` opens or comments on a `refresh` issue when it holds or fails; a red `pages.yml` leaves the last good site live and opens or comments on a "Pages deploy failed" issue; undo is `git revert` and a redeploy |
 | | Fixes after a merge are counted (the guardrail) | later: no count kept yet; start one before the `/code-review` trial is judged |
 | | Upstream data defects logged in `docs/DATA_ISSUES.md` | adopted: habit; rows carry SENT / NOT SENT |
