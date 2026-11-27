@@ -8,22 +8,17 @@ group them; closed items are moved to `docs/TODO_archive.md` by the tool, which
 leaves a one-line stub under `## Done`. An open item can be stale — reproduce the
 symptom and re-measure the stated cause before acting on it.
 
+**By-hand actions** only the owner can do (a command a session's permissions
+block, a settings change) go under `### Waiting on the owner`, the last group in
+`## Open work`, one line each, so they can be collated across repos with
+`grep -n '^- \[ \] \*\*Owner runs:'` (anchored, so this example doesn't match):
+``- [ ] **Owner runs:** `<command or action>` — why · confirm: `<check>` · urgency · since YYYY-MM-DD``
+The SessionStart hook lists the open ones; run each `confirm:` check and tick
+the lines that pass.
+
 ## Open work
 
 ### Next session
-
-### Waiting on the owner
-
-- [ ] **Reopen "3D never encodes a quantity" for the density lens, or not.** Waits on the owner seeing 2D and 3D density examples from the stack report.
-- [ ] **Owner runs:** `claude.ai Project → Sync: docs/BRIEF.md, and data/DATA.md if not synced since S11` — PR #95 regenerated the brief and the web side can't tell it is stale · confirm: a new Project chat quotes the brief's DECISIONS row dated 2026-11-25 · before the next Claude web chat · since 2026-11-25
-- [ ] **Owner runs:** `claude.ai Project picker: tick docs/BRIEF.md, docs/DECISIONS.md, docs/SPEC_civic_map.md, docs/SPEC_lenses.md, docs/SPEC_data_schema.md, data/DATA.md` — the 2026-10-12 chat saw only the first three (the stack research did later read the lens spec) · confirm: a new Project chat lists all six from its file list · low · since 2026-10-12
-- [ ] **Owner runs:** `git branch -D template-a104a5f` — local branch with one commit (0907fb2) whose patch isn't on master; it's an old draft of the template pull that landed as #91 · confirm: `git branch --list template-a104a5f` prints nothing · low · since 2026-11-25
-- [ ] **A trigger for a past `recheck_dates` entry: yes or no** (audit 2026-11-13, L4; `docs/ASSUMPTIONS.md` DA-7). Nothing compares those dates with today, and 2026-11-02 passed unnoticed. Options: a test that fails, or a refresh step that opens an issue. A CI change, so it waits for the owner.
-- [ ] **Owner runs:** `send the City one report of the NOT SENT rows in docs/DATA_ISSUES.md` — defects in City data stay unreported until it goes · confirm: `grep -c "NOT SENT" docs/DATA_ISSUES.md` prints 0 · no deadline · since 2026-10-10
-- [ ] **Owner runs:** `send the City the community-league open-data request (Claude drafts on asking) via the portal's dataset request or Mapdesk@Edmonton.ca` — the communities lens uses neighbourhoods only until the City answers · confirm: the City's answer is recorded in `data/DATA.md` "Community leagues — City GIS service" · low, can go with the defect report · since 2026-10-17
-  Request details (owner decided 2026-10-17 to ask). The layer exists: `GDB.V_COMMUNITY_LEAGUES` on `gis.edmonton.ca/arcgisintegration/.../DPIM/DPIM_FS/FeatureServer/12`, 163 leagues with bylaw boundary text, no licence stated; the City's printed league map (2024-04-02) is no-reproduction (`data/DATA.md`, "Community leagues — City GIS service"). Ask via the open data portal's dataset request or Mapdesk@Edmonton.ca: publish under OGL – City of Edmonton, without the staff-logon and mailing-address columns. Done when the City has answered and the answer is recorded.
-- [ ] **Owner runs:** `send the school-ward question to both school boards and Edmonton Elections (Claude drafts on asking)` — which lines the 2025 vote used at six addresses; details in "School-ward boundaries used in the 2025 election" below · confirm: that item is closed with their answer recorded · no deadline · since 2026-11-14
-- [ ] **Owner runs:** `read in a browser: Bylaw 15142 (council wards); the post-2025-election ward boundary report on eScribe; what the Assembly did with the provincial boundaries report` — the sites answer scripts with 403/404/502; each has its own item under "Sources still to verify" · confirm: each of those three items is closed · ward report after 2026-12-31, the rest no deadline · since 2026-11-13
 
 ### Sources still to verify
 
@@ -57,6 +52,20 @@ symptom and re-measure the stated cause before acting on it.
 - [ ] **Repeatable City-versus-board school-ward comparison** through every address, and a sweep of the rest of both ward lines against the bylaw text (audit 2026-11-13, L4; run by hand twice so far). The boards' layers state no licence: compare, do not publish. A new module: propose the plan first.
 - [ ] **Parcels that lie across a district line** (audit 2026-11-13, L2). Find a City parcel-polygon source and count the parcels each layer's lines cross. Done when the count and the addresses are in `data/DATA.md`, and `docs/ASSUMPTIONS.md` DA-6 has a new status.
 - [ ] **Measure weekly address churn, around 2026-11-27** (after 4–6 refresh runs): read the "N added, M removed" counts in the `Weekly refresh` commit messages and check the 1% stop line (`data/diff_rules.json` `parcel_rows_max_change`) against real weeks. Unmeasured so far: the address dataset keeps no history.
+
+### Waiting on the owner
+
+- [ ] **Reopen "3D never encodes a quantity" for the density lens, or not.** Waits on the owner seeing 2D and 3D density examples from the stack report.
+- [ ] **Owner runs:** `claude.ai Project → Sync: docs/BRIEF.md, and data/DATA.md if not synced since S11` — PR #95 regenerated the brief and the web side can't tell it is stale · confirm: a new Project chat quotes the brief's DECISIONS row dated 2026-11-25 · before the next Claude web chat · since 2026-11-25
+- [ ] **Owner runs:** `claude.ai Project picker: tick docs/BRIEF.md, docs/DECISIONS.md, docs/SPEC_civic_map.md, docs/SPEC_lenses.md, docs/SPEC_data_schema.md, data/DATA.md` — the 2026-10-12 chat saw only the first three (the stack research did later read the lens spec) · confirm: a new Project chat lists all six from its file list · low · since 2026-10-12
+- [ ] **Owner runs:** `git branch -D template-a104a5f` — local branch with one commit (0907fb2) whose patch isn't on master; it's an old draft of the template pull that landed as #91 · confirm: `git branch --list template-a104a5f` prints nothing · low · since 2026-11-25
+- [ ] **A trigger for a past `recheck_dates` entry: yes or no** (audit 2026-11-13, L4; `docs/ASSUMPTIONS.md` DA-7). Nothing compares those dates with today, and 2026-11-02 passed unnoticed. Options: a test that fails, or a refresh step that opens an issue. A CI change, so it waits for the owner.
+- [ ] **Owner runs:** `send the City one report of the NOT SENT rows in docs/DATA_ISSUES.md` — defects in City data stay unreported until it goes · confirm: `grep -c "NOT SENT" docs/DATA_ISSUES.md` prints 0 · no deadline · since 2026-10-10
+- [ ] **Owner runs:** `send the City the community-league open-data request (Claude drafts on asking) via the portal's dataset request or Mapdesk@Edmonton.ca` — the communities lens uses neighbourhoods only until the City answers · confirm: the City's answer is recorded in `data/DATA.md` "Community leagues — City GIS service" · low, can go with the defect report · since 2026-10-17
+  Request details (owner decided 2026-10-17 to ask). The layer exists: `GDB.V_COMMUNITY_LEAGUES` on `gis.edmonton.ca/arcgisintegration/.../DPIM/DPIM_FS/FeatureServer/12`, 163 leagues with bylaw boundary text, no licence stated; the City's printed league map (2024-04-02) is no-reproduction (`data/DATA.md`, "Community leagues — City GIS service"). Ask via the open data portal's dataset request or Mapdesk@Edmonton.ca: publish under OGL – City of Edmonton, without the staff-logon and mailing-address columns. Done when the City has answered and the answer is recorded.
+- [ ] **Owner runs:** `send the school-ward question to both school boards and Edmonton Elections (Claude drafts on asking)` — which lines the 2025 vote used at six addresses; details in "School-ward boundaries used in the 2025 election" below · confirm: that item is closed with their answer recorded · no deadline · since 2026-11-14
+- [ ] **Owner runs:** `read in a browser: Bylaw 15142 (council wards); the post-2025-election ward boundary report on eScribe; what the Assembly did with the provincial boundaries report` — the sites answer scripts with 403/404/502; each has its own item under "Sources still to verify" · confirm: each of those three items is closed · ward report after 2026-12-31, the rest no deadline · since 2026-11-13
+
 ## Done
 
 Closed items moved out of `## Open work` live in **`docs/TODO_archive.md`** — one line each below, reasoning there.
